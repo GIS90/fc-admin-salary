@@ -27,7 +27,7 @@ const props = defineProps({
 
 let disX = ref(0);
 const sliderStatus = ref(false);
-const sliderIcon = ref('Right');
+const sliderIcon = ref('Right222');
 const sliderText = ref('请拖住滑块，拖动到最右边');
 
 // 监听状态
@@ -36,7 +36,7 @@ watch(sliderStatus, (value) => {
     sliderIcon.value = "SuccessFilled";
     sliderText.value = "验证通过";
   } else {
-    sliderIcon.value = "Right";
+    sliderIcon.value = "Right222";
     sliderText.value = "请拖住滑块，拖动到最右边";
   }
 }, { immediate: true });
