@@ -162,7 +162,7 @@ const clickTreeNode = (node: any) => {
 };
 
 // 设置checkbox为True，获取选择数据
-const changeTreeFilter = (keys: []) => {};
+const changeTreeFilter = (_keys: []) => {};
 
 const fcTableRef = ref<FcTableInstance>();  // fcTabel 实例
 // fc-table属性
@@ -208,7 +208,7 @@ const reFetchTreeData = (isReload: boolean = false) => {
 };
 
 // 字典分类.单条删除
-const deleteDictCateHandle = (scope: DictKeyListModel) => {
+const deleteDictCateHandle = (scope: any) => {
   if (scope?.row?.data?.md5 == allNode) {
     ElMessage.warning("全部字典类别不允许操作");
     return;
@@ -279,7 +279,7 @@ const addDictKeyHandle = () => {
 };
 
 // 字典分类.编辑
-const editDictKeyHandle = (data) => {
+const editDictKeyHandle = (data: any) => {
   editKeyVisible.value = true;
   setKeySelected(data)
 };
@@ -330,7 +330,7 @@ const addDictEnumHandle = () => {
 };
 
 // 字典枚举.编辑
-const editDictEnumHandle = (data) => {
+const editDictEnumHandle = (data: any) => {
   selectEnumMd5.value = data.md5;
   editEnumVisible.value = true;
 };

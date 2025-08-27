@@ -48,7 +48,7 @@
                    :no-match-text="selectSingleField.noMatchText" :no-data-text="selectSingleField.noDataText"
                    :placeholder="lmodelPlace.pnode" :disabled="btnDisabled">
           <el-option v-for="item in treeData" :key="item.id" :label="item.label" :value="item.id">
-            <span :style="{ paddingLeft: item.level * 20 + 'px' }">{{ item.label }}</span>
+            <span :style="{ paddingLeft: (item.level ?? 0) * 25 + 'px' }">{{ item.label }}</span>
           </el-option>
         </el-select>
       </el-form-item>
@@ -104,7 +104,7 @@ import {
 } from "@/utils/attrs/field";
 import publicLength from "@/utils/attrs/length";
 import publicPlaceHolder from "@/utils/attrs/place";
-import {OptionEnumModel} from "@/models/X";
+import {OptionEnumModelList} from "@/models/X";
 
 // 数据组件属性值
 const lmodelLen = publicLength.systemDepartModel;
@@ -114,14 +114,14 @@ const introductionSize = ref({minRows: 3, maxRows: 4});
 const emit = defineEmits(['update:visible', 'fetchTreeData']);
 const btnDisabled = ref(false); // 禁用
 const btnLoading = ref(false); // 加载中
-const userOption = ref<OptionEnumModel[]>([]);
-const defaultTreeProps = {
-  value: 'id',
-  label: 'label',
-  children: 'children',
-  disabled: 'disabled'
-};
-const treeData = ref([]);
+const userOption = ref<OptionEnumModelList>([]);
+// 定义树节点类型
+interface TreeNode {
+  id: number;
+  label: string;
+  level?: number;
+}
+const treeData = ref<TreeNode[]>([]);
 const props = defineProps({
   visible: {
     type: Boolean,
@@ -139,7 +139,7 @@ const props = defineProps({
 const fetchApiData = async (md5: string) => {
   const response = await SysOpsDepartApi({ md5 });
   if (response.data) {
-    const res = response.data as { data: DepartmentNode, user: OptionEnumModel, tree: [DepartmentNode] }; // declare
+    const res = response.data as { data: DepartmentNode, user: OptionEnumModelList, tree: [DepartmentNode] }; // declare
     Object.assign(ruleForm, res.data); // 节点
     userOption.value = res.user; // 用户枚举
     treeData.value = res.tree; // 树结构
@@ -168,7 +168,7 @@ watch(
 const ruleFormRef = ref<FormInstance>();
 const ruleForm = reactive({}) as DepartmentNode;
 // from rule
-const rules = reactive<FormRules<DepartmentNode>>({
+const rules = reactive({
   label: [
     { required: true, message: "部门名称不允许为空", trigger: 'blur' },
     { min: 1, max: lmodelLen.label, message: '最大长度支持'+lmodelLen.label+'位', trigger: 'blur' },
@@ -177,7 +177,7 @@ const rules = reactive<FormRules<DepartmentNode>>({
     { required: true, message: "部门描述不允许为空", trigger: 'blur' },
     { min: 1, max: lmodelLen.description, message: '最大长度支持'+lmodelLen.description+'位', trigger: 'blur' },
   ],
-});
+} as FormRules);
 
 const close = () => {
   emit('update:visible', false);

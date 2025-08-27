@@ -75,15 +75,16 @@
 <script setup lang='ts'>
 import { ref, defineProps, defineEmits } from "vue";
 import { formField, selectMultiField, buttonField, inputField, dateRangePickerField } from "@/utils/attrs/field";
+import { OptionEnumModelList } from "@/models/X";
 
-const props = defineProps({
+defineProps({
   apiOption: {
-    type: Array,
+    type: Array as () => OptionEnumModelList,
     required: true,
     default: []
   },
   userOption: {
-    type: Array,
+    type: Array as () => OptionEnumModelList,
     required: true,
     default: []
   }

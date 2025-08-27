@@ -58,7 +58,7 @@
             :indent="teField.indent"
             :draggable="teField.draggable"
             :default-expanded-keys="treeExpandedKeys"
-            :filter-node-method="filterNode"
+            :filter-node-method="filterNodeMethod"
             :allow-drag="allowDrag"
             @node-click="nodeClick"
             @check="nodeCheck"
@@ -113,7 +113,7 @@ import { DepartmentNode } from "@/models/systemModel";
 import {SysOpsDepartDeleteApi, SysOpsDepartDragApi, SysOpsDepartTreeApi} from "@/api/modules/system";
 import type Node from 'element-plus/es/components/tree/src/model/node'
 import type { DragEvents } from 'element-plus/es/components/tree/src/model/useDragNode'
-import type { NodeDropType } from 'element-plus/es/components/tree/src/tree.type'
+import type { NodeDropType, FilterNodeMethodFunction } from 'element-plus/es/components/tree/src/tree.type'
 import Add from "./components/add.vue";
 import Edit from "./components/edit.vue";
 
@@ -165,10 +165,11 @@ const fetchTreeData = async () => {
   }
 }
 
-const filterNode = (value: string, data: DepartmentNode) => {
-  if (!value) return true
-  return data.label.includes(value)
-};
+const filterNodeMethod = ((value: string, data: any, _node: any) => {
+  if (!value) return true;
+  const departmentData = data as DepartmentNode;
+  return departmentData.label.includes(value);
+}) as FilterNodeMethodFunction;
 
 const resetHandle = () => {
   treeRef.value!.setCheckedKeys([], false);
@@ -191,7 +192,7 @@ const nodeClick = (node: DepartmentNode) => {
   selectNodeMd5.value = node.md5;
 };
 
-const nodeCheck = (data, state) => {
+const nodeCheck = (_data: any, state: any) => {
   if (state?.checkedKeys) {
     treeCheckedKeys.value = state.checkedKeys;
   }
@@ -218,7 +219,7 @@ const allowDrag = (draggingNode: Node) => {
   return true;
 }
 
-const nodeDrag = (draggingNode: Node, dropNode: Node, dropType: NodeDropType, event: DragEvents) => {
+const nodeDrag = (draggingNode: Node, dropNode: Node, dropType: NodeDropType, _event: DragEvents) => {
   // 获取拖拽后的父节点
   let parentNodeId;
   if (dropType === 'inner') {
@@ -254,6 +255,12 @@ const nodeAppend = (node: Node, data: DepartmentNode) => {
 };
 
 const nodeAppendTree = (data: DepartmentNode) => {
+  // 在问题代码之前添加 null 检查
+  if (!addNodeParent.value) {
+    console.error('addNodeParent 为 null');
+    return;
+  }
+
   if (!addNodeParent.value.data.children) {
     addNodeParent.value.data.children = []; // 或使用 Vue.set/Vue3 的 reactive 方式
   }

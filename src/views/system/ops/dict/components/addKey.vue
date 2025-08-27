@@ -109,7 +109,6 @@ const dgConfigField = reactive({
   title: '新增',
   width: '45%'
 });
-const introductionSize = ref({minRows: 3, maxRows: 4});
 const dgField = {...dialogField, ...dgConfigField}; // DIALOG属性
 const fullView = ref(dgField.fullScreen); // 全屏控制
 const fullViewText = ref('全屏');

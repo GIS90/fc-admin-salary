@@ -115,7 +115,18 @@ const dgField = {...dialogField, ...dgConfigField}; // DIALOG属性
 const fullView = ref(dgField.fullScreen); // 全屏控制
 const fullViewText = ref('全屏');
 const emit = defineEmits(['update:visible']);
-const ruleForm = reactive({});
+const ruleForm = reactive<TaskModelList>({
+  create_rtx: "",
+  create_time: "",
+  data: "",
+  id: 0,
+  md5: "",
+  name: "",
+  api: "",
+  cost: 0,
+  type: "",
+  status: ""
+});
 const props = defineProps({
   visible: {
     type: Boolean,

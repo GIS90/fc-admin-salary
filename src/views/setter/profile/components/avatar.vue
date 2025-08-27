@@ -140,7 +140,13 @@ const emit = defineEmits(['update:visible']);
 const btnDisabled = ref(false); // 禁用
 const btnLoading = ref(false); // 加载中
 
-const { proxy } = getCurrentInstance();
+const instance = getCurrentInstance();
+if (!instance) {
+  throw new Error('Component instance is null');
+}
+
+// 使用类型断言
+const { proxy } = instance as { proxy: any };
 const showCropper = ref(false);
 const originalFileName = ref(''); // 存储原始文件名
 // cropper配置  更多配置可参考 https://www.npmjs.com/package/vue-cropper

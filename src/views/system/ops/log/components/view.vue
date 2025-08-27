@@ -122,7 +122,23 @@ const dgField = {...dialogField, ...dgConfigField}; // DIALOG属性
 const fullView = ref(dgField.fullScreen); // 全屏控制
 const fullViewText = ref('全屏');
 const emit = defineEmits(['update:visible']);
-const ruleForm = reactive({});
+const ruleForm = reactive<LogModelList>({
+  apiname: "",
+  blueprint: "",
+  cost: 0,
+  create_date: "",
+  create_time: "",
+  endpoint: "",
+  host_url: "",
+  id: 0,
+  ip: "",
+  md5: "",
+  method: "",
+  path: "",
+  rtx_id: "",
+  url: "",
+  params: ""
+});
 const props = defineProps({
   visible: {
     type: Boolean,

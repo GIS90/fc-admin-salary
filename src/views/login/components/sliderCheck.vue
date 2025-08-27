@@ -41,7 +41,7 @@ watch(sliderStatus, (value) => {
   }
 }, { immediate: true });
 
-const rangeMove = (e) => {
+const rangeMove = (e: any) => {
   const ele = e.target;
   const startX = e.clientX;
   const eleWidth = ele.offsetWidth;

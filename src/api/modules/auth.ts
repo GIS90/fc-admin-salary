@@ -1,5 +1,5 @@
 import http from "@/api";
-import {AuthRequestModel, AuthModel, MenuPermissionsModel, AuthTaskModel} from "@/models/authModel";
+import {AuthRequestModel, AuthModel, MenuPermissionsModel} from "@/models/authModel";
 import { ECOption } from '@/components/fcEcharts/config';
 
 
@@ -27,7 +27,7 @@ export const AuthDashboardApi = () => {
 
 // [GET]个人中心>任务中心
 export const AuthTaskApi = (params: any) => {
-    return http.get<AuthTaskModel[]>('/user/task', params);
+    return http.get('/user/task', params);
 };
 
 

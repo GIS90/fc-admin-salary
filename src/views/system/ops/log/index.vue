@@ -65,7 +65,7 @@ import { ColumnProps, FcTableInstance } from "@/components/fcTable/model";
 import { LogModelList} from "@/models/systemModel";
 import { ElMessage, ElNotification } from 'element-plus';
 import { fcTableField, PopConfirmField, buttonField } from "@/utils/attrs/field";
-import { OptionEnumModel } from "@/models/X";
+import { OptionEnumModelList } from "@/models/X";
 import Detail from "./components/view.vue";
 import Filter from "./components/filter.vue";
 
@@ -104,15 +104,14 @@ let tableSelectList = reactive([] as string[]); // 当前选择数据Keys列表
 const requestParam = reactive({"content": {}});  // 条件查询内容
 const searchIcon = ref("SwitchButton"); // 查询按钮图标
 const searchBtnText = ref("展开查询"); // 查询按钮文本
-// 性别枚举
-const apiOption = ref<OptionEnumModel[]>([]);
-const userOption = ref<OptionEnumModel[]>([]);
+const apiOption = ref<OptionEnumModelList>([]);
+const userOption = ref<OptionEnumModelList>([]);
 
 
 onMounted(async () => {
   const response = await SysOpsLogFilterApi();
   if (response.status_id ===100) {
-    const res = response.data as { api: OptionEnumModel, user: OptionEnumModel };
+    const res = response.data as { api: OptionEnumModelList, user: OptionEnumModelList };
     apiOption.value = res.api;
     userOption.value = res.user;
   }

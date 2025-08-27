@@ -130,7 +130,7 @@ import { dialogField, inputField, textAreaField, formField,
   selectMultiField, inputNumberField } from "@/utils/attrs/field";
 import publicLength from "@/utils/attrs/length";
 import publicPlaceHolder from "@/utils/attrs/place";
-import {OptionEnumModel} from "@/models/X";
+import { OptionEnumModelList } from "@/models/X";
 
 // 数据组件属性值
 const lmodelLen = publicLength.systemDepartModel;
@@ -147,7 +147,7 @@ const fullViewText = ref('全屏');
 const emit = defineEmits(['update:visible', 'nodeAppendTree']);
 const btnDisabled = ref(false); // 禁用
 const btnLoading = ref(false); // 加载中
-const userOption = ref<OptionEnumModel[]>([]);
+const userOption = ref<OptionEnumModelList>([]);
 const pNode = reactive({}) as DepartmentNode;
 
 const props = defineProps({
@@ -197,7 +197,7 @@ const ruleForm = reactive({}) as DepartmentNode;
 ruleForm.order_id = 1; // 默认为1
 ruleForm.disabled = false;
 // from rule
-const rules = reactive<FormRules<DepartmentNode>>({
+const rules = reactive({
   label: [
     { required: true, message: "部门名称不允许为空", trigger: 'blur' },
     { min: 1, max: lmodelLen.label, message: '最大长度支持'+lmodelLen.label+'位', trigger: 'blur' },
@@ -206,7 +206,7 @@ const rules = reactive<FormRules<DepartmentNode>>({
     { required: true, message: "部门描述不允许为空", trigger: 'blur' },
     { min: 1, max: lmodelLen.description, message: '最大长度支持'+lmodelLen.description+'位', trigger: 'blur' },
   ],
-});
+} as FormRules);
 
 const resetForm = () => {
   ruleForm.label = "";
@@ -220,7 +220,7 @@ const resetForm = () => {
 const fetchApiData = async (md5: string) => {
   const response = await SysOpsDepartAddInitApi({ md5 });
   if (response.data) {
-    const res = response.data as { data: DepartmentNode, user: OptionEnumModel }; // declare
+    const res = response.data as { data: DepartmentNode, user: OptionEnumModelList }; // declare
     Object.assign(pNode, res.data); // 父级部门
     userOption.value = res.user; // 用户枚举
   }

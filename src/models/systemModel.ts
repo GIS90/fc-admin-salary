@@ -166,6 +166,7 @@ export interface LogModelList {
     method: string;
     path: string;
     url: string;
+    params: string;
     host_url: string;
     cost: number;
     create_time: string;
@@ -180,6 +181,7 @@ export interface TaskModelList {
     md5: string;
     api: string;
     name: string;
+    type: string;
     data: string;
     status: string;
     cost: number;

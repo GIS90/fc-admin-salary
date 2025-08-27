@@ -16,7 +16,7 @@
         </template>
         <template #default>
           <h3>
-            系统前端基于FC-Admin脚手架开发，使用Vue3、TypeScript、Vite、Pinia、Element-Plus开源技术，如果系统开发需求，请联系管理员。
+            系统前端基于FC-Admin脚手架开发，使用Vue3、TypeScript、Vite、Pinia、Element-Plus开源技术，如果增加系统个性化开发需求，请联系管理员。
           </h3>
           <el-descriptions :column="2" border class="margin-top-20px">
             <el-descriptions-item v-for="(item, index) in AdminInfos" :key="index" :label="item.key">
@@ -66,13 +66,6 @@ const AdminInfos = ref([
   {key: "邮箱", value: "gaoming971366@163.com"},
   {key: "电话", value: "13051355646（微信同步）"},
   {key: "座右铭", value: "代码改变世界"}
-]);
-
-const FcAdminInfos = ref([
-  {key: "Gitee", value: "https://gitee.com/lfcleo/fc-admin"},
-  {key: "Github", value: "https://github.com/lfcleo/fc-admin"},
-  {key: "文档地址", value: "https://doc.fcadmin.fun"},
-  {key: "文档地址", value: "https://www.fcadmin.fun"}
 ]);
 </script>
 

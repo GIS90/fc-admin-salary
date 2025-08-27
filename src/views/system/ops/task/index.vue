@@ -65,7 +65,7 @@ import { ColumnProps, FcTableInstance } from "@/components/fcTable/model";
 import { TaskModelList} from "@/models/systemModel";
 import { ElMessage, ElNotification } from 'element-plus';
 import { fcTableField, PopConfirmField, buttonField } from "@/utils/attrs/field";
-import { OptionEnumModel } from "@/models/X";
+import { OptionEnumModelList } from "@/models/X";
 import Detail from "./components/view.vue";
 import Filter from "./components/filter.vue";
 
@@ -105,15 +105,15 @@ const requestParam = reactive({"content": {}});  // 条件查询内容
 const searchIcon = ref("SwitchButton"); // 查询按钮图标
 const searchBtnText = ref("展开查询"); // 查询按钮文本
 // 性别枚举
-const dsOption = ref<OptionEnumModel[]>([]);
-const statusOption = ref<OptionEnumModel[]>([]);
-const userOption = ref<OptionEnumModel[]>([]);
+const dsOption = ref<OptionEnumModelList>([]);
+const statusOption = ref<OptionEnumModelList>([]);
+const userOption = ref<OptionEnumModelList>([]);
 
 
 onMounted(async () => {
   const response = await SysOpsTaskFilterApi();
   if (response.status_id ===100) {
-    const res = response.data as { ds: OptionEnumModel, status: OptionEnumModel, user: OptionEnumModel };
+    const res = response.data as { ds: OptionEnumModelList, status: OptionEnumModelList, user: OptionEnumModelList };
     dsOption.value = res.ds;
     statusOption.value = res.status;
     userOption.value = res.user;

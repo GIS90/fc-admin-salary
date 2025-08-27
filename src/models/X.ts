@@ -7,6 +7,8 @@ export interface OptionEnumModel {
     disabled: boolean;
 }
 
+export type OptionEnumModelList = OptionEnumModel[];
+
 export interface OptionExtendEnumModel extends OptionEnumModel {
     name: string;
     md5: string;

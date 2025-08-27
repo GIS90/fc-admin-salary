@@ -70,7 +70,7 @@ const loading = ref(false)
 const treeRef = ref<InstanceType<typeof ElTree>>();
 const treeData = ref<{ [key: string]: any }[]>([]);
 const treeAllData = ref<{ [key: string]: any }[]>([]);
-const selectedKey = ref("");
+// const selectedKey = ref("");
 const selected = ref();
 const checkStrictly = ref(false);
 const setSelected = () => {

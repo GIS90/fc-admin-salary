@@ -115,7 +115,7 @@
 </template>
 
 <script setup lang='ts'>
-import { ref, reactive, defineProps, defineEmits, watch, toRef } from 'vue';
+import { ref, reactive, defineProps, defineEmits, watch } from 'vue';
 import { DictEnumBaseModel } from "@/models/systemModel";
 import {SysOpsDictEnumAddApi, SysOpsDictEnumAddInitApi} from "@/api/modules/system";
 import { FormInstance, FormRules } from "element-plus";
@@ -140,7 +140,7 @@ const fullViewText = ref('全屏');
 const emit = defineEmits(['update:visible', 'reFetchTableData']);
 const btnDisabled = ref(false); // 禁用
 const btnLoading = ref(false); // 加载中
-const selectedKey = ref('');
+// const selectedKey = ref('');
 
 // 字典Key
 const keyOption = ref<OptionEnumModel[]>([]);
@@ -178,7 +178,7 @@ function openDialog() {
   // 重置验证
   ruleFormRef.value?.clearValidate();
   // 请求数据
-  fetchApiData(props.md5);
+  fetchApiData();
 };
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -206,7 +206,7 @@ const rules = reactive<FormRules<DictEnumBaseModel>>({
   ],
   value: [
     { required: true, message: "字典枚举值名称不允许为空", trigger: 'blur' },
-    { min: 1, max: ProfileLen.remark, message: '最大长度支持'+ProfileLen.remark+'位', trigger: 'blur' },
+    { min: 1, max: ProfileLen.value, message: '最大长度支持'+ProfileLen.value+'位', trigger: 'blur' },
   ]
 });
 
@@ -225,7 +225,7 @@ const resetForm = () => {
 };
 
 // 请求数据API
-const fetchApiData = async (md5: string) => {
+const fetchApiData = async () => {
   const response = await SysOpsDictEnumAddInitApi();
   if (response.data) {
     const res = response as { data: { key: OptionEnumModel[] } }; // declare
