@@ -49,14 +49,31 @@
     </el-row>
     <el-row :gutter="10">
       <el-col :span="12">
+        <el-form-item label="系统用户">
+          <el-select v-model="user" style="width: 100%;" :size="selectMultiField.size" :clearable="selectMultiField.clearable"
+                     :filterable="selectMultiField.filterable" :allow-create="selectMultiField.allowCreate"
+                     :no-match-text="selectMultiField.noMatchText" :no-data-text="selectMultiField.noDataText"
+                     :multiple="selectMultiField.multiple" :multiple-limit="selectMultiField.limit" :collapse-tags="selectMultiField.collapseTags"
+                     :max-collapse-tags="selectMultiField.maxCollapseTags" :collapse-tags-tooltip="selectMultiField.collapseTagsTooltip"
+                     placeholder="请选择系统用户，支持多选">
+            <el-option v-for="item in userOption" :key="item.value" :label="item.label" :value="item.value">
+              <span class="el-select-key">{{ item.label }}</span>
+              <span class="el-select-value">{{ item.value }}</span>
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
         <el-form-item label="创建日期">
           <el-date-picker v-model="dateRange" :type="dateRangePickerField.type" :size="dateRangePickerField.size" :format="dateRangePickerField.format"
-              :value-format="dateRangePickerField.valueFormat" :editable="dateRangePickerField.editable" :clearable="dateRangePickerField.clearable"
-              :range-separator="dateRangePickerField.rangeSeparator" :start-placeholder="dateRangePickerField.startPlaceholder" :end-placeholder="dateRangePickerField.endPlaceholder"
-              :unlink-panels="dateRangePickerField.unlinkPanels" :shortcuts="dateRangePickerField.shortcuts"
+                          :value-format="dateRangePickerField.valueFormat" :editable="dateRangePickerField.editable" :clearable="dateRangePickerField.clearable"
+                          :range-separator="dateRangePickerField.rangeSeparator" :start-placeholder="dateRangePickerField.startPlaceholder" :end-placeholder="dateRangePickerField.endPlaceholder"
+                          :unlink-panels="dateRangePickerField.unlinkPanels" :shortcuts="dateRangePickerField.shortcuts"
           />
         </el-form-item>
       </el-col>
+    </el-row>
+    <el-row :gutter="10">
       <el-col :span="12">
         <el-form-item>
           <el-button id="btn-filter-search" class="table-handle-button" :type="buttonField.type" :plain="buttonField.plain" :size="buttonField.size" icon="Search" @click="submit">
