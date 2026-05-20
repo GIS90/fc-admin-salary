@@ -273,8 +273,8 @@ const confirm = async () => {
     formData.append('file', blob, originalFileName.value || 'cropped-avatar.png');
 
     SetProfileAvatarApi(formData).then(response => {
-      if (response.status_id === 100) {
-        const res = response as { status_id: number, data: { url: string } };
+      if (response.code === 100) {
+        const res = response as { code: number, data: { url: string } };
         // 更新authStore
         authStore.setUserInfoField("avatar", res.data.url);
         ElNotification({

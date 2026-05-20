@@ -204,9 +204,9 @@ const confirm = async (formEl: FormInstance | undefined) => {
 
       // 下载
       XDownloadTableApi(params).then((response) => {
-        const res = response as { status_id: number, data: { list: [], name: string } }; // declare
-        const { status_id, data } = res;
-        if (status_id === 100) {
+        const res = response as { code: number, data: { list: [], name: string } }; // declare
+        const { code, data } = res;
+        if (code === 100) {
           const wb = XLSX.utils.book_new();  // 创建一个新的工作簿
           const ws = XLSX.utils.json_to_sheet(data.list);  // 创建一个新的工作表
           XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');  // 将工作表添加到工作簿

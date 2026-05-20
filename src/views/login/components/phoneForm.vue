@@ -1,5 +1,7 @@
 <template>
     <h2>{{ $t('login.mobileTip') }}</h2>
+
+    <!-- 电话号登录 -->
     <el-form v-show="false" ref="loginForm" :model="form" :rules="rules" label-width="0" size="large" @keyup.enter="login">
         <el-form-item prop="phone">
             <el-input v-model="form.phone" prefix-icon="Iphone" clearable :placeholder="$t('login.mobilePlaceholder')">

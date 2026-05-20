@@ -1,0 +1,1 @@
+import{_ as e,o as s,c as a}from"./index.wiki_Nz6.js";const n={name:"message"};function o(t,c,r,_,p,f){return s(),a("h1",null,"salary>notify>message")}const m=e(n,[["render",o]]);export{m as default};

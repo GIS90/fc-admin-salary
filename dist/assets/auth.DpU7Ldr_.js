@@ -1,0 +1,1 @@
+import{h as t}from"./index.Clt2a6KJ.js";const a=s=>t.post("/access/login",s),r=()=>t.get("/access/logout"),u=()=>t.get("/x/auth"),e=()=>t.get("/x/dashboard"),n=s=>t.get("/x/task",s);export{e as A,a,u as b,n as c,r as d};

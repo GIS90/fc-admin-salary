@@ -140,7 +140,7 @@ const save = async (formEl: FormInstance | undefined) => {
       btnLoading.value = true;
 
       SetProfileUpdateApi(ruleForm).then(res => {
-        if (res.status_id === 100) {
+        if (res.code === 100) {
           // 更新authStore
           authStore.setUserInfoField("userName", ruleForm.userName);
           authStore.setUserInfoField("sex", ruleForm.sex);

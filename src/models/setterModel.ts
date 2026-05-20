@@ -25,7 +25,6 @@ export interface ProfileModel {
  * 用户密码
  */
 export interface ProfilePassword {
-    userId: string;
     userPassword: string;
     newPassword: string;
     confirmNewPassword: string;
@@ -37,8 +36,11 @@ export interface ProfilePassword {
  * 用户日志
  */
 export interface ProfileLogItem{
-    title: string;
+    id: number;
     ip: string;
-    code: string;
-    time: string;
+    method: string;
+    path: string;
+    tag: string;
+    cost: number;
+    createTime: string;
 }

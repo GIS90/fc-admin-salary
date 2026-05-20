@@ -3,7 +3,7 @@ import {AuthRequestModel, AuthModel, MenuPermissionsModel} from "@/models/authMo
 import { ECOption } from '@/components/fcEcharts/config';
 
 
-/* * * * * * * * * * * * * * * * * * * * * * [系统->登录] * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* * * * * * * * * * * * * * * * * * * * * * [系统->登录、退出] * * * * * * * * * * * * * * * * * * * * * * * * * */
 // [POST]系统>登录
 export const AuthLoginApi = (params: AuthRequestModel) => {
     return http.post<AuthModel>('/access/login', params);
@@ -14,20 +14,20 @@ export const AuthLogoutApi = () => {
     return http.get('/access/logout');
 };
 
+/* * * * * * * * * * * * * * * * * * * * * * [系统->全局PAI] * * * * * * * * * * * * * * * * * * * * * * * * * */
 // [GET]系统>菜单列表及权限
 export const AuthMenuApi = () => {
-    return http.get<MenuPermissionsModel>('/user/auth');
+    return http.get<MenuPermissionsModel>('/x/auth');
 };
 
-/* * * * * * * * * * * * * * * * * * * * * * [系统->全局PAI] * * * * * * * * * * * * * * * * * * * * * * * * * */
 // [GET]首页>Dashboard
 export const AuthDashboardApi = () => {
-    return http.get<ECOption>('/user/dashboard');
+    return http.get<ECOption>('/x/dashboard');
 };
 
 // [GET]个人中心>任务中心
 export const AuthTaskApi = (params: any) => {
-    return http.get('/user/task', params);
+    return http.get('/x/task', params);
 };
 
 

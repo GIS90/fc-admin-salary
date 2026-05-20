@@ -112,7 +112,7 @@ const userOption = ref<OptionEnumModelList>([]);
 
 onMounted(async () => {
   const response = await SysOpsTaskFilterApi();
-  if (response.status_id ===100) {
+  if (response.code ===100) {
     const res = response.data as { ds: OptionEnumModelList, status: OptionEnumModelList, user: OptionEnumModelList };
     dsOption.value = res.ds;
     statusOption.value = res.status;

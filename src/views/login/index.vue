@@ -8,8 +8,8 @@
             </div>
             <div class="login_adv__mask"></div>
             <div class="login_adv__bottom">
-                2024 © Powered by
-                <a href="http://pygo2.top/" target="_blank" style="color: white;font-weight: 700">
+                {{ currentYear }} © Powered by
+                <a href="https://pygo.space/" target="_blank" style="color: white;font-weight: 700">
                     Pygo
                 </a>
             </div>
@@ -49,10 +49,10 @@
                 </div>
                 <el-tabs>
                     <el-tab-pane :label="$t('login.accountLogin')" lazy>
-                        <password-form />
+                        <passwordForm />
                     </el-tab-pane>
                     <el-tab-pane :label="$t('login.mobileLogin')" lazy>
-                        <phone-form />
+                        <phoneForm />
                     </el-tab-pane>
                 </el-tabs>
                 <div v-if="isOtherLogin">
@@ -109,6 +109,7 @@ const isWechatLoginResult = ref(false);
 const appTitle = import.meta.env.VITE_VUE_TITLE;
 const appVersion = import.meta.env.VITE_VUE_VERSION;
 const isOtherLogin = import.meta.env.VITE_IS_OTHER_LOGIN === 'true';
+const currentYear = new Date().getFullYear();
 
 sysGlobalStore.$subscribe((_mutation, state) => {
     document.documentElement.classList[state.sysDark ? 'add' : 'remove']('dark');
@@ -249,8 +250,8 @@ const wechatLogin = () => {
 }
 
 .login-header .logo img {
-    width: 40px;
-    height: 40px;
+    width: 55px;
+    height: 55px;
     vertical-align: bottom;
     margin-right: 10px;
 }

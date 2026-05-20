@@ -4,18 +4,18 @@
         <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="auto" style="margin-top:20px;">
             <el-form-item label="当前密码" prop="userPassword">
                 <el-input v-model="ruleForm.userPassword" type="password" show-password
-                          :placeholder="PasswordPlace.userPassword" :maxlength="PasswordLen.max+1"/>
-                <div class="el-form-item-msg">必须提供当前登录用户密码才能进行更改</div>
+                          :placeholder="PasswordPlace.userPassword" :maxlength="PasswordLen.max"/>
+              <div class="el-form-item-msg">必须提供当前登录用户密码才能进行更改，（最大长度支持{{PasswordLen.max}}位，当前长度<span style="color: red;">{{ruleForm.userPassword.length}}</span>位）</div>
             </el-form-item>
             <el-form-item label="新密码" prop="newPassword">
                 <el-input v-model="ruleForm.newPassword" type="password" show-password
-                          :placeholder="PasswordPlace.newPassword" :maxlength="PasswordLen.max+1" />
+                          :placeholder="PasswordPlace.newPassword" :maxlength="PasswordLen.max" />
                 <fc-password-strength v-model="ruleForm.newPassword" />
-                <div class="el-form-item-msg">请输入包含英文、数字的8位以上密码</div>
+                <div class="el-form-item-msg">请输入包含英文、数字的8位以上密码，（最大长度支持{{PasswordLen.max}}位，当前长度<span style="color: red;">{{ruleForm.newPassword.length}}</span>位）</div>
             </el-form-item>
             <el-form-item label="确认新密码" prop="confirmNewPassword">
                 <el-input v-model="ruleForm.confirmNewPassword" type="password" show-password
-                          :placeholder="PasswordPlace.confirmNewPassword" :maxlength="PasswordLen.max+1" />
+                          :placeholder="PasswordPlace.confirmNewPassword" :maxlength="PasswordLen.max" />
             </el-form-item>
             <el-form-item>
                 <el-button class="submit-btn" type="primary" @click="save(ruleFormRef)">保存密码</el-button>
@@ -41,7 +41,7 @@ const router = useRouter();
 
 const ruleFormRef = ref<FormInstance>();
 const ruleForm = reactive<ProfilePassword>({
-  userId: authStore.getUserInfoId,
+  // userId: authStore.getUserInfoId,
   userPassword: "",
   newPassword: "",
   confirmNewPassword: "",
@@ -77,7 +77,7 @@ const save = async (formEl: FormInstance | undefined) => {
   await formEl.validate((valid) => {
     if (!valid) return
     SetProfilePasswordApi(ruleForm).then(res => {
-      if (res?.status_id === 100) {
+      if (res?.code === 100) {
         ElMessageBox.confirm('密码修改成功，是否跳转至登录页使用新密码登录', '修改成功', {
           type: 'success'
         }).then(() => {

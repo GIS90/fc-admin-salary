@@ -63,7 +63,7 @@ class RequestHttp {
                 axiosCanceler.removePending(config);
 
                 // 登录失效,提示用户后跳转到登录页面，25X系列为Token问题
-                if (data?.status_id && data.status_id >= 250 && data.status_id <= 259) {
+                if (data?.code && data.code >= 250 && data.code <= 259) {
                     if (!MessageBox_401_show) {
                         useAuthStore().$reset();
                         MessageBox_401_show = true
@@ -87,7 +87,7 @@ class RequestHttp {
 
                 // 全局错误信息拦截（防止下载文件的时候返回数据流，没有 code 直接报错）
                 // 100-Success 101-Success-No-Data
-                if (data.status_id && ![100, 101].includes(data.status_id)) {
+                if (data.code && ![100, 101].includes(data.code)) {
                     ElNotification.error({
                         title: '请求错误提示',
                         message: data.message || `Status:${data.code}，未知错误！`
