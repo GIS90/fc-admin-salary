@@ -17,17 +17,17 @@ export const AuthLogoutApi = () => {
 /* * * * * * * * * * * * * * * * * * * * * * [系统->全局PAI] * * * * * * * * * * * * * * * * * * * * * * * * * */
 // [GET]系统>菜单列表及权限
 export const AuthMenuApi = () => {
-    return http.get<MenuPermissionsModel>('/x/auth');
+    return http.get<MenuPermissionsModel>('/api/auth');
 };
 
 // [GET]首页>Dashboard
 export const AuthDashboardApi = () => {
-    return http.get<ECOption>('/x/dashboard');
+    return http.get<ECOption>('/api/dashboard');
 };
 
 // [GET]个人中心>任务中心
 export const AuthTaskApi = (params: any) => {
-    return http.get('/x/task', params);
+    return http.get('/api/task', params);
 };
 
 
