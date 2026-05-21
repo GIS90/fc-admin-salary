@@ -138,15 +138,30 @@ const lineOption = ref<ECOption>({})
 const columnOption = ref<ECOption>({})
 const trendValue1 = ref(7.7)
 const trendValue2 = ref(-6.7)
+const tip = ref("")
 
 onMounted(() => {
     getData()
 })
 
 const getData = async () => {
-    let data = await AuthDashboardApi();
-    lineOption.value = data.data.lineChart as ECOption
-    columnOption.value = data.data.columnChart as ECOption
+    let response = await AuthDashboardApi();
+    lineOption.value = response.data.lineChart as ECOption
+    columnOption.value = response.data.columnChart as ECOption
+
+    // tip后台返回
+    // const now = new Date();
+    // const hour = now.getHours();
+    //
+    // if (hour >= 6 && hour < 12) {
+    //   tip.value = '上午好，' + authStore.userInfo.userName + '。' + response.data.tip;
+    // } else if (hour >= 12 && hour < 14) {
+    //   tip.value = '中午好，' + authStore.userInfo.userName + '。' + response.data.tip;
+    // } else if (hour >= 14 && hour < 18) {
+    //   tip.value = '下午好，' + authStore.userInfo.userName + '。' + response.data.tip;
+    // } else {
+    //   tip.value = '晚上好，' + authStore.userInfo.userName + '。' + response.data.tip;
+    // }
 }
 
 const getTipTitle = () => {
