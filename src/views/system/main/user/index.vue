@@ -40,8 +40,13 @@
           </el-tooltip>
         </template>
         <!-- 状态管理 -->
-        <template #is_del="scope">
-          <el-switch v-model="scope.row.is_del" active-text="注销" inactive-text="启用" style="--el-switch-on-color: #ff4949; --el-switch-off-color: #13ce66;" @change="statusHandle(scope.row.md5, $event)" />
+        <template #status="scope">
+          <el-switch v-if="scope.row.rtxId !== 'admin'"
+                     v-model="scope.row.status"
+                     active-text="注销"
+                     inactive-text="启用"
+                     style="--el-switch-on-color: #ff4949; --el-switch-off-color: #13ce66;"
+                     @change="statusHandle(scope.row.md5, $event)" />
         </template>
       </fc-table>
     </el-main>
@@ -85,18 +90,18 @@ const fcTableRef = ref<FcTableInstance>();
 const columns = reactive<ColumnProps<UserModelList>[]>([
   { prop: "", width: 80, type: "selection", fixed: "left" },
   { prop: "id", label: "序号", width: 100 },
-  { prop: "rtx_id", label: "账号", width: 150 },
+  { prop: "rtxId", label: "账号", width: 150 },
   { prop: "avatar", label: "头像", width: 100 },
   { prop: "name", label: "昵称", width: 180 },
   { prop: "email", label: "邮箱", width: 200 },
   { prop: "phone", label: "手机号", width: 140 },
-  { prop: "sex_value", label: "性别", width: 120 },
+  { prop: "sex", label: "性别", width: 120 },
   // { prop: "introduction", label: "描述", width: 240, align: "left" },
   // { prop: "department", label: "部门", width: 180, align: "left" },
-  { prop: "create_time", label: "创建时间", width: 180 },
-  { prop: "create_rtx", label: "创建人", width: 150 },
+  { prop: "createTime", label: "创建时间", width: 180 },
+  { prop: "createRtx", label: "创建人", width: 150 },
   { prop: "options", label: "操作", width: 120, fixed: "right" },
-  { prop: "is_del", label: "状态管理", width: 160, fixed: "right" }
+  { prop: "status", label: "状态管理", width: 160, fixed: "right" }
 ]);
 
 // Dialog状态管理
@@ -139,7 +144,7 @@ const editHandle = (row: UserModelList) => {
 // 重置密码
 const resetPwdHandle = (row: UserModelList) => {
   tableRowMd5.value = row.md5;
-  tableRowRtxId.value = row.rtx_id;
+  tableRowRtxId.value = row.rtxId;
   rePwdVisible.value = true;
 };
 

@@ -14,42 +14,47 @@ import {RequestStatusModel, RequestMd5Model, RequestMd5Models} from "@/models/X"
 /* * * * * * * * * * * * * * * * * * * * * * [权限管理->用户管理] * * * * * * * * * * * * * * * * * * * * * * * * * */
 // [GET]用户管理>列表
 export const SysMainUserListApi = (params: any) => {
-    return http.get<ResultPage<UserModelList>>('/main/user/list', params);
+    return http.get<ResultPage<UserModelList>>('/system/main/user.list', params);
 };
 
 // [DELETE]用户管理>启用/注销
 export const SysMainUserStatusApi = (params: RequestStatusModel) => {
-    return http.delete('/main/user/status', params);
+    return http.delete('/system/main/user.status', params);
 };
 
 // [PUT]用户管理>批量注销
 export const SysMainUsersStatusApi = (params: RequestMd5Models) => {
-    return http.put('/main/user/status', params);
+    return http.put('/system/main/user.batch.soft', params);
+};
+
+// [PUT]用户管理>获取初始密码
+export const SysMainUserDefaultPwdApi = () => {
+    return http.put('/system/main/user.defaultPwd');
 };
 
 // [PUT]用户管理>重置密码
 export const SysMainUserResetPwdApi = (params: RequestMd5Model) => {
-    return http.put('/main/user/resetPwd', params);
+    return http.put('/system/main/user.resetPwd', params);
 };
 
 // [GET]用户管理>详情
 export const SysMainUserApi = (params: RequestMd5Model) => {
-    return http.get('/main/user', params);
+    return http.get('/system/main/user', params);
 };
 
 // [PUT]用户管理>更新
 export const SysMainUserUpdateApi = (params: UserModelDetail) => {
-    return http.put('/main/user', params);
+    return http.put('/system/main/user', params);
 };
 
 // [GET]用户管理>新增枚举
 export const SysMainUserAddEnumApi = () => {
-    return http.get('/main/user/addEnum');
+    return http.get('/system/main/user.addEnum');
 };
 
 // [PUT]用户管理>新增
 export const SysMainUserAddApi = (params: UserModelDetail) => {
-    return http.post('/main/user', params);
+    return http.post('/system/main/user', params);
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * [权限管理->角色管理] * * * * * * * * * * * * * * * * * * * * * * * * * */

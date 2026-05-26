@@ -18,15 +18,15 @@ export const SetProfileUpdateApi = (params: ProfileModel) => {
 
 // [PUT]个人中心>密码修改
 export const SetProfilePasswordApi = (params: ProfilePassword) => {
-    return http.put('/setter/profile/password', params);
+    return http.put('/setter/profile.password', params);
 };
 
 // [GET]个人中心>日志
 export const SetProfileLogApi = (params: PageableModel) => {
-    return http.get<ResultPage<ProfileLogItem>>('/setter/profile/log', params);
+    return http.get<ResultPage<ProfileLogItem>>('/setter/profile.log', params);
 };
 
 // [POST]个人中心>头像上传
 export const SetProfileAvatarApi = (params: FormData) => {
-    return http.post('/setter/profile/avatar', params);
+    return http.post('/setter/profile.avatar', params);
 };

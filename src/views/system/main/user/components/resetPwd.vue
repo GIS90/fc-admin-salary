@@ -54,8 +54,10 @@
 <script setup lang='ts'>
 import { ref, reactive, defineProps, defineEmits } from 'vue';
 import { dialogField } from "@/utils/attrs/field";
-import { SysMainUserResetPwdApi } from "@/api/modules/system";
+import {SysMainUserApi, SysMainUserResetPwdApi} from "@/api/modules/system";
 import { ElNotification } from 'element-plus';
+import {UserModelDetail} from "@/models/systemModel";
+import {OptionEnumModel, OptionExtendEnumModel} from "@/models/X";
 
 const dgConfigField = reactive({
   title: '重置密码',
@@ -99,6 +101,17 @@ function fullScreen() {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //              ↑Dialog通用配置         ↓定制化方法
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// 请求数据API
+const fetchApiData = async () => {
+  // const response = await SysMainUserApi({ md5 });
+  // if (response.data) {
+  //   const res = response as { data: { user: UserModelDetail, sexEnum: OptionEnumModel[], roleList: OptionExtendEnumModel[] } }; // declare
+  //   Object.assign(ruleForm, res.data.user);
+  //   sexOption.value = res.data.sexEnum as OptionEnumModel[];
+  //   roleList.value = res.data.roleList as OptionExtendEnumModel[];
+  // }
+};
 
 // 确认
 const confirm = () => {

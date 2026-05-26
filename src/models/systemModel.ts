@@ -5,7 +5,7 @@ import { RequestIDModels } from "@/models/X";
  */
 export interface UserModelList {
     id: number;
-    rtx_id: string;
+    rtxId: string;
     md5: string;
     name: string;
     sex: string;
@@ -14,20 +14,16 @@ export interface UserModelList {
     avatar: string;
     introduction: string;
     department: string;
-    role: [];
-    sex_value: string;
-    create_time: string;
-    create_rtx: string;
-    delete_time: string;
-    delete_rtx: string;
-    is_del: boolean;
+    createTime: string;
+    createRtx: string;
+    status: string;
 }
 
 /**
  * 用户>用户模型.详情
  */
 export interface UserModelDetail {
-    rtx_id: string;
+    rtxId: string;
     md5: string;
     name: string;
     sex: string;
