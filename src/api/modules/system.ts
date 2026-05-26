@@ -29,7 +29,7 @@ export const SysMainUsersStatusApi = (params: RequestMd5Models) => {
 
 // [PUT]用户管理>获取初始密码
 export const SysMainUserDefaultPwdApi = () => {
-    return http.put('/system/main/user.defaultPwd');
+    return http.get('/system/main/user.defaultPwd');
 };
 
 // [PUT]用户管理>重置密码

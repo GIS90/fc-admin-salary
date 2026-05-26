@@ -15,6 +15,7 @@
       :overflow = "dgField.overflow"
       :center="dgField.center"
       :align-center="dgField.alignCenter"
+      @open="openDialog"
       @close="closeDialog"
   >
     <!--header-->
@@ -37,7 +38,7 @@
         账号：<span style="font-size: 2rem">{{ rtxId }}</span>
       </div>
       <div>
-        初始密码为<span style="color: red;">abc1234</span>，确认重置吗？
+        初始密码为<span style="color: red;">{{ defaultPassword }}</span>，确认重置吗？
       </div>
     </div>
 
@@ -54,10 +55,8 @@
 <script setup lang='ts'>
 import { ref, reactive, defineProps, defineEmits } from 'vue';
 import { dialogField } from "@/utils/attrs/field";
-import {SysMainUserApi, SysMainUserResetPwdApi} from "@/api/modules/system";
+import {SysMainUserDefaultPwdApi, SysMainUserResetPwdApi} from "@/api/modules/system";
 import { ElNotification } from 'element-plus';
-import {UserModelDetail} from "@/models/systemModel";
-import {OptionEnumModel, OptionExtendEnumModel} from "@/models/X";
 
 const dgConfigField = reactive({
   title: '重置密码',
@@ -66,6 +65,7 @@ const dgConfigField = reactive({
 });
 const dgField = {...dialogField, ...dgConfigField}; // DIALOG属性
 const emit = defineEmits(['update:visible']);
+const defaultPassword = ref("abc1234"); // 默认密码
 const btnDisabled = ref(false); // 禁用
 const btnLoading = ref(false); // 加载中
 const props = defineProps({
@@ -91,6 +91,11 @@ function closeDialog() {
   emit('update:visible', false);
 };
 
+// 打开
+function openDialog() {
+  fetchApiData()
+};
+
 // 全屏
 /*
 function fullScreen() {
@@ -104,13 +109,10 @@ function fullScreen() {
 
 // 请求数据API
 const fetchApiData = async () => {
-  // const response = await SysMainUserApi({ md5 });
-  // if (response.data) {
-  //   const res = response as { data: { user: UserModelDetail, sexEnum: OptionEnumModel[], roleList: OptionExtendEnumModel[] } }; // declare
-  //   Object.assign(ruleForm, res.data.user);
-  //   sexOption.value = res.data.sexEnum as OptionEnumModel[];
-  //   roleList.value = res.data.roleList as OptionExtendEnumModel[];
-  // }
+  const response = await SysMainUserDefaultPwdApi();
+  if (response.data) {
+    defaultPassword.value = (response.data as { password: string }).password;
+  }
 };
 
 // 确认
