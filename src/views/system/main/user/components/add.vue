@@ -43,7 +43,7 @@
                :label-position="formField.labelPosition" :label-width="formField.labelWidth"
                :size="formField.size" style="width: 100%" >
         <el-divider content-position="left">基本信息</el-divider>
-        <el-form-item label="账号" prop="rtx_id">
+        <el-form-item label="账号" prop="rtxId">
           <el-input v-model.trim="ruleForm.rtxId"
                     :size="inputField.size"
                     :show-word-limit="inputField.showWordLimit"
