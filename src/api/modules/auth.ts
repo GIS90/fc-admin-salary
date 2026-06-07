@@ -1,9 +1,10 @@
 import http from "@/api";
 import {AuthRequestModel, AuthModel, MenuPermissionsModel} from "@/models/authModel";
 import { ECOption } from '@/components/fcEcharts/config';
+import { RequestDownloadModel } from "@/models/X";
 
 
-/* * * * * * * * * * * * * * * * * * * * * * [系统->登录、退出] * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* * * * * * * * * * * * * * * * * * * * * * [登录、退出] * * * * * * * * * * * * * * * * * * * * * * * * * */
 // [POST]系统>登录
 export const AuthLoginApi = (params: AuthRequestModel) => {
     return http.post<AuthModel>('/access/login', params);
@@ -14,7 +15,7 @@ export const AuthLogoutApi = () => {
     return http.get('/access/logout');
 };
 
-/* * * * * * * * * * * * * * * * * * * * * * [系统->全局PAI] * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* * * * * * * * * * * * * * * * * * * * * * [全局PAI] * * * * * * * * * * * * * * * * * * * * * * * * * */
 // [GET]系统>菜单列表及权限
 export const AuthMenuApi = () => {
     return http.get<MenuPermissionsModel>('/api/auth');
@@ -30,10 +31,16 @@ export const AuthTaskApi = (params: any) => {
     return http.get('/api/task', params);
 };
 
+/* * * * * * * * * * * * * * * * * * * * * * [下载模块] * * * * * * * * * * * * * * * * * * * * * * * * * */
+// [GET]下载>枚举
+export const DownloadEnumApi = () => {
+    return http.get('/api/download.enum');
+};
 
-
-
-
+// [POST]下载
+export const DownloadTableApi = (params: RequestDownloadModel) => {
+    return http.post('/api/download', params);
+};
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

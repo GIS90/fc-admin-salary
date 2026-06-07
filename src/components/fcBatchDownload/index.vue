@@ -89,7 +89,7 @@ import { dialogField, inputField, selectSingleField, formField } from "@/utils/a
 import publicLength from "@/utils/attrs/length";
 import publicPlaceHolder from "@/utils/attrs/place";
 import { OptionEnumModel, RequestDownloadModel, FormDownloadModel } from "@/models/X";
-import { XDownloadEnumApi, XDownloadTableApi } from "@/api/modules/X";
+import { DownloadTableApi, DownloadEnumApi } from "@/api/modules/auth";
 
 const FormLen = publicLength.downloadFormModel;
 const FormPlace = publicPlaceHolder.downloadFormModel;
@@ -161,7 +161,7 @@ const rules = reactive<FormRules<FormDownloadModel>>({
 
 // 请求数据API
 const fetchApiData = async () => {
-  const response = await XDownloadEnumApi();
+  const response = await DownloadEnumApi();
   if (response.data) {
     const res = response as { data: { typeList: OptionEnumModel[], formatList: OptionEnumModel[] } }; // declare
     typeOption.value = res.data.typeList as OptionEnumModel[];
@@ -203,7 +203,7 @@ const confirm = async (formEl: FormInstance | undefined) => {
       } as RequestDownloadModel;
 
       // 下载
-      XDownloadTableApi(params).then((response) => {
+      DownloadTableApi(params).then((response) => {
         const res = response as { code: number, data: { list: [], name: string } }; // declare
         const { code, data } = res;
         if (code === 100) {
@@ -232,7 +232,7 @@ const confirm = async (formEl: FormInstance | undefined) => {
 
 <style scoped>
 .download-dialog-header {
-  background-color: #F7DE91 !important;
-  border-bottom: 2px solid #F7BD1A !important;
+  background-color: #FFF9D2 !important;
+  border-bottom: 2px solid #FF6A1C !important;
 }
 </style>
