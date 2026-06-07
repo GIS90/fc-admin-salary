@@ -53,6 +53,7 @@
                     :placeholder="ProfilePlace.rtxId"
                     :disabled="btnDisabled"
           />
+          <div class="el-form-item-msg">只允许包含字母、数字、连字符(-)和点(.)（不能包含空格、标点等特殊字符）</div>
         </el-form-item>
         <el-row :gutter="20">
           <el-col :span="12">
@@ -212,7 +213,7 @@ function openDialog() {
 // 响应式数据
 const ruleFormRef = ref<FormInstance>();
 let ruleForm = reactive({
-  rtx_id: "",
+  rtxId: "",
   name: "",
   sex: "",
   email: "",
@@ -227,7 +228,7 @@ const sexOption = ref<OptionEnumModel[]>([]);
 const roleList = ref<OptionEnumModel[]>([]);
 // from rule
 const rules = reactive<FormRules<UserModelDetail>>({
-  rtx_id: [
+  rtxId: [
     { required: true, message: "用户RTX-ID账户不允许为空", trigger: 'blur' },
     { min: 1, max: ProfileLen.rtxId, message: '最大长度支持'+ProfileLen.rtxId+'位', trigger: 'blur' },
   ],
@@ -259,7 +260,7 @@ const fetchApiData = async () => {
 };
 
 const resetForm = () => {
-  ruleForm.rtx_id = "";
+  ruleForm.rtxId = "";
   ruleForm.name = "";
   ruleForm.sex = "";
   ruleForm.email = "";

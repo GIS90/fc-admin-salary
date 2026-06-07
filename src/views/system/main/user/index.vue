@@ -7,7 +7,7 @@
           新增
         </el-button>
         <el-button id="btn-batch-delete" type="danger" icon="Delete" :plain="buttonField.plain" :size="buttonField.size" @click="batchDeleteHandle" :disabled="!fcTableRef?.isSelected">
-          批量删除
+          批量注销
         </el-button>
       </div>
       <div class="right-panel">
