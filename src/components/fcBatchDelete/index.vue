@@ -34,7 +34,7 @@
     <!--body-->
     <div class="my-dialog-body">
       <div>
-        确认删除选择的数据吗？
+        {{ message }}
       </div>
     </div>
 
@@ -85,6 +85,11 @@ const props = defineProps({
   }
 });
 
+let message = ref("确认删除选择的数据吗？")
+if (props.api === 'SystemMainUser') {
+  message = ref("确认注销选择的数据吗？")
+}
+
 // 关闭
 function closeDialog() {
   emit('update:visible', false);
@@ -109,7 +114,7 @@ const confirm = () => {
     SysMainUsersStatusApi({ md5: props.md5List as string[] }).then(() => {
       ElNotification.success({
         title: '提示',
-        message: '删除成功'
+        message: '注销成功'
       });
       closeDialog();
       emit('reFetchTableData', true);
