@@ -39,13 +39,13 @@ export interface MenuPermissionsModel {
  */
 export interface AuthTaskModel {
     id: string;
+    rtxId: string;
     api: string;
     name: string;
-    type: string;
+    data: string;
     md5: string;
-    status: string;
-    create_time: string;
-    create_rtx: string;
+    task: string;
+    createTime: string;
     cost: number;
 }
 
