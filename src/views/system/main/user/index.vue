@@ -89,7 +89,7 @@ const fcTableRef = ref<FcTableInstance>();
 
 const columns = reactive<ColumnProps<UserModelList>[]>([
   { prop: "", width: 80, type: "selection", fixed: "left" },
-  { prop: "id", label: "序号", width: 100 },
+  { prop: "id", label: "数据ID", width: 100 },
   { prop: "rtxId", label: "账号", width: 150 },
   { prop: "avatar", label: "头像", width: 100 },
   { prop: "name", label: "昵称", width: 180 },
