@@ -104,7 +104,7 @@ export let dialogField = {
     lockScroll: true, // 是否在 Dialog 出现时将 body 滚动锁定
     openDelay: 0, // Dialog 打开的延时时间，单位毫秒
     closeDelay: 0, // Dialog 关闭的延时时间，单位毫秒
-    closeOnClickModal: true, // 是否可以通过点击 modal 关闭 Dialog
+    closeOnClickModal: false, // 是否可以通过点击 modal 关闭 Dialog
     closeOnPressEscape: true, // 是否可以通过按下 ESC 关闭 Dialog
     showClose: false, // 是否显示关闭按钮
     draggable: false, // 是否显示关闭按钮
