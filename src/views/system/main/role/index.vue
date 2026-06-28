@@ -134,6 +134,14 @@ const editHandle = (row: RoleModelList) => {
 // 授权
 const authHandle = (row: RoleModelList) => {
   tableRowMd5.value = row.md5;
+  if (row.engname == "ADMIN") {
+    ElNotification({
+      title: '提示',
+      message: '管理员角色已授权全部功能，不允许进行授权操作',
+      type: 'warning'
+    });
+    return
+  }
   authVisible.value = true;
 };
 

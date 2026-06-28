@@ -91,7 +91,7 @@ const dwField = {...drawerField, ...dwConfigField};
 // Tree属性
 const treeConfigField = reactive({
   nodeKey: 'id',
-  indent: 20
+  indent: 22
 });
 const teField = {...treeField, ...treeConfigField};
 // 默认的树节点属性

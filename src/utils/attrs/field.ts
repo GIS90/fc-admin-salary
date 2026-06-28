@@ -137,7 +137,7 @@ export let treeField = {
     nodeKey: "id", // 节点ID字段
     highlightCurrent: true, // 是否开启高亮选中功能
     defaultExpandAll: false, // 是否默认展开所有节点
-    expandOnClickNode: true, // 是否在点击节点的时候展开或者收缩节点
+    expandOnClickNode: false, // 是否在点击节点的时候展开或者收缩节点
     checkOnClickNode: false, // 是否在点击节点的时候选中节点
     autoExpandParent: true, // 如果为 true,在点击节点的时候将自动展开父节点
     showCheckbox: true, // 是否显示多选框

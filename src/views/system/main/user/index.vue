@@ -146,6 +146,14 @@ const editHandle = (row: UserModelList) => {
 const resetPwdHandle = (row: UserModelList) => {
   tableRowMd5.value = row.md5;
   tableRowRtxId.value = row.rtxId;
+  if (row.rtxId == "admin") {
+    ElNotification({
+      title: '提示',
+      message: '管理员用户不允许密码重置操作',
+      type: 'warning'
+    });
+    return
+  }
   rePwdVisible.value = true;
 };
 
