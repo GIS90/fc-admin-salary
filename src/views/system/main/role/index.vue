@@ -69,6 +69,7 @@ import { ColumnProps, FcTableInstance } from "@/components/fcTable/model";
 import { RoleModelList } from "@/models/systemModel";
 import { ElMessage, ElNotification } from 'element-plus';
 import { fcTableField, PopConfirmField, buttonField } from "@/utils/attrs/field";
+import { tableWidth } from "@/utils/attrs/table";
 import Edit from "./components/edit.vue";
 import Add from "./components/add.vue";
 import Auth from "./components/auth.vue";
@@ -84,14 +85,14 @@ const pcField = {...PopConfirmField, ...{}};
 const fcTableRef = ref<FcTableInstance>();
 
 const columns = reactive<ColumnProps<RoleModelList>[]>([
-  { prop: "", width: 80, type: "selection", fixed: "left" },
-  { prop: "id", label: "序号", width: 80 },
-  { prop: "engname", label: "角色ID", width: 140 },
-  { prop: "chnname", label: "名称", width: 160 },
+  { prop: "", width: tableWidth.selection, type: "selection", fixed: "left" },
+  { prop: "id", label: "序号", width: tableWidth.id },
+  { prop: "engname", label: "角色ID", width: tableWidth.rtx },
+  { prop: "chnname", label: "名称", width: tableWidth.name },
   { prop: "introduction", label: "简介", align: "left" },
-  { prop: "create_time", label: "创建时间" },
-  { prop: "create_rtx", label: "创建人"},
-  { prop: "options", label: "操作", width: 160, fixed: "right" }
+  { prop: "createTime", label: "创建时间" },
+  { prop: "createRtx", label: "创建人"},
+  { prop: "options", label: "操作", width: tableWidth.option3, fixed: "right" }
 ]);
 
 // Dialog状态管理

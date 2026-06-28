@@ -44,8 +44,8 @@ export interface RoleModelList {
     chnname: string;
     md5: string;
     introduction: string;
-    create_time: string;
-    create_rtx: string;
+    createTime: string;
+    createTtx: string;
 }
 
 /**
@@ -58,11 +58,8 @@ export interface RoleModelDetail {
     md5: string;
     introduction: string;
     authority: [];
-    create_time: string;
-    create_rtx: string;
-    delete_time: string;
-    delete_rtx: string;
-    is_del: boolean;
+    createTime: string;
+    createTtx: string;
 }
 
 /**
@@ -86,7 +83,7 @@ export interface RoleAuthUpdateModel extends RequestIDModels {
 /**
  * 菜单>菜单模型.列表
  */
-export interface RoleModelList {
+export interface MenuModelList {
     id: number;
     engname: string;
     chnname: string;

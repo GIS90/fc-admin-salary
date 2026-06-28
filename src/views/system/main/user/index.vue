@@ -75,6 +75,7 @@ import UserEdit from "./components/edit.vue";
 import UserAdd from "./components/add.vue";
 import { ElMessage, ElNotification } from 'element-plus';
 import { fcTableField, buttonField } from "@/utils/attrs/field";
+import { tableWidth } from "@/utils/attrs/table";
 
 // fc-table属性
 const fcTableConfig = reactive({
@@ -88,19 +89,19 @@ const ftField = {...fcTableField, ...fcTableConfig};
 const fcTableRef = ref<FcTableInstance>();
 
 const columns = reactive<ColumnProps<UserModelList>[]>([
-  { prop: "", width: 80, type: "selection", fixed: "left" },
-  { prop: "id", label: "数据ID", width: 100 },
-  { prop: "rtxId", label: "账号", width: 150 },
-  { prop: "avatar", label: "头像", width: 100 },
-  { prop: "name", label: "昵称", width: 180 },
+  { prop: "", width: tableWidth.selection, type: "selection", fixed: "left" },
+  { prop: "id", label: "数据ID", width: tableWidth.id },
+  { prop: "rtxId", label: "账号", width: tableWidth.rtx },
+  { prop: "avatar", label: "头像", width: 120 },
+  { prop: "name", label: "昵称", width: tableWidth.name },
   { prop: "email", label: "邮箱", width: 200 },
   { prop: "phone", label: "手机号", width: 140 },
   { prop: "sex", label: "性别", width: 120 },
   // { prop: "introduction", label: "描述", width: 240, align: "left" },
   // { prop: "department", label: "部门", width: 180, align: "left" },
-  { prop: "createTime", label: "创建时间", width: 180 },
-  { prop: "createRtx", label: "创建人", width: 150 },
-  { prop: "options", label: "操作", width: 120, fixed: "right" },
+  { prop: "createTime", label: "创建时间", width: tableWidth.createTime },
+  { prop: "createRtx", label: "创建人", width: tableWidth.createRtx },
+  { prop: "options", label: "操作", width: tableWidth.option2, fixed: "right" },
   { prop: "status", label: "状态管理", width: 160, fixed: "right" }
 ]);
 

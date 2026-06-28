@@ -205,7 +205,7 @@ const confirm = async () => {
 }
 
 .tab-desc-text {
-  font-size: 15px;
+  font-size: 16px;
   line-height: 2;
 }
 

@@ -60,42 +60,42 @@ export const SysMainUserAddApi = (params: UserModelDetail) => {
 /* * * * * * * * * * * * * * * * * * * * * * [权限管理->角色管理] * * * * * * * * * * * * * * * * * * * * * * * * * */
 // [GET]角色管理>列表
 export const SysMainRoleListApi = (params: any) => {
-    return http.get<ResultPage<RoleModelList>>('/main/role/list', params);
-};
-
-// [DELETE]角色管理>单条删除
-export const SysMainRoleDeleteApi = (params: RequestMd5Model) => {
-    return http.delete('/main/role/delete', params);
-};
-
-// [PUT]角色管理>批量删除
-export const SysMainRolesDeleteApi = (params: RequestMd5Models) => {
-    return http.put('/main/role/delete', params);
-};
-
-// [GET]角色管理>详情
-export const SysMainRoleApi = (params: RequestMd5Model) => {
-    return http.get('/main/role', params);
-};
-
-// [PUT]角色管理>更新
-export const SysMainRoleUpdateApi = (params: RoleModelDetail) => {
-    return http.put('/main/role', params);
+    return http.get<ResultPage<RoleModelList>>('/system/main/role.list', params);
 };
 
 // [POST]角色管理>新增
 export const SysMainRoleAddApi = (params: RoleModelDetail) => {
-    return http.post('/main/role', params);
+    return http.post('/system/main/role', params);
+};
+
+// [GET]角色管理>详情
+export const SysMainRoleApi = (params: RequestMd5Model) => {
+    return http.get('/system/main/role', params);
+};
+
+// [PUT]角色管理>更新
+export const SysMainRoleUpdateApi = (params: RoleModelDetail) => {
+    return http.put('/system/main/role', params);
+};
+
+// [DELETE]角色管理>单条删除
+export const SysMainRoleDeleteApi = (params: RequestMd5Model) => {
+    return http.delete('/system/main/role.soft', params);
+};
+
+// [PUT]角色管理>批量删除
+export const SysMainRolesDeleteApi = (params: RequestMd5Models) => {
+    return http.put('/system/main/role.batch.soft', params);
 };
 
 // [GET]角色管理>权限详情
 export const SysMainRoleAuthApi = (params: RequestMd5Model) => {
-    return http.get('/main/role/auth', params);
+    return http.get('/system/main/role.auth', params);
 };
 
 // [PUT]角色管理>权限更新
 export const SysMainRoleAuthUpdateApi = (params: RoleAuthUpdateModel) => {
-    return http.put('/main/role/auth', params);
+    return http.put('/system/main/role.auth', params);
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * [权限管理->菜单管理] * * * * * * * * * * * * * * * * * * * * * * * * * */

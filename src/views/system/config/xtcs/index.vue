@@ -1,5 +1,5 @@
 <template>
-  <h1>config>xtcs</h1>
+  <h1 style="color: red">开发中，后续会陆续上线。。。。。。</h1>
 </template>
 
 <script>
