@@ -29,6 +29,9 @@ Fc-admin项目请参考开源项目：https://github.com/lfcleo/fc-admin
 - npm install
 - npm run dev：根据package.json中的scripts配置，启动项目
 
+### 打包
+- npm run build:dev
+
 ### 配置说明
 - package.json：项目信息、包管理等配置
 - .env：环境变量配置
