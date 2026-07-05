@@ -101,22 +101,24 @@ export const SysMainRoleAuthUpdateApi = (params: RoleAuthUpdateModel) => {
 /* * * * * * * * * * * * * * * * * * * * * * [权限管理->菜单管理] * * * * * * * * * * * * * * * * * * * * * * * * * */
 // [GET]菜单管理>列表.不分页
 export const SysMainMenuListApi = (params: any) => {
-    return http.get<Menu.MenuOptions[]>('/main/menu/list', params);
+    return http.get<Menu.MenuOptions[]>('/system/main/menu.list', params);
 };
 // [GET]菜单管理>列表.分页
 // export const SysMainMenuListApi = (params: any) => {
 //     return http.get<ResultPage<Menu.MenuOptions>>('/main/menu/list', params);
 // };
 
-// [DELETE]菜单管理>启用/隐藏
-export const SysMainMenuStatusApi = (params: RequestStatusModel) => {
-    return http.delete('/main/menu/status', params);
-};
-
 // [DELETE]菜单管理>单条删除
 export const SysMainMenuDeleteApi = (params: RequestMd5Model) => {
-    return http.delete('/main/menu/delete', params);
+    return http.delete('/system/main/menu.delete', params);
 };
+
+// [DELETE]菜单管理>启用/隐藏
+export const SysMainMenuStatusApi = (params: RequestStatusModel) => {
+    return http.delete('/system/main/menu.status', params);
+};
+
+
 
 // [GET]菜单管理>详情
 export const SysMainMenuApi = (params: RequestMd5Model) => {

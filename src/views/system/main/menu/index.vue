@@ -59,11 +59,12 @@ import { ElNotification } from 'element-plus';
 import MenuEdit from "./components/edit.vue";
 import MenuAdd from "./components/add.vue";
 import {fcTableField, PopConfirmField, buttonField } from "@/utils/attrs/field";
+import { tableWidth } from "@/utils/attrs/table";
 
 // fc-table属性
 const fcTableConfig = reactive({
   rowKey: "md5",
-  indent: 20,
+  indent: 25,
   border: false,
   pagination: false,
   showDownloadBtn: false
@@ -76,7 +77,7 @@ const fcTableRef = ref<FcTableInstance>();
 // 表格配置项
 const columns = reactive<ColumnProps<Menu.MenuOptions>[]>([
   // { prop: "", width: 80, type: "selection", fixed: "left" },
-  {prop: "id", label: "菜单ID", width: 140, align: "left"},
+  {prop: "id", label: "菜单ID", width: 120, align: "left"},
   {prop: "title", label: "标题", width: 180},
   {prop: "icon", label: "图标", width: 120},
   {prop: "name", label: "名称", width: 180},
