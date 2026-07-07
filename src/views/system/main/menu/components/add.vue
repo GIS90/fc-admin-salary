@@ -42,7 +42,7 @@
                           :placeholder="ProfilePlace.name"
                           :disabled="btnDisabled"
                 />
-                <div class="el-form-item-msg">系统唯一且与内置组件名一致，建议全英文驼峰写法，示例：SystemMainMenu</div>
+                <div class="el-form-item-msg">系统唯一且与内置组件名一致，否则导致缓存失效，采用全英文名称，大驼峰命名方式[注：需要与父节点连接映射]，例如SystemMainMenu</div>
               </el-form-item>
               <el-form-item label="显示标题" prop="title">
                 <el-input v-model.trim="ruleForm.title"
@@ -106,7 +106,8 @@
                           :placeholder="ProfilePlace.path"
                           :disabled="btnDisabled"
                 />
-                <div class="el-form-item-msg">配置的菜单路由地址，以/开头，示例：/system/main/menu</div>
+                <div class="el-form-item-msg" v-if="ruleForm.type === 'LINK'">链接类型菜单，需要配置外链接地址到路由地址，示例：https://www.baidu.com</div>
+                <div class="el-form-item-msg" v-else>配置的菜单路由地址，以/开头，示例：/system/main/menu</div>
               </el-form-item>
               <el-form-item label="重定向" prop="redirect">
                 <el-input v-model.trim="ruleForm.redirect"

@@ -34,10 +34,11 @@
             </template>
           </el-popconfirm>
         </template>
-        <!-- 状态管理 -->
+        <!-- 状态管理
         <template #isHide="scope">
           <el-switch v-model="scope.row.isHide" active-text="隐藏" inactive-text="启用" style="--el-switch-on-color: #ff4949; --el-switch-off-color: #13ce66;" @change="statusHandle(scope.row.md5, $event)" />
         </template>
+        -->
       </fc-table>
     </el-main>
 
@@ -87,7 +88,7 @@ const columns = reactive<ColumnProps<Menu.MenuOptions>[]>([
   {prop: "component", label: "组件路径", align: "left", width: 260},
   {prop: "order_id", label: "顺序", width: 100},
   {prop: "options", label: "操作", width: 260, fixed: "right"},
-  {prop: "isHide", label: "状态管理", width: 160, fixed: "right"}
+  // {prop: "isHide", label: "状态管理", width: 160, fixed: "right"}
 ]);
 
 // Dialog状态管理

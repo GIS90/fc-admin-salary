@@ -46,7 +46,7 @@
                           :placeholder="ProfilePlace.name"
                           :disabled="btnDisabled"
                 />
-                <div class="el-form-item-msg">系统唯一且与内置组件名一致，否则导致缓存失效</div>
+                <div class="el-form-item-msg">系统唯一且与内置组件名一致，否则导致缓存失效，采用全英文名称，大驼峰命名方式[注：需要与父节点连接映射]，例如SystemMainMenu</div>
               </el-form-item>
               <el-form-item label="显示标题" prop="title">
                 <el-input v-model.trim="ruleForm.title"
@@ -269,6 +269,7 @@ function closeDrawer() {
 // 请求数据API
 const fetchApiData = async (md5: string) => {
   const response = await SysMainMenuApi({ md5 });
+  console.log(response)
   if (response.data) {
     const res = response.data as {
       menu: Menu.MenuFlat,

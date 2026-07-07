@@ -118,17 +118,21 @@ export const SysMainMenuStatusApi = (params: RequestStatusModel) => {
     return http.delete('/system/main/menu.status', params);
 };
 
-
-
 // [GET]菜单管理>详情
 export const SysMainMenuApi = (params: RequestMd5Model) => {
-    return http.get('/main/menu', params);
+    return http.get('/system/main/menu', params);
 };
 
 // [PUT]菜单管理>更新
 export const SysMainMenuUpdateApi = (params: Menu.MenuFlat) => {
-    return http.put('/main/menu', params);
+    return http.put('/system/main/menu', params);
 };
+
+
+
+
+
+
 
 // [POST]菜单管理>新增
 export const SysMainMenuAddApi = (params: Menu.MenuBaseFlat) => {
