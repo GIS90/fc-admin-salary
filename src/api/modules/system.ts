@@ -129,19 +129,14 @@ export const SysMainMenuUpdateApi = (params: Menu.MenuFlat) => {
 };
 
 
-
-
-
-
-
 // [POST]菜单管理>新增
 export const SysMainMenuAddApi = (params: Menu.MenuBaseFlat) => {
-    return http.post('/main/menu', params);
+    return http.post('/system/main/menu', params);
 };
 
 // [GET]菜单管理>新增枚举
 export const SysMainMenuAddEnumApi = () => {
-    return http.get('/main/menu/addEnum');
+    return http.get('/system/main/menu.addEnum');
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * [系统维护->数据字典] * * * * * * * * * * * * * * * * * * * * * * * * * */
