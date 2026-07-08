@@ -54,7 +54,7 @@ import { dialogField } from "@/utils/attrs/field";
 import {
   SysMainUsersStatusApi, SysMainRolesDeleteApi,
   SysOpsDictEnumsDeleteApi, SysOpsLogsDeleteApi,
-  SysOpsTasksDeleteApi, SysOpsDepartsDeleteApi
+  SysOpsTasksDeleteApi, SysOpsDepartsDeleteApi, SysMainUsersDeleteApi
 } from "@/api/modules/system";
 import { ElNotification, ElMessage } from 'element-plus';
 
@@ -110,11 +110,24 @@ const confirm = () => {
   btnDisabled.value = true;
   btnLoading.value = true;
   if (props.api === 'SystemMainUser') {
-    // 系统>权限管理>用户管理
+    // 系统>权限管理>用户管理[批量注销]
     SysMainUsersStatusApi({ md5: props.md5List as string[] }).then(() => {
       ElNotification.success({
         title: '提示',
         message: '注销成功'
+      });
+      closeDialog();
+      emit('reFetchTableData', true);
+    }).finally(() => {
+      btnDisabled.value = false;
+      btnLoading.value = false;
+    });
+  } else if (props.api === 'SystemMainUser2') {
+    // 系统>权限管理>角色管理[批量删除]
+    SysMainUsersDeleteApi({ md5: props.md5List as string[] }).then(() => {
+      ElNotification.success({
+        title: '提示',
+        message: '删除成功'
       });
       closeDialog();
       emit('reFetchTableData', true);

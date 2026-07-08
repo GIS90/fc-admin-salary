@@ -6,9 +6,23 @@
         <el-button id="btn-add" class="table-handle-button" :type="buttonField.type" :plain="buttonField.plain" :size="buttonField.size" icon="Plus" @click="addHandle">
           新增
         </el-button>
-        <el-button id="btn-batch-delete" type="danger" icon="Delete" :plain="buttonField.plain" :size="buttonField.size" @click="batchDeleteHandle" :disabled="!fcTableRef?.isSelected">
+        <el-button id="btn-batch-status" class="table-handle-button" type="danger" icon="Close" :plain="buttonField.plain" :size="buttonField.size" @click="batchStatusHandle" :disabled="!fcTableRef?.isSelected">
           批量注销
         </el-button>
+        <el-button id="btn-batch-delete" class="table-handle-button" type="warning" icon="Delete" :plain="buttonField.plain" :size="buttonField.size" @click="batchDeleteHandle" :disabled="!fcTableRef?.isSelected">
+          批量删除
+        </el-button>
+        <el-popover placement="bottom" title="操作说明" width="350" trigger="hover">
+          <template #default>
+            <div style="line-height: 2.5;">
+              <span style="color: #f56c6c;">【注销】</span>：禁止用户登录系统，停止系统配置相关菜单，再次允许使用重新开启状态即可<br/>
+              <span style="color: #e6a23c;">【删除】</span>：直接删除用户，请谨慎操作
+            </div>
+          </template>
+          <template #reference>
+            <el-button id="btn-popover" type="info" :plain="buttonField.plain" :size="buttonField.size">说明</el-button>
+          </template>
+        </el-popover>
       </div>
       <div class="right-panel">
         <el-input v-model.trim="requestParam.content" placeholder="支持模糊查询，输入后点击查询" clearable style="width: 250px;" />
@@ -62,6 +76,8 @@
 
     <!--批量删除-->
     <fc-batch-delete v-model:visible="batchDeleteVisible" :api="apiName" :md5List="tableSelectList" @reFetchTableData="reFetchTableData"/>
+
+    <fc-batch-delete v-model:visible="batchDeleteVisible" :api="apiName2" :md5List="tableSelectList" @reFetchTableData="reFetchTableData"/>
   </el-container>
 </template>
 
@@ -114,6 +130,7 @@ const batchDeleteVisible = ref(false);
 const tableRowMd5 = ref(""); // 默认当前选择的数据MD5
 const tableRowRtxId = ref(""); // 默认当前选择的数据rtx-id
 const apiName = "SystemMainUser"; // 组件标识名称
+const apiName2 = "SystemMainUser2"; // 组件标识名称
 let tableSelectList = reactive([] as string[]); // 当前选择数据Keys列表
 const requestParam = reactive({"content": "" });  // 查询内容
 
@@ -171,10 +188,34 @@ const statusHandle = (md5: string, value: boolean) => {
 };
 
 // 批量注销用户
-const batchDeleteHandle = () => {
+const batchStatusHandle = () => {
   // 无选择数据
   if (!fcTableRef.value?.isSelected) {
     ElMessage.warning("请选择需要注销的用户");
+    return;
+  }
+
+  // 包含已注销数据
+  if (fcTableRef.value?.selectedList.length > 0) {
+    for (let item of fcTableRef.value?.selectedList) {
+      if (item.is_del) {
+        ElMessage.warning("选择的数据中包含已注销用户");
+        return;
+      }
+    }
+  }
+
+  tableSelectList = fcTableRef.value?.selectedListKeys;
+  batchDeleteVisible.value = true;
+
+};
+
+
+// 批量删除用户
+const batchDeleteHandle = () => {
+  // 无选择数据
+  if (!fcTableRef.value?.isSelected) {
+    ElMessage.warning("请选择需要删除的用户");
     return;
   }
 

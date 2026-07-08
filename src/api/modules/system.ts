@@ -27,6 +27,11 @@ export const SysMainUsersStatusApi = (params: RequestMd5Models) => {
     return http.put('/system/main/user.batch.soft', params);
 };
 
+// [PUT]用户管理>批量删除
+export const SysMainUsersDeleteApi = (params: RequestMd5Models) => {
+    return http.put('/system/main/user.batch.hard', params);
+};
+
 // [PUT]用户管理>获取初始密码
 export const SysMainUserDefaultPwdApi = () => {
     return http.get('/system/main/user.defaultPwd');
