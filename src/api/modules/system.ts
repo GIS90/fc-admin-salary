@@ -18,9 +18,9 @@ export const SysMainUserListApi = (params: any) => {
     return http.get<ResultPage<UserModelList>>('/system/main/user.list', params);
 };
 
-// [DELETE]用户管理>启用/注销
+// [PUT]用户管理>启用/注销
 export const SysMainUserStatusApi = (params: RequestStatusModel) => {
-    return http.delete('/system/main/user.status', params);
+    return http.put('/system/main/user.status', params);
 };
 
 // [PUT]用户管理>批量注销
