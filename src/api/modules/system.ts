@@ -3,6 +3,7 @@ import { ResultPage } from "../utils/models";
 import {
     UserModelList, UserModelDetail,
     RoleModelList, RoleModelDetail, RoleAuthUpdateModel,
+    XtcsModelList, XtcsModelDetail, XtcsModelView,
     DictKeyListModel, DictEnumListModel,
     DictEnumBaseModel, DictEnumDetailModel,
     DictKeyDetailModel, DictKeyBaseModel, LogModelList,
@@ -142,6 +143,48 @@ export const SysMainMenuAddApi = (params: Menu.MenuBaseFlat) => {
 // [GET]菜单管理>新增枚举
 export const SysMainMenuAddEnumApi = () => {
     return http.get('/system/main/menu.addEnum');
+};
+
+
+/* * * * * * * * * * * * * * * * * * * * * * [系统配置->参数配置] * * * * * * * * * * * * * * * * * * * * * * * * * */
+// [GET]参数配置>列表
+export const SysConfigXtcsListApi = (params: any) => {
+    return http.get<ResultPage<XtcsModelList>>('/system/config/xtcs.list', params);
+};
+
+// [DELETE]参数配置>单条删除
+export const SysConfigXtcsDeleteApi = (params: RequestMd5Model) => {
+    return http.delete('/system/config/xtcs.delete', params);
+};
+
+// [PUT]用户管理>启用/注销
+export const SysConfigXtcsStatusApi = (params: RequestStatusModel) => {
+    return http.put('/system/config/xtcs.status', params);
+};
+
+// [PUT]角色管理>批量删除
+export const SysConfigXtcsDeleteApis = (params: RequestMd5Models) => {
+    return http.put('/system/config/xtcs.batch.delete', params);
+};
+
+// [GET]参数配置>详情
+export const SysConfigXtcsApi = (params: RequestMd5Model) => {
+    return http.get('/system/config/xtcs', params);
+};
+
+// [PUT]角色管理>更新
+export const SysConfigXtcsUpdateApi = (params: XtcsModelDetail) => {
+    return http.put('/system/config/xtcs', params);
+};
+
+// [POST]角色管理>新增
+export const SysConfigXtcsAddApi = (params: XtcsModelDetail) => {
+    return http.post('/system/config/xtcs', params);
+};
+
+// [GET]参数配置>详情
+export const SysConfigXtcsViewApi = (params: RequestMd5Model) => {
+    return http.get('/system/config/xtcs.view', params);
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * [系统维护->数据字典] * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -1,7 +1,8 @@
 import { RequestIDModels } from "@/models/X";
 
+// - - - - - - - - - - - - - - - - - - - - - [权限管理] - - - - - - - - - - - - - - - - - - - - - -
 /**
- * 用户>用户模型.列表
+ * 用户管理>列表
  */
 export interface UserModelList {
     id: number;
@@ -20,7 +21,7 @@ export interface UserModelList {
 }
 
 /**
- * 用户>用户模型.详情
+ * 用户管理>详情
  */
 export interface UserModelDetail {
     rtxId: string;
@@ -36,7 +37,7 @@ export interface UserModelDetail {
 }
 
 /**
- * 角色>角色模型.列表
+ * 角色管理>列表
  */
 export interface RoleModelList {
     id: number;
@@ -49,7 +50,7 @@ export interface RoleModelList {
 }
 
 /**
- * 角色>角色模型.详情
+ * 角色管理>详情
  */
 export interface RoleModelDetail {
     id: number;
@@ -63,7 +64,7 @@ export interface RoleModelDetail {
 }
 
 /**
- * 角色>角色菜单树模型
+ * 角色管理>菜单树模型
  */
 export interface RoleAuthTreeModel {
     id: number;
@@ -80,18 +81,56 @@ export interface RoleAuthUpdateModel extends RequestIDModels {
     md5: string;
 }
 
+// - - - - - - - - - - - - - - - - - - - - - [系统配置] - - - - - - - - - - - - - - - - - - - - - -
 /**
- * 菜单>菜单模型.列表
+ * 系统参数>列表
  */
-export interface MenuModelList {
+export interface XtcsModelList {
     id: number;
-    engname: string;
-    chnname: string;
+    key: string;
     md5: string;
-    introduction: string;
-    create_time: string;
-    create_rtx: string;
+    remark: string;
+    value: string;
+    status: boolean;
+    orderId: number;
 }
+
+/**
+ * 系统参数>详情
+ */
+export interface XtcsModelDetail {
+    key: string;
+    md5: string;
+    remark: string;
+    value: string;
+    orderId: number;
+}
+
+
+/**
+ * 系统参数>试图数据
+ */
+export interface XtcsModelView {
+    key: string;
+    md5: string;
+    remark: string;
+    value: string;
+    createTime: string;
+    createTtx: string;
+    updateTime: string;
+    updateTime: string;
+    orderId: number;
+}
+
+
+
+
+
+
+
+
+
+
 
 /**
  * 字典>分类模型.基础

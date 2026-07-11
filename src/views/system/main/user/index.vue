@@ -77,7 +77,7 @@
     <!--批量删除-->
     <fc-batch-delete v-model:visible="batchDeleteVisible" :api="apiName" :md5List="tableSelectList" @reFetchTableData="reFetchTableData"/>
 
-    <fc-batch-delete v-model:visible="batchDeleteVisible" :api="apiName2" :md5List="tableSelectList" @reFetchTableData="reFetchTableData"/>
+    <fc-batch-delete v-model:visible="batchDeleteVisible2" :api="apiName2" :md5List="tableSelectList" @reFetchTableData="reFetchTableData"/>
   </el-container>
 </template>
 
@@ -126,6 +126,7 @@ const addVisible= ref(false);
 const editVisible = ref(false);
 const rePwdVisible = ref(false);
 const batchDeleteVisible = ref(false);
+const batchDeleteVisible2 = ref(false);
 
 const tableRowMd5 = ref(""); // 默认当前选择的数据MD5
 const tableRowRtxId = ref(""); // 默认当前选择的数据rtx-id
@@ -230,7 +231,7 @@ const batchDeleteHandle = () => {
   }
 
   tableSelectList = fcTableRef.value?.selectedListKeys;
-  batchDeleteVisible.value = true;
+  batchDeleteVisible2.value = true;
 
 };
 </script>

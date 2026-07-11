@@ -86,7 +86,7 @@ const columns = reactive<ColumnProps<Menu.MenuOptions>[]>([
   {prop: "type", label: "类型", width: 120},
   {prop: "path", label: "路由地址", align: "left", width: 240},
   {prop: "component", label: "组件路径", align: "left", width: 260},
-  {prop: "order_id", label: "顺序", width: 100},
+  {prop: "order_id", label: "排序编号", width: 100},
   {prop: "options", label: "操作", width: 260, fixed: "right"},
   // {prop: "isHide", label: "状态管理", width: 160, fixed: "right"}
 ]);

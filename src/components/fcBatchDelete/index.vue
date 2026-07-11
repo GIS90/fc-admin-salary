@@ -54,7 +54,8 @@ import { dialogField } from "@/utils/attrs/field";
 import {
   SysMainUsersStatusApi, SysMainRolesDeleteApi,
   SysOpsDictEnumsDeleteApi, SysOpsLogsDeleteApi,
-  SysOpsTasksDeleteApi, SysOpsDepartsDeleteApi, SysMainUsersDeleteApi
+  SysOpsTasksDeleteApi, SysOpsDepartsDeleteApi, SysMainUsersDeleteApi,
+  SysConfigXtcsDeleteApis
 } from "@/api/modules/system";
 import { ElNotification, ElMessage } from 'element-plus';
 
@@ -138,6 +139,19 @@ const confirm = () => {
   } else if (props.api === 'SystemMainRole') {
     // 系统>权限管理>角色管理
     SysMainRolesDeleteApi({ md5: props.md5List as string[] }).then(() => {
+      ElNotification.success({
+        title: '提示',
+        message: '删除成功'
+      });
+      closeDialog();
+      emit('reFetchTableData', true);
+    }).finally(() => {
+      btnDisabled.value = false;
+      btnLoading.value = false;
+    });
+  } else if (props.api === 'SystemConfigXtcs') {
+    // 系统>权限管理>角色管理
+    SysConfigXtcsDeleteApis({ md5: props.md5List as string[] }).then(() => {
       ElNotification.success({
         title: '提示',
         message: '删除成功'
