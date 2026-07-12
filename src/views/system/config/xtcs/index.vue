@@ -24,8 +24,13 @@
                 :showColumnBtn="ftField.showColumnBtn" :showDownloadBtn="ftField.showDownloadBtn">
         <!-- 表格操作 -->
         <template #options="scope">
+          <el-tooltip effect="dark" content="查看" placement="top">
+            <el-icon class="table-handle-icon" @click="viewHandle(scope.row)">
+              <View />
+            </el-icon>
+          </el-tooltip>
           <el-tooltip effect="dark" content="编辑" placement="top">
-            <el-icon class="table-handle-icon" @click="editHandle(scope.row)">
+            <el-icon class="table-handle-icon margin-left-25px" @click="editHandle(scope.row)">
               <EditPen />
             </el-icon>
           </el-tooltip>
@@ -51,14 +56,14 @@
       </fc-table>
     </el-main>
 
-<!--    &lt;!&ndash;新增&ndash;&gt;-->
-<!--    <Add v-model:visible="addVisible" @reFetchTableData="reFetchTableData" />-->
+    <!--新增-->
+    <Add v-model:visible="addVisible" @reFetchTableData="reFetchTableData" />
 
-<!--    &lt;!&ndash;编辑&ndash;&gt;-->
-<!--    <Edit v-model:visible="editVisible" :md5="tableRowMd5" @reFetchTableData="reFetchTableData" />-->
+    <!--编辑-->
+    <Edit v-model:visible="editVisible" :md5="tableRowMd5" @reFetchTableData="reFetchTableData" />
 
-<!--    &lt;!&ndash;新增&ndash;&gt;-->
-<!--    <Auth v-model:visible="authVisible" :md5="tableRowMd5" />-->
+    <!--编辑-->
+    <ViewD v-model:visible="viewVisible" :md5="tableRowMd5" @reFetchTableData="reFetchTableData" />
 
     <!--批量删除-->
     <fc-batch-delete v-model:visible="batchDeleteVisible" :api="apiName" :md5List="tableSelectList" @reFetchTableData="reFetchTableData"/>
@@ -73,9 +78,9 @@ import { XtcsModelList } from "@/models/systemModel";
 import { ElMessage, ElNotification } from 'element-plus';
 import { fcTableField, PopConfirmField, buttonField } from "@/utils/attrs/field";
 import { tableWidth } from "@/utils/attrs/table";
-// import Edit from "./components/edit.vue";
-// import Add from "./components/add.vue";
-// import Auth from "./components/auth.vue";
+import Add from "./components/add.vue";
+import Edit from "./components/edit.vue";
+import ViewD from "./components/view.vue";
 
 // fc-table属性
 const fcTableConfig = reactive({
@@ -94,14 +99,14 @@ const columns = reactive<ColumnProps<XtcsModelList>[]>([
   { prop: "remark", label: "参数说明" },
   { prop: "value", label: "参数值" },
   { prop: "orderId", label: "排序编号" },
-  { prop: "options", label: "操作", width: tableWidth.option2, fixed: "right" },
+  { prop: "options", label: "操作", width: tableWidth.option3, fixed: "right" },
   { prop: "lock", label: "状态管理", width: 160, fixed: "right" }
 ]);
 
 // Dialog状态管理
 const addVisible= ref(false);
+const viewVisible = ref(false);
 const editVisible = ref(false);
-const authVisible = ref(false);
 const batchDeleteVisible = ref(false);
 
 const tableRowMd5 = ref(""); // 默认当前选择的数据MD5
@@ -128,24 +133,24 @@ const addHandle = () => {
   addVisible.value = true;
 };
 
-// 编辑
-const editHandle = (row: XtcsModelList) => {
+// 查看
+const viewHandle = (row: XtcsModelList) => {
   tableRowMd5.value = row.md5;
-  editVisible.value = true;
+  viewVisible.value = true;
 };
 
-// 授权
-const authHandle = (row: XtcsModelList) => {
-  tableRowMd5.value = row.md5;
-  if (row.engname == "ADMIN") {
+// 编辑
+const editHandle = (row: XtcsModelList) => {
+  if (row?.lock === true) {
     ElNotification({
       title: '提示',
-      message: '管理员角色已授权全部功能，不允许进行授权操作',
+      message: '数据已锁定，请解锁后再进行编辑',
       type: 'warning'
     });
     return
   }
-  authVisible.value = true;
+  tableRowMd5.value = row.md5;
+  editVisible.value = true;
 };
 
 // 单条删除

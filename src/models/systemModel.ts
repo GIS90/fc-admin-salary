@@ -118,7 +118,7 @@ export interface XtcsModelView {
     createTime: string;
     createTtx: string;
     updateTime: string;
-    updateTime: string;
+    updateRtx: string;
     orderId: number;
 }
 

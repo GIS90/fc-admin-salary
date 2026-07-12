@@ -126,7 +126,7 @@
               <el-form-item label="菜单图标" prop="icon">
                 <fc-icon-select v-model="ruleForm.icon" clearable />
               </el-form-item>
-              <el-form-item label="顺序编号" prop="order_id">
+              <el-form-item label="排序编号" prop="order_id">
                 <el-input-number v-model="ruleForm.order_id"
                                  style="width: 100%;"
                                  :min="inputNumberField.min"

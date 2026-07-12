@@ -31,7 +31,7 @@ let systemMenuModel = {
     path: 255,
     component: 255,
     redirect: 255,
-    tag: 4,
+    tag: 4
 }
 
 let systemDictKeyModel = {
@@ -51,6 +51,12 @@ let systemDepartModel = {
     description: 255
 }
 
+let systemXtcsModel = {
+    key: 35,
+    remark: 35,
+    value: 255
+}
+
 export default {
     setterProfileModel,
     setterProfilePassword,
@@ -60,4 +66,5 @@ export default {
     systemDictKeyModel,
     systemDictEnumModel,
     systemDepartModel,
+    systemXtcsModel,
 }

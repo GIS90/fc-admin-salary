@@ -41,19 +41,19 @@ let systemMenuModel = {
     order_id: "请输入菜单顺序编号",
     component: "请输入菜单组件路径，以/开头",
     redirect: "请输入菜单重定向地址，以/开头",
-    tag: "请输入菜单TAG",
+    tag: "请输入菜单TAG"
 }
 
 let systemDictKeyModel = {
     key: "请输入字典类别唯一标识，建议采用英文+中划线",
-    remark: "请输入字典类别名称",
+    remark: "请输入字典类别名称"
 }
 
 let systemDictEnumModel = {
     key: "请输入字典枚举值唯一标识，建议采用英文+中划线",
     value: "请输入字典枚举值名称",
     description: "请输入字典枚举值描述",
-    name: "请选择字典枚举值Key",
+    name: "请选择字典枚举值Key"
 }
 
 let systemDepartModel = {
@@ -61,7 +61,13 @@ let systemDepartModel = {
     description: "请输入部门节点描述",
     manage_rtx: "请选择部门节点管理员，支持多选",
     name: "请选择字典枚举值Key",
-    pnode: "请选择上级部门节点",
+    pnode: "请选择上级部门节点"
+}
+
+let systemXtcsModel = {
+    key: "请输入系统参数名称",
+    remark: "请输入系统参数说明",
+    value: "请输入系统参数值"
 }
 
 export default {
@@ -73,4 +79,5 @@ export default {
     systemDictKeyModel,
     systemDictEnumModel,
     systemDepartModel,
+    systemXtcsModel,
 }
