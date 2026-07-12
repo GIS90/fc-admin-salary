@@ -92,7 +92,7 @@ const columns = reactive<ColumnProps<TaskModelList>[]>([
   { prop: "api", label: "接口名称" },
   { prop: "dataText", label: "下载类型" },
   { prop: "taskText", label: "任务状态" },
-  { prop: "cost", label: "花销时间(单位：s)" },
+  { prop: "cost", label: "耗时（单位：s）" },
   { prop: "options", label: "操作", width: tableWidth.option2, fixed: "right" }
 ]);
 

@@ -69,7 +69,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="花销时间" prop="cost">
+            <el-form-item label="耗时（单位：s）" prop="cost">
               <el-input v-model.trim="ruleForm.cost" :size="inputField.size" disabled>
                 <template #append>（单位：S）</template>
               </el-input>
