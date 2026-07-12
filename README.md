@@ -59,6 +59,7 @@ Fc-admin项目请参考开源项目：https://github.com/lfcleo/fc-admin
     复制SVG代码，直接进行粘贴
 </template>
 ```
+注意点：需要去掉width="32" height="32"属性，使用默认大小。  
 阿里矢量图标库：https://www.iconfont.cn/   
 #### 3.2、使用
 ```vue
