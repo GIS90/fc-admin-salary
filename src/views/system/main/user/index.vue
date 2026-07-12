@@ -156,6 +156,14 @@ const addHandle = () => {
 
 // 编辑
 const editHandle = (row: UserModelList) => {
+  if (row?.status === true) {
+    ElNotification({
+      title: '提示',
+      message: '用户已注销，不允许编辑操作',
+      type: 'warning'
+    });
+    return
+  }
   tableRowMd5.value = row.md5;
   editVisible.value = true;
 };
@@ -168,6 +176,14 @@ const resetPwdHandle = (row: UserModelList) => {
     ElNotification({
       title: '提示',
       message: '管理员用户不允许密码重置操作',
+      type: 'warning'
+    });
+    return
+  }
+  if (row?.status === true) {
+    ElNotification({
+      title: '提示',
+      message: '用户已注销，不允许密码重置操作',
       type: 'warning'
     });
     return

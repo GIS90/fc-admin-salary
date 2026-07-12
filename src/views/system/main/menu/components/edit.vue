@@ -269,7 +269,6 @@ function closeDrawer() {
 // 请求数据API
 const fetchApiData = async (md5: string) => {
   const response = await SysMainMenuApi({ md5 });
-  console.log(response)
   if (response.data) {
     const res = response.data as {
       menu: Menu.MenuFlat,
