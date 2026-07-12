@@ -110,7 +110,7 @@
 <script setup lang='ts'>
 import { ref, reactive, defineProps, watch, defineEmits } from 'vue';
 import { LogModelList } from "@/models/systemModel";
-import { SysOpsLogApi } from "@/api/modules/system";
+import { SysOpsLogApi } from "@/api/modules/systemOps";
 import { dialogField, inputField, formField } from "@/utils/attrs/field";
 
 

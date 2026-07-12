@@ -26,12 +26,13 @@
                 :rowKey="ftField.rowKey" :stripe="ftField.stripe" :border="ftField.border" :pagination="ftField.pagination"
                 :showBottomView="ftField.showBottomView" :showRefreshBtn="ftField.showRefreshBtn"
                 :showColumnBtn="ftField.showColumnBtn" :showDownloadBtn="ftField.showDownloadBtn">
-        <!-- 表格操作 -->
-        <template #method="scope">
-          <el-tag :type="scope.row.tag" effect="dark">{{ scope.row.method }}</el-tag>
+        <template #task="scope">
+          <el-tag v-if="scope.row.task === 'SUCCESS'" type="success" effect="dark">{{ scope.row.task }}</el-tag>
+          <el-tag v-else type="danger" effect="dark">{{ scope.row.task }}</el-tag>
         </template>
+        <!-- 表格操作 -->
         <template #options="scope">
-          <el-tooltip effect="dark" content="详情" placement="top">
+          <el-tooltip effect="dark" content="查看" placement="top">
             <el-icon class="table-handle-icon" @click="viewHandle(scope.row)">
               <View />
             </el-icon>
@@ -86,10 +87,10 @@ const columns = reactive<ColumnProps<TaskModelList>[]>([
   { prop: "", width: 80, type: "selection" },
   { prop: "id", label: "序号", width: tableWidth.id },
   { prop: "createTime", label: "创建时间" },
-  { prop: "createRtx", label: "系统用户"},
+  { prop: "rtxId", label: "用户"},
   { prop: "api", label: "接口名称" },
-  { prop: "type", label: "下载类型" },
-  { prop: "status", label: "任务状态" },
+  { prop: "dataText", label: "下载类型" },
+  { prop: "taskText", label: "任务状态" },
   { prop: "cost", label: "花销时间(单位：s)" },
   { prop: "options", label: "操作", width: tableWidth.option2, fixed: "right" }
 ]);

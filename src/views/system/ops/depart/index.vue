@@ -110,7 +110,7 @@ import {inputField, buttonField, treeField, PopConfirmField} from "@/utils/attrs
 import type { TreeInstance } from 'element-plus'
 import {ElMessage, ElNotification, ElTree} from "element-plus";
 import { DepartmentNode } from "@/models/systemModel";
-import {SysOpsDepartDeleteApi, SysOpsDepartDragApi, SysOpsDepartTreeApi} from "@/api/modules/system";
+import {SysOpsDepartDeleteApi, SysOpsDepartDragApi, SysOpsDepartTreeApi} from "@/api/modules/systemOps";
 import type Node from 'element-plus/es/components/tree/src/model/node'
 import type { DragEvents } from 'element-plus/es/components/tree/src/model/useDragNode'
 import type { NodeDropType, FilterNodeMethodFunction } from 'element-plus/es/components/tree/src/tree.type'

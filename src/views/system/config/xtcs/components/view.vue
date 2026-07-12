@@ -8,7 +8,7 @@
       :lock-scroll="dgField.lockScroll"
       :open-delay="dgField.openDelay"
       :close-delay="dgField.closeDelay"
-      :close-on-click-modal="true"
+      :close-on-click-modal="dgField.closeOnClickModal"
       :close-on-press-escape="dgField.closeOnPressEscape"
       :show-close="dgField.showClose"
       :draggable = "dgField.draggable"

@@ -44,13 +44,13 @@
         <el-divider content-position="left">基本信息</el-divider>
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="创建时间" prop="create_time">
-              <el-input v-model.trim="ruleForm.create_time" :size="inputField.size" disabled />
+            <el-form-item label="创建时间" prop="createTime">
+              <el-input v-model.trim="ruleForm.createTime" :size="inputField.size" disabled />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="系统用户" prop="create_rtx">
-              <el-input v-model.trim="ruleForm.create_rtx" :size="inputField.size" disabled />
+            <el-form-item label="系统用户" prop="rtxId">
+              <el-input v-model.trim="ruleForm.rtxId" :size="inputField.size" disabled />
             </el-form-item>
           </el-col>
         </el-row>
@@ -69,22 +69,22 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="任务状态" prop="status">
-              <el-input v-model.trim="ruleForm.status" :size="inputField.size" disabled />
+            <el-form-item label="花销时间" prop="cost">
+              <el-input v-model.trim="ruleForm.cost" :size="inputField.size" disabled>
+                <template #append>（单位：S）</template>
+              </el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="下载类型" prop="type">
-              <el-input v-model.trim="ruleForm.type" :size="inputField.size" disabled />
+            <el-form-item label="下载类型" prop="data">
+              <el-input v-model.trim="ruleForm.data" :size="inputField.size" disabled />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="花销时间" prop="cost">
-              <el-input v-model.trim="ruleForm.cost" :size="inputField.size" disabled>
-                <template #append>（单位：S）</template>
-              </el-input>
+            <el-form-item label="任务状态" prop="task">
+              <el-input v-model.trim="ruleForm.task" :size="inputField.size" disabled />
             </el-form-item>
           </el-col>
         </el-row>
@@ -102,30 +102,28 @@
 
 <script setup lang='ts'>
 import { ref, reactive, defineProps, watch, defineEmits } from 'vue';
-import { TaskModelList } from "@/models/systemModel";
-import { SysOpsTaskApi } from "@/api/modules/system";
+import { TaskModelDetail } from "@/models/systemModel";
+import { SysOpsTaskApi } from "@/api/modules/systemOps";
 import { dialogField, inputField, formField } from "@/utils/attrs/field";
 
 
 const dgConfigField = reactive({
-  title: '详情',
+  title: '查看',
   width: '65%'
 });
 const dgField = {...dialogField, ...dgConfigField}; // DIALOG属性
 const fullView = ref(dgField.fullScreen); // 全屏控制
 const fullViewText = ref('全屏');
 const emit = defineEmits(['update:visible']);
-const ruleForm = reactive<TaskModelList>({
-  create_rtx: "",
-  create_time: "",
+const ruleForm = reactive<TaskModelDetail>({
+  rtxId: "",
+  createTime: "",
   data: "",
-  id: 0,
   md5: "",
   name: "",
   api: "",
   cost: 0,
-  type: "",
-  status: ""
+  task: "",
 });
 const props = defineProps({
   visible: {
@@ -169,7 +167,7 @@ function openDialog() {
 const fetchApiData = async (md5: string) => {
   const response = await SysOpsTaskApi({ md5 });
   if (response.data) {
-    const res = response as { data: TaskModelList }; // declare
+    const res = response as { data: TaskModelDetail }; // declare
     Object.assign(ruleForm, res.data);
   }
 };

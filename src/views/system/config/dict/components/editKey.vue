@@ -94,7 +94,7 @@
 <script setup lang='ts'>
 import { ref, reactive, defineProps, defineEmits, watch } from 'vue';
 import { DictKeyDetailModel } from "@/models/systemModel";
-import {SysOpsDictKeyApi, SysOpsDictKeyUpdateApi} from "@/api/modules/system";
+import {SysOpsDictKeyApi, SysOpsDictKeyUpdateApi} from "@/api/modules/systemConfig";
 import { FormInstance, FormRules } from "element-plus";
 import { ElNotification } from 'element-plus';
 import { dialogField, inputField, inputNumberField, formField } from "@/utils/attrs/field";

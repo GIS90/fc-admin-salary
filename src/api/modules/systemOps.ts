@@ -1,12 +1,17 @@
 import http from "@/api";
 import {ResultPage} from "@/api/utils/models";
-import {DepartmentDragNode, DepartmentNode, LogModelList} from "@/models/systemModel";
+import {DepartmentDragNode, DepartmentNode, TaskModelList} from "@/models/systemModel";
 import {RequestMd5Model, RequestMd5Models} from "@/models/X";
 
 /* * * * * * * * * * * * * * * * * * * * * * [任务中心] * * * * * * * * * * * * * * * * * * * * * * * * * */
-// [POST]列表
+// [GET]列表
 export const SysOpsTaskListApi = (params: any) => {
-    return http.post<ResultPage<LogModelList>>('/system/ops/task.list', params);
+    return http.get<ResultPage<TaskModelList>>('/system/ops/task.list', params);
+};
+
+// [GET]过滤条件
+export const SysOpsTaskFilterApi = () => {
+    return http.get('/system/ops/task.filter');
 };
 
 // [DELETE]单条删除
@@ -22,11 +27,6 @@ export const SysOpsTasksDeleteApi = (params: RequestMd5Models) => {
 // [GET]详情
 export const SysOpsTaskApi = (params: RequestMd5Model) => {
     return http.get('/system/ops/task', params);
-};
-
-// [GET]过滤条件
-export const SysOpsTaskFilterApi = () => {
-    return http.get('/system/ops/task.filter');
 };
 
 

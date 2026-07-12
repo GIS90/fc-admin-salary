@@ -117,7 +117,7 @@
 <script setup lang='ts'>
 import { ref, reactive, defineProps, defineEmits, watch } from 'vue';
 import {DictEnumDetailModel} from "@/models/systemModel";
-import {SysOpsDictEnumApi, SysOpsDictEnumUpdateApi} from "@/api/modules/system";
+import {SysOpsDictEnumApi, SysOpsDictEnumUpdateApi} from "@/api/modules/systemConfig";
 import { FormInstance, FormRules } from "element-plus";
 import { ElNotification } from 'element-plus';
 import { dialogField, inputField, formField, inputNumberField, selectSingleField, textAreaField } from "@/utils/attrs/field";

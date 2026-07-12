@@ -147,7 +147,7 @@ const confirm = () => {
       btnLoading.value = false;
     });
   } else if (props.api === 'SystemConfigXtcs') {
-    // 系统>权限管理>角色管理
+    // 系统>系统维护>系统参数
     SysConfigXtcsDeleteApis({ md5: props.md5List as string[] }).then(() => {
       ElNotification.success({
         title: '提示',

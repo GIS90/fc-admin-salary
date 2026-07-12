@@ -35,7 +35,7 @@
           <el-card v-for="task in tasksData" :key="task.id" shadow="hover" class="user-bar-tasks-item">
             <div class="user-bar-tasks-item-body">
               <div class="taskIcon">
-                <el-icon v-if="task.data == 'ALL'" :size="20">
+                <el-icon v-if="task.data === 'ALL'" :size="20">
                   <Paperclip />
                 </el-icon>
                 <el-icon v-else :size="20">
@@ -53,8 +53,7 @@
                     <p class="text-time">创建时间：{{task.createTime}}</p>
                     <div class="text-status">
                       <el-tag type="success" effect="dark" v-if="task.task === 'SUCCESS'">成功</el-tag>
-                      <el-tag type="danger" effect="dark" v-else-if="task.task === 'FAILURE'">失败</el-tag>
-                      <el-tag type="info" effect="dark" v-else>执行中</el-tag>
+                      <el-tag type="danger" effect="dark" v-else>失败</el-tag>
                     </div>
                   </div>
                 </div>

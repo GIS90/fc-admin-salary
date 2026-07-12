@@ -123,7 +123,7 @@
 <script setup lang='ts'>
 import { ref, reactive, defineProps, defineEmits, watch } from 'vue';
 import {DepartmentNode} from "@/models/systemModel";
-import {SysOpsDepartAddApi, SysOpsDepartAddInitApi} from "@/api/modules/system";
+import {SysOpsDepartAddApi, SysOpsDepartAddInitApi} from "@/api/modules/systemOps";
 import { FormInstance, FormRules } from "element-plus";
 import { ElNotification } from 'element-plus';
 import { dialogField, inputField, textAreaField, formField,

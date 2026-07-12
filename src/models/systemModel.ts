@@ -2,7 +2,7 @@ import { RequestIDModels } from "@/models/X";
 
 // - - - - - - - - - - - - - - - - - - - - - [权限管理] - - - - - - - - - - - - - - - - - - - - - -
 /**
- * 用户管理>基础数据
+ * 用户管理>基础模型
  */
 export interface __UserModelBase {
     rtxId: string;
@@ -27,14 +27,14 @@ export interface UserModelList extends __UserModelBase{
 }
 
 /**
- * 用户管理>详情
+ * 用户管理>编辑
  */
 export interface UserModelDetail extends __UserModelBase{
     role: [];
 }
 
 /**
- * 角色管理>基础数据
+ * 角色管理>基础模型
  */
 export interface __RoleModelBase {
     engname: string;
@@ -53,14 +53,14 @@ export interface RoleModelList extends __RoleModelBase {
 }
 
 /**
- * 角色管理>详情
+ * 角色管理>编辑
  */
 export interface RoleModelDetail extends __RoleModelBase {
     authority: [];
 }
 
 /**
- * 角色管理>菜单树模型
+ * 角色管理>菜单树
  */
 export interface RoleAuthTreeModel {
     id: number;
@@ -73,13 +73,16 @@ export interface RoleAuthTreeModel {
     children: [];
 }
 
+/**
+ * 角色管理>菜单权限更新
+ */
 export interface RoleAuthUpdateModel extends RequestIDModels {
     md5: string;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - [系统配置] - - - - - - - - - - - - - - - - - - - - - -
 /**
- * 系统参数>基础数据
+ * 系统参数>基础模型
  */
 export interface XtcsModelBase {
     key: string;
@@ -89,7 +92,7 @@ export interface XtcsModelBase {
 }
 
 /**
- * 系统参数>详情
+ * 系统参数>编辑
  */
 export interface XtcsModelDetail extends XtcsModelBase {
     md5: string;
@@ -114,6 +117,45 @@ export interface XtcsModelView extends XtcsModelBase {
     updateTime: string;
     updateRtx: string;
 }
+
+
+
+// - - - - - - - - - - - - - - - - - - - - - [系统维护] - - - - - - - - - - - - - - - - - - - - - -
+/**
+ * 任务中心>基础模型
+ */
+export interface __TaskModelBase {
+    rtxId: string;
+    api: string;
+    name: string;
+    type: string;
+    data: string;
+    task: string;
+    cost: number;
+    createTime: string;
+}
+
+/**
+ * 任务中心>列表
+ */
+export interface TaskModelList extends __TaskModelBase{
+    id: number;
+    md5: string;
+    dataText: string;
+    taskText: string;
+}
+
+/**
+ * 任务中心>查看
+ */
+export interface TaskModelDetail extends __TaskModelBase{
+    md5: string;
+}
+
+
+
+
+
 
 
 
@@ -198,21 +240,6 @@ export interface LogModelList {
     create_date: string;
 }
 
-/**
- * 角色>角色模型.列表
- */
-export interface TaskModelList {
-    id: number;
-    md5: string;
-    api: string;
-    name: string;
-    type: string;
-    data: string;
-    status: string;
-    cost: number;
-    create_time: string;
-    create_rtx: string;
-}
 
 /**
  * 系统>系统维护>部门架构>部门树
