@@ -123,6 +123,7 @@ onMounted(() => {
     sysViewTagsStore.$reset();
     sysKeepAliveStore.$reset();
 
+    console.log('基于VUE3语言研发，基于Fc-admin脚手架开发的平台前端项目')
     console.log('欢迎来到智行工具平台，有问题请联系系统管理员：高明亮')
 });
 

@@ -43,13 +43,31 @@ Fc-admin项目请参考开源项目：https://github.com/lfcleo/fc-admin
 
 > ## 开发特定点
 
-### 标准化API请求  
+### 1、标准化API请求  
 - fetchTableData：Table数据请求API方法，用于fcTable封装组件的数据初始化获取
 - reFetchTableData：Table数据刷新API方法，isReloadwei是否重新加载数据，默认为False
 
-### 个性化组件
+### 2、个性化组件
 - fcBatchDelete：批量删除数据
 - fcBatchDownload：批量下载数据
+
+### 3、图标拓展
+#### 3.1、新增
+扩展了Element Plus图标库，在@/assets/icons中新增SVG图标组件，需要在@/assets/icons/index.js中引入。
+```vue
+<template>
+    复制SVG代码，直接进行粘贴
+</template>
+```
+阿里矢量图标库：https://www.iconfont.cn/   
+#### 3.2、使用
+```vue
+import { UploadPlus } from "@/assets/icons/index.ts";
+
+<el-icon>
+  <UploadPlus />
+</el-icon>
+```
 
 
 > ## 联系方式
