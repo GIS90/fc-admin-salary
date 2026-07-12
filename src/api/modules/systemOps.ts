@@ -1,6 +1,6 @@
 import http from "@/api";
 import {ResultPage} from "@/api/utils/models";
-import {DepartmentDragNode, DepartmentNode, TaskModelList} from "@/models/systemModel";
+import {DepartmentDragNode, DepartmentNode, TaskModelList, LogModelList} from "@/models/systemModel";
 import {RequestMd5Model, RequestMd5Models} from "@/models/X";
 
 /* * * * * * * * * * * * * * * * * * * * * * [任务中心] * * * * * * * * * * * * * * * * * * * * * * * * * */

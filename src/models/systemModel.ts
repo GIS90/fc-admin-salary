@@ -23,7 +23,7 @@ export interface UserModelList extends __UserModelBase{
     id: number;
     createTime: string;
     createRtx: string;
-    status: string;
+    status: boolean;
 }
 
 /**
@@ -128,7 +128,6 @@ export interface __TaskModelBase {
     rtxId: string;
     api: string;
     name: string;
-    type: string;
     data: string;
     task: string;
     cost: number;

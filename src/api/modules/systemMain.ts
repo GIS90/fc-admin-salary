@@ -2,12 +2,7 @@ import http from "@/api";
 import { ResultPage } from "../utils/models";
 import {
     UserModelList, UserModelDetail,
-    RoleModelList, RoleModelDetail, RoleAuthUpdateModel,
-    XtcsModelList, XtcsModelBase,
-    DictKeyListModel, DictEnumListModel,
-    DictEnumBaseModel, DictEnumDetailModel,
-    DictKeyDetailModel, DictKeyBaseModel, LogModelList,
-    DepartmentNode, DepartmentDragNode
+    RoleModelList, RoleModelDetail, RoleAuthUpdateModel
 } from "@/models/systemModel";
 import {RequestStatusModel, RequestMd5Model, RequestMd5Models} from "@/models/X";
 

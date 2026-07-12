@@ -108,7 +108,7 @@ import {
   SysOpsDictKeyListApi, SysOpsDictEnumListApi,
   SysOpsDictKeyDeleteApi, SysOpsDictEnumDeleteApi,
   SysOpsDictEnumStatusApi, SysOpsDictKeyStatusApi,
-} from '@/api/modules/system';
+} from '@/api/modules/systemConfig';
 import { DictKeyListModel, DictEnumListModel } from "@/models/systemModel";
 import { ColumnProps, FcTableInstance } from "@/components/fcTable/model";
 import FcTreeFilter from '@/components/fcTreeFilter/index.vue';
