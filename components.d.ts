@@ -69,7 +69,6 @@ declare module 'vue' {
     ElTabs: typeof import('element-plus/es')['ElTabs']
     ElTag: typeof import('element-plus/es')['ElTag']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
-    ElTree: typeof import('element-plus/es')['ElTree']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     FcBatchDelete: typeof import('./src/components/fcBatchDelete/index.vue')['default']
     FcBatchDownload: typeof import('./src/components/fcBatchDownload/index.vue')['default']

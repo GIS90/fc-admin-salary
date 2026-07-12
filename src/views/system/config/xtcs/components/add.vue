@@ -105,7 +105,7 @@
 
 <script setup lang='ts'>
 import { ref, reactive, defineProps, defineEmits, watch } from 'vue';
-import { XtcsModelDetail } from "@/models/systemModel";
+import { XtcsModelBase } from "@/models/systemModel";
 import { SysConfigXtcsAddApi } from "@/api/modules/system";
 import { FormInstance, FormRules } from "element-plus";
 import { ElNotification } from 'element-plus';
@@ -169,9 +169,9 @@ const ruleForm = reactive({
   remark: "",
   value: "",
   orderId: undefined
-}) as XtcsModelDetail;
+}) as XtcsModelBase;
 // from rule
-const rules = reactive<FormRules<XtcsModelDetail>>({
+const rules = reactive<FormRules<XtcsModelBase>>({
   key: [
     { required: true, message: "系统参数名称不允许为空", trigger: 'blur' },
     { min: 1, max: ProfileLen.key, message: '最大长度支持'+ProfileLen.key+'位', trigger: 'blur' },

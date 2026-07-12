@@ -2,10 +2,9 @@ import { RequestIDModels } from "@/models/X";
 
 // - - - - - - - - - - - - - - - - - - - - - [权限管理] - - - - - - - - - - - - - - - - - - - - - -
 /**
- * 用户管理>列表
+ * 用户管理>基础数据
  */
-export interface UserModelList {
-    id: number;
+export interface __UserModelBase {
     rtxId: string;
     md5: string;
     name: string;
@@ -15,6 +14,13 @@ export interface UserModelList {
     avatar: string;
     introduction: string;
     department: string;
+}
+
+/**
+ * 用户管理>列表
+ */
+export interface UserModelList extends __UserModelBase{
+    id: number;
     createTime: string;
     createRtx: string;
     status: string;
@@ -23,44 +29,34 @@ export interface UserModelList {
 /**
  * 用户管理>详情
  */
-export interface UserModelDetail {
-    rtxId: string;
-    md5: string;
-    name: string;
-    sex: string;
-    email: string;
-    phone: string;
-    avatar: string;
-    introduction: string;
-    department: string;
+export interface UserModelDetail extends __UserModelBase{
     role: [];
+}
+
+/**
+ * 角色管理>基础数据
+ */
+export interface __RoleModelBase {
+    engname: string;
+    chnname: string;
+    md5: string;
+    introduction: string;
+    createTime: string;
+    createTtx: string;
 }
 
 /**
  * 角色管理>列表
  */
-export interface RoleModelList {
+export interface RoleModelList extends __RoleModelBase {
     id: number;
-    engname: string;
-    chnname: string;
-    md5: string;
-    introduction: string;
-    createTime: string;
-    createTtx: string;
 }
 
 /**
  * 角色管理>详情
  */
-export interface RoleModelDetail {
-    id: number;
-    engname: string;
-    chnname: string;
-    md5: string;
-    introduction: string;
+export interface RoleModelDetail extends __RoleModelBase {
     authority: [];
-    createTime: string;
-    createTtx: string;
 }
 
 /**
@@ -83,43 +79,40 @@ export interface RoleAuthUpdateModel extends RequestIDModels {
 
 // - - - - - - - - - - - - - - - - - - - - - [系统配置] - - - - - - - - - - - - - - - - - - - - - -
 /**
- * 系统参数>列表
+ * 系统参数>基础数据
  */
-export interface XtcsModelList {
-    id: number;
+export interface XtcsModelBase {
     key: string;
-    md5: string;
     remark: string;
     value: string;
-    status: boolean;
-    orderId: number;
+    orderId?: number;
 }
 
 /**
  * 系统参数>详情
  */
-export interface XtcsModelDetail {
-    key: string;
+export interface XtcsModelDetail extends XtcsModelBase {
     md5: string;
-    remark: string;
-    value: string;
-    orderId: number;
 }
 
+/**
+ * 系统参数>列表
+ */
+export interface XtcsModelList extends XtcsModelBase {
+    id: number;
+    md5: string;
+    lock: boolean;
+}
 
 /**
- * 系统参数>试图数据
+ * 系统参数>查看
  */
-export interface XtcsModelView {
-    key: string;
+export interface XtcsModelView extends XtcsModelBase {
     md5: string;
-    remark: string;
-    value: string;
     createTime: string;
-    createTtx: string;
+    createRtx: string;
     updateTime: string;
     updateRtx: string;
-    orderId: number;
 }
 
 

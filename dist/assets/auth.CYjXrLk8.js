@@ -1,0 +1,1 @@
+import{h as t}from"./index.BeGP-3yP.js";const s=a=>t.post("/access/login",a),n=()=>t.get("/access/logout"),e=()=>t.get("/api/auth"),r=()=>t.get("/api/dashboard"),u=a=>t.get("/api/task",a),p=()=>t.get("/api/download.enum"),i=a=>t.post("/api/download",a);export{r as A,p as D,s as a,e as b,i as c,u as d,n as e};

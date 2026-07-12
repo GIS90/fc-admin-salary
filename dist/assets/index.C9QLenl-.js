@@ -1,0 +1,1 @@
+import{_ as e,o,c as t}from"./index.Dfz8aDy2.js";const c={name:"configek"},n={style:{color:"red"}};function s(r,a,_,p,d,f){return o(),t("h1",n,"开发中，后续会陆续上线。。。。。。")}const l=e(c,[["render",s]]);export{l as default};

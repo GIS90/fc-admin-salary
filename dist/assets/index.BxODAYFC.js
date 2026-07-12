@@ -1,0 +1,1 @@
+import{_ as e,o,c as t}from"./index.Dfz8aDy2.js";const c={name:"configreport"},r={style:{color:"red"}};function n(s,a,_,p,d,f){return o(),t("h1",r,"开发中，后续会陆续上线。。。。。。")}const l=e(c,[["render",n]]);export{l as default};

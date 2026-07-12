@@ -133,12 +133,12 @@ import { ECOption } from '@/components/fcEcharts/config';
 import { onMounted, ref } from 'vue';
 import { AuthDashboardApi } from '@/api/modules/auth'
 
-const authStore = useAuthStore()
-const lineOption = ref<ECOption>({})
-const columnOption = ref<ECOption>({})
-const trendValue1 = ref(7.7)
-const trendValue2 = ref(-6.7)
-const tip = ref("")
+const authStore = useAuthStore();
+const lineOption = ref<ECOption>({});
+const columnOption = ref<ECOption>({});
+const trendValue1 = ref(7.7);
+const trendValue2 = ref(-6.7);
+// const tip = ref("");
 
 onMounted(() => {
     getData()

@@ -68,7 +68,7 @@
         <el-form-item label="排序编号" prop="orderId">
           <el-input v-model="ruleForm.orderId"
                      style="width: 100%;"
-                     :size="inputNumberField.size"
+                     :size="inputField.size"
                      disabled
           />
         </el-form-item>
@@ -133,8 +133,6 @@ const dgField = {...dialogField, ...dgConfigField}; // DIALOG属性
 const fullView = ref(dgField.fullScreen); // 全屏控制
 const fullViewText = ref('全屏');
 const emit = defineEmits(['update:visible']);
-const btnDisabled = ref(false); // 禁用
-const btnLoading = ref(false); // 加载中
 const props = defineProps({
   visible: {
     type: Boolean,
@@ -178,6 +176,7 @@ function openDialog() {
 // 响应式数据
 const ruleFormRef = ref<FormInstance>();
 const ruleForm = reactive({
+  md5: "",
   key: "",
   remark: "",
   value: "",

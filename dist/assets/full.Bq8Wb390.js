@@ -1,1 +1,0 @@
-import{_ as a,o as c,j as n,k as e,l as r,i as _}from"./index.wiki_Nz6.js";import{E as l}from"./el-main.p4BFEQ4z.js";import{E as s}from"./el-card.Cmm1xBx4.js";const f={};function m(d,i){const o=s,t=l;return c(),n(t,null,{default:e(()=>[r(o,null,{default:e(()=>[_(" 全屏展示 ")]),_:1})]),_:1})}const E=a(f,[["render",m]]);export{E as default};

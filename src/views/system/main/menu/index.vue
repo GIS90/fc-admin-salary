@@ -54,8 +54,8 @@
 <script setup lang='ts'>
 
 import { reactive, ref } from 'vue'
-import {ColumnProps, FcTableInstance} from "@/components/fcTable/model"
-import {SysMainMenuDeleteApi, SysMainMenuListApi, SysMainMenuStatusApi } from '@/api/modules/system';
+import { ColumnProps, FcTableInstance } from "@/components/fcTable/model"
+import { SysMainMenuDeleteApi, SysMainMenuListApi } from '@/api/modules/system';
 import { ElNotification } from 'element-plus';
 import MenuEdit from "./components/edit.vue";
 import MenuAdd from "./components/add.vue";
@@ -78,7 +78,7 @@ const fcTableRef = ref<FcTableInstance>();
 // 表格配置项
 const columns = reactive<ColumnProps<Menu.MenuOptions>[]>([
   // { prop: "", width: 80, type: "selection", fixed: "left" },
-  {prop: "id", label: "菜单ID", width: 120, align: "left"},
+  {prop: "id", label: "菜单ID", width: tableWidth.id, align: "left"},
   {prop: "title", label: "标题", width: 180},
   {prop: "icon", label: "图标", width: 120},
   {prop: "name", label: "名称", width: 180},
@@ -87,7 +87,7 @@ const columns = reactive<ColumnProps<Menu.MenuOptions>[]>([
   {prop: "path", label: "路由地址", align: "left", width: 240},
   {prop: "component", label: "组件路径", align: "left", width: 260},
   {prop: "order_id", label: "排序编号", width: 100},
-  {prop: "options", label: "操作", width: 260, fixed: "right"},
+  {prop: "options", label: "操作", width: tableWidth.optionMenu, fixed: "right"},
   // {prop: "isHide", label: "状态管理", width: 160, fixed: "right"}
 ]);
 
@@ -114,17 +114,17 @@ const reFetchTableData = (isReload: boolean = false) => {
 };
 
 // 启用/隐藏菜单
-const statusHandle = (md5: string, value: boolean) => {
-  SysMainMenuStatusApi({md5, value}).then(() => {
-    const message = value ? '<strong>状态修改成功</strong><br /><div style="color: red;">隐藏菜单为系统功能中不可见状态</div>' : '<strong>状态修改成功</strong>';
-    ElNotification({
-      title: '提示',
-      dangerouslyUseHTMLString: true,
-      message,
-      type: 'success'
-    });
-  })
-};
+// const statusHandle = (md5: string, value: boolean) => {
+//   SysMainMenuStatusApi({md5, value}).then(() => {
+//     const message = value ? '<strong>状态修改成功</strong><br /><div style="color: red;">隐藏菜单为系统功能中不可见状态</div>' : '<strong>状态修改成功</strong>';
+//     ElNotification({
+//       title: '提示',
+//       dangerouslyUseHTMLString: true,
+//       message,
+//       type: 'success'
+//     });
+//   })
+// };
 
 // 新增菜单
 const addMenuHandle = (id: number | undefined = undefined) => {

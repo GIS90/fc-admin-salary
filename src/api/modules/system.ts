@@ -3,7 +3,7 @@ import { ResultPage } from "../utils/models";
 import {
     UserModelList, UserModelDetail,
     RoleModelList, RoleModelDetail, RoleAuthUpdateModel,
-    XtcsModelList, XtcsModelDetail, XtcsModelView,
+    XtcsModelList, XtcsModelBase,
     DictKeyListModel, DictEnumListModel,
     DictEnumBaseModel, DictEnumDetailModel,
     DictKeyDetailModel, DictKeyBaseModel, LogModelList,
@@ -173,12 +173,12 @@ export const SysConfigXtcsApi = (params: RequestMd5Model) => {
 };
 
 // [PUT]角色管理>更新
-export const SysConfigXtcsUpdateApi = (params: XtcsModelDetail) => {
+export const SysConfigXtcsUpdateApi = (params: XtcsModelBase) => {
     return http.put('/system/config/xtcs', params);
 };
 
 // [POST]角色管理>新增
-export const SysConfigXtcsAddApi = (params: XtcsModelDetail) => {
+export const SysConfigXtcsAddApi = (params: XtcsModelBase) => {
     return http.post('/system/config/xtcs', params);
 };
 
