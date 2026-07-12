@@ -26,9 +26,9 @@
                 :rowKey="ftField.rowKey" :stripe="ftField.stripe" :border="ftField.border" :pagination="ftField.pagination"
                 :showBottomView="ftField.showBottomView" :showRefreshBtn="ftField.showRefreshBtn"
                 :showColumnBtn="ftField.showColumnBtn" :showDownloadBtn="ftField.showDownloadBtn">
-        <template #task="scope">
-          <el-tag v-if="scope.row.task === 'SUCCESS'" type="success" effect="dark">{{ scope.row.task }}</el-tag>
-          <el-tag v-else type="danger" effect="dark">{{ scope.row.task }}</el-tag>
+        <template #taskText="scope">
+          <el-tag v-if="scope.row.task === 'SUCCESS'" type="success" effect="dark">{{ scope.row.taskText }}</el-tag>
+          <el-tag v-else type="danger" effect="dark">{{ scope.row.taskText }}</el-tag>
         </template>
         <!-- 表格操作 -->
         <template #options="scope">
