@@ -93,7 +93,7 @@
 <script setup lang='ts'>
 import { ref, reactive, defineProps, defineEmits, watch } from 'vue';
 import { RoleModelDetail } from "@/models/systemModel";
-import { SysMainRoleAddApi } from "@/api/modules/system";
+import { SysMainRoleAddApi } from "@/api/modules/systemMain";
 import { FormInstance, FormRules } from "element-plus";
 import { ElNotification } from 'element-plus';
 import { dialogField, inputField, textAreaField, formField } from "@/utils/attrs/field";

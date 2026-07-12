@@ -55,7 +55,7 @@
 
 import { reactive, ref } from 'vue'
 import { ColumnProps, FcTableInstance } from "@/components/fcTable/model"
-import { SysMainMenuDeleteApi, SysMainMenuListApi } from '@/api/modules/system';
+import { SysMainMenuDeleteApi, SysMainMenuListApi } from '@/api/modules/systemMain';
 import { ElNotification } from 'element-plus';
 import MenuEdit from "./components/edit.vue";
 import MenuAdd from "./components/add.vue";

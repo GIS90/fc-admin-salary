@@ -117,7 +117,7 @@
 <script setup lang='ts'>
 import { ref, reactive, defineProps, defineEmits, watch } from 'vue';
 import { XtcsModelView } from "@/models/systemModel";
-import { SysConfigXtcsViewApi} from "@/api/modules/system";
+import { SysConfigXtcsViewApi } from "@/api/modules/systemConfig";
 import { FormInstance } from "element-plus";
 import { dialogField, inputField, textAreaField, formField } from "@/utils/attrs/field";
 import publicPlaceHolder from "@/utils/attrs/place";

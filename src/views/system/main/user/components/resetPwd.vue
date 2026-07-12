@@ -55,7 +55,7 @@
 <script setup lang='ts'>
 import { ref, reactive, defineProps, defineEmits } from 'vue';
 import { dialogField } from "@/utils/attrs/field";
-import {SysMainUserDefaultPwdApi, SysMainUserResetPwdApi} from "@/api/modules/system";
+import {SysMainUserDefaultPwdApi, SysMainUserResetPwdApi} from "@/api/modules/systemMain";
 import { ElNotification } from 'element-plus';
 
 const dgConfigField = reactive({

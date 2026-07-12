@@ -51,12 +51,9 @@
 <script setup lang='ts'>
 import { ref, reactive, defineProps, defineEmits } from 'vue';
 import { dialogField } from "@/utils/attrs/field";
-import {
-  SysMainUsersStatusApi, SysMainRolesDeleteApi,
-  SysOpsDictEnumsDeleteApi, SysOpsLogsDeleteApi,
-  SysOpsTasksDeleteApi, SysOpsDepartsDeleteApi, SysMainUsersDeleteApi,
-  SysConfigXtcsDeleteApis
-} from "@/api/modules/system";
+import { SysMainUsersStatusApi, SysMainRolesDeleteApi, SysMainUsersDeleteApi } from "@/api/modules/systemMain";
+import { SysOpsTasksDeleteApi, SysOpsLogsDeleteApi, SysOpsDepartsDeleteApi } from "@/api/modules/systemOps";
+import { SysConfigXtcsDeleteApis, SysOpsDictEnumsDeleteApi } from "@/api/modules/systemConfig";
 import { ElNotification, ElMessage } from 'element-plus';
 
 const dgConfigField = reactive({

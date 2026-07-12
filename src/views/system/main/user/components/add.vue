@@ -152,7 +152,7 @@
 <script setup lang='ts'>
 import { ref, reactive, defineProps, defineEmits, watch } from 'vue';
 import { UserModelDetail } from "@/models/systemModel";
-import { SysMainUserAddEnumApi, SysMainUserAddApi } from "@/api/modules/system";
+import { SysMainUserAddEnumApi, SysMainUserAddApi } from "@/api/modules/systemMain";
 import { FormInstance, FormRules } from "element-plus";
 import {OptionEnumModel, OptionExtendEnumModel} from "@/models/X";
 import { ElNotification } from 'element-plus';

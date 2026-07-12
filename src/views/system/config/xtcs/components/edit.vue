@@ -106,7 +106,7 @@
 <script setup lang='ts'>
 import { ref, reactive, defineProps, defineEmits, watch } from 'vue';
 import { XtcsModelDetail} from "@/models/systemModel";
-import { SysConfigXtcsApi, SysConfigXtcsUpdateApi } from "@/api/modules/system";
+import { SysConfigXtcsApi, SysConfigXtcsUpdateApi } from "@/api/modules/systemConfig";
 import { FormInstance, FormRules } from "element-plus";
 import { ElNotification } from 'element-plus';
 import { dialogField, inputField, textAreaField, formField, inputNumberField } from "@/utils/attrs/field";

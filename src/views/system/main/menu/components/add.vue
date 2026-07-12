@@ -196,7 +196,7 @@
 <script setup lang='ts'>
 import {defineEmits, defineProps, reactive, ref, watch} from "vue";
 import { drawerField, formField, inputField, selectSingleField, inputNumberField } from "@/utils/attrs/field";
-import {SysMainMenuAddApi, SysMainMenuAddEnumApi} from "@/api/modules/system";
+import {SysMainMenuAddApi, SysMainMenuAddEnumApi} from "@/api/modules/systemMain";
 import {ElNotification, FormInstance, FormRules} from "element-plus";
 import {GroupOptionEnumModel, OptionEnumModel, OptionExtendEnumModel} from "@/models/X";
 import publicLength from "@/utils/attrs/length";

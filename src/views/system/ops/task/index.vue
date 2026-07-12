@@ -60,12 +60,13 @@
 
 <script setup lang='ts'>
 import { ref, reactive, watch, onMounted } from 'vue';
-import {SysOpsTaskListApi, SysOpsTaskDeleteApi, SysOpsTaskFilterApi} from '@/api/modules/system';
+import {SysOpsTaskListApi, SysOpsTaskDeleteApi, SysOpsTaskFilterApi} from '@/api/modules/systemOps';
 import { ColumnProps, FcTableInstance } from "@/components/fcTable/model";
 import { TaskModelList} from "@/models/systemModel";
 import { ElMessage, ElNotification } from 'element-plus';
 import { fcTableField, PopConfirmField, buttonField } from "@/utils/attrs/field";
 import { OptionEnumModelList } from "@/models/X";
+import { tableWidth } from "@/utils/attrs/table";
 import Detail from "./components/view.vue";
 import Filter from "./components/filter.vue";
 
@@ -83,14 +84,14 @@ const fcTableRef = ref<FcTableInstance>();
 
 const columns = reactive<ColumnProps<TaskModelList>[]>([
   { prop: "", width: 80, type: "selection" },
-  { prop: "id", label: "序号", width: 80 },
-  { prop: "create_time", label: "创建时间" },
-  { prop: "create_rtx", label: "系统用户"},
+  { prop: "id", label: "序号", width: tableWidth.id },
+  { prop: "createTime", label: "创建时间" },
+  { prop: "createRtx", label: "系统用户"},
   { prop: "api", label: "接口名称" },
   { prop: "type", label: "下载类型" },
   { prop: "status", label: "任务状态" },
   { prop: "cost", label: "花销时间(单位：s)" },
-  { prop: "options", label: "操作", width: 130, fixed: "right" }
+  { prop: "options", label: "操作", width: tableWidth.option2, fixed: "right" }
 ]);
 
 // Dialog状态管理

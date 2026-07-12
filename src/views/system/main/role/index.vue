@@ -64,7 +64,7 @@
 
 <script setup lang='ts'>
 import { ref, reactive } from 'vue';
-import { SysMainRoleListApi, SysMainRoleDeleteApi } from '@/api/modules/system';
+import { SysMainRoleListApi, SysMainRoleDeleteApi } from '@/api/modules/systemMain';
 import { ColumnProps, FcTableInstance } from "@/components/fcTable/model";
 import { RoleModelList } from "@/models/systemModel";
 import { ElMessage, ElNotification } from 'element-plus';

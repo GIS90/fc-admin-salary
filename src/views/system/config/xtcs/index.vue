@@ -72,7 +72,7 @@
 
 <script setup lang='ts'>
 import { ref, reactive } from 'vue';
-import {SysConfigXtcsListApi, SysConfigXtcsDeleteApi, SysConfigXtcsStatusApi} from '@/api/modules/system';
+import {SysConfigXtcsListApi, SysConfigXtcsDeleteApi, SysConfigXtcsStatusApi} from '@/api/modules/systemConfig';
 import { ColumnProps, FcTableInstance } from "@/components/fcTable/model";
 import { XtcsModelList } from "@/models/systemModel";
 import { ElMessage, ElNotification } from 'element-plus';

@@ -77,7 +77,7 @@
 
 <script setup lang='ts'>
 import { ref, reactive, defineProps, defineEmits } from 'vue';
-import { SysMainRoleAuthApi, SysMainRoleAuthUpdateApi } from '@/api/modules/system';
+import { SysMainRoleAuthApi, SysMainRoleAuthUpdateApi } from '@/api/modules/systemMain';
 import { RoleAuthTreeModel } from "@/models/systemModel";
 import { drawerField, treeField } from "@/utils/attrs/field";
 import { ElNotification, ElTree } from "element-plus";
