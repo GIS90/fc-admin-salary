@@ -104,7 +104,7 @@ const batchDeleteVisible = ref(false);
 const tableRowMd5 = ref(""); // 默认当前选择的数据MD5
 const apiName = "SystemOpsTask"; // 组件标识名称
 let tableSelectList = reactive([] as string[]); // 当前选择数据Keys列表
-const requestParam = reactive({"content": {}});  // 条件查询内容
+const requestParam = reactive({"filter": {}});  // 条件查询内容
 const searchIcon = ref("SwitchButton"); // 查询按钮图标
 const searchBtnText = ref("展开查询"); // 查询按钮文本
 // 性别枚举
@@ -180,7 +180,7 @@ const switchSearch = () => {
 };
 
 const search = (params: any) => {
-  requestParam.content = params;
+  requestParam.filter = params;
   reFetchTableData(true);
 };
 </script>

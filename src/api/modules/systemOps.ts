@@ -4,9 +4,9 @@ import {DepartmentDragNode, DepartmentNode, TaskModelList, LogModelList} from "@
 import {RequestMd5Model, RequestMd5Models} from "@/models/X";
 
 /* * * * * * * * * * * * * * * * * * * * * * [任务中心] * * * * * * * * * * * * * * * * * * * * * * * * * */
-// [GET]列表
+// [POST]列表
 export const SysOpsTaskListApi = (params: any) => {
-    return http.get<ResultPage<TaskModelList>>('/system/ops/task.list', params);
+    return http.post<ResultPage<TaskModelList>>('/system/ops/task.list', params);
 };
 
 // [GET]过滤条件
