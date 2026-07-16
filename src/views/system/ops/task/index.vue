@@ -87,7 +87,7 @@ const columns = reactive<ColumnProps<TaskModelList>[]>([
   { prop: "", width: tableWidth.selection, type: "selection" },
   { prop: "id", label: "序号", width: tableWidth.id },
   { prop: "createTime", label: "创建时间" },
-  { prop: "rtxId", label: "用户"},
+  { prop: "rtxId", label: "系统用户"},
   { prop: "name", label: "文件名称" },
   { prop: "api", label: "接口名称" },
   { prop: "dataText", label: "下载类型" },
