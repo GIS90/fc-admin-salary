@@ -24,10 +24,7 @@
                      :multiple="selectMultiField.multiple" :multiple-limit="selectMultiField.limit" :collapse-tags="selectMultiField.collapseTags"
                      :max-collapse-tags="selectMultiField.maxCollapseTags" :collapse-tags-tooltip="selectMultiField.collapseTagsTooltip"
                      placeholder="请选择任务下载类型，支持多选">
-            <el-option v-for="item in dsOption" :key="item.value" :label="item.label" :value="item.value">
-              <span class="el-select-key">{{ item.label }}</span>
-              <span class="el-select-value">{{ item.value }}</span>
-            </el-option>
+            <el-option v-for="item in dsOption" :key="item.value" :label="item.label" :value="item.value" :disabled="item.disabled" />
           </el-select>
         </el-form-item>
       </el-col>
@@ -39,10 +36,7 @@
                      :multiple="selectMultiField.multiple" :multiple-limit="selectMultiField.limit" :collapse-tags="selectMultiField.collapseTags"
                      :max-collapse-tags="selectMultiField.maxCollapseTags" :collapse-tags-tooltip="selectMultiField.collapseTagsTooltip"
                      placeholder="请选择任务状态，支持多选">
-            <el-option v-for="item in statusOption" :key="item.value" :label="item.label" :value="item.value">
-              <span class="el-select-key">{{ item.label }}</span>
-              <span class="el-select-value">{{ item.value }}</span>
-            </el-option>
+            <el-option v-for="item in statusOption" :key="item.value" :label="item.label" :value="item.value" :disabled="item.disabled" />
           </el-select>
         </el-form-item>
       </el-col>

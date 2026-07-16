@@ -152,6 +152,40 @@ export interface TaskModelDetail extends __TaskModelBase{
 }
 
 
+/**
+ * 系统日志>基础模型
+ */
+export interface __LogModelBase {
+    rtxId: string;
+    ip: string;
+    blueprint: string;
+    apiName: string;
+    endPoint: string;
+    method: string;
+    path: string;
+    url: string;
+    params: string;
+    hostUrl: string;
+    cost: number;
+    createTime: string;
+    createDate: string;
+}
+
+/**
+ * 系统日志>列表
+ */
+export interface LogModelList extends __LogModelBase{
+    id: number;
+    md5: string;
+    tag: string;
+}
+
+/**
+ * 系统日志>查看
+ */
+export interface LogModelDetail extends __LogModelBase{
+    md5: string;
+}
 
 
 
@@ -218,26 +252,6 @@ export interface DictEnumListModel extends DictEnumBaseModel{
     status: boolean;
 }
 
-/**
- * 角色>角色模型.列表
- */
-export interface LogModelList {
-    id: number;
-    md5: string;
-    rtx_id: string;
-    ip: string;
-    blueprint: string;
-    apiname: string;
-    endpoint: string;
-    method: string;
-    path: string;
-    url: string;
-    params: string;
-    host_url: string;
-    cost: number;
-    create_time: string;
-    create_date: string;
-}
 
 
 /**

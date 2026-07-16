@@ -11,8 +11,8 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue";
 import { SetProfileLogApi } from "@/api/modules/setter";
-import { ProfileLogItem } from "@/models/setterModel";
 import { ColumnProps, FcTableInstance } from "@/components/fcTable/model";
+import { LogModelList } from "@/models/systemModel";
 
 // fcTabel 实例
 const fcTableRef = ref<FcTableInstance>();
@@ -20,12 +20,12 @@ const apiName = "setterProfileLog"; // 组件标识名称
 const showDownloadBtn=ref(false); // 禁用下载按钮
 
 // 表格配置项
-const columns = reactive<ColumnProps<ProfileLogItem>[]>([
+const columns = reactive<ColumnProps<LogModelList>[]>([
   { prop: "id", label: "序号", width: 80 },
   { prop: "ip", label: "IP来源" },
   { prop: "method", label: "请求方式" },
   { prop: "url", label: "请求路径" },
-  { prop: "cost", label: "花销时间(单位：s)" },
+  { prop: "cost", label: "耗时（单位：s）" },
   { prop: "createTime", label: "请求时间" }
 ]);
 

@@ -84,7 +84,7 @@ const pcField = {...PopConfirmField, ...{}};
 const fcTableRef = ref<FcTableInstance>();
 
 const columns = reactive<ColumnProps<TaskModelList>[]>([
-  { prop: "", width: 80, type: "selection" },
+  { prop: "", width: tableWidth.selection, type: "selection" },
   { prop: "id", label: "序号", width: tableWidth.id },
   { prop: "createTime", label: "创建时间" },
   { prop: "rtxId", label: "用户"},

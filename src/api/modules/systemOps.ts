@@ -29,39 +29,31 @@ export const SysOpsTaskApi = (params: RequestMd5Model) => {
     return http.get('/system/ops/task', params);
 };
 
-
-
-
-
-
-
-/* * * * * * * * * * * * * * * * * * * * * * [系统维护->系统日志] * * * * * * * * * * * * * * * * * * * * * * * * * */
-// [GET]系统日志>列表
+/* * * * * * * * * * * * * * * * * * * * * * [系统日志] * * * * * * * * * * * * * * * * * * * * * * * * * */
+// [POST]系统日志>列表
 export const SysOpsLogListApi = (params: any) => {
-    return http.post<ResultPage<LogModelList>>('/ops/log/list', params);
+    return http.post<ResultPage<LogModelList>>('/system/ops/log.list', params);
 };
 
 // [DELETE]系统日志>单条删除
 export const SysOpsLogDeleteApi = (params: RequestMd5Model) => {
-    return http.delete('/ops/log/delete', params);
+    return http.delete('/system/ops/log.batch.delete', params);
 };
 
 // [PUT]系统日志>批量删除
 export const SysOpsLogsDeleteApi = (params: RequestMd5Models) => {
-    return http.put('/ops/log/delete', params);
+    return http.put('/system/ops/log.delete', params);
 };
 
 // [GET]系统日志>详情
 export const SysOpsLogApi = (params: RequestMd5Model) => {
-    return http.get('/ops/log', params);
+    return http.get('/system/ops/log', params);
 };
 
 // [GET]系统日志>过滤条件
 export const SysOpsLogFilterApi = () => {
-    return http.get('/ops/log/filter');
+    return http.get('/system/ops/log.filter');
 };
-
-
 
 /* * * * * * * * * * * * * * * * * * * * * * [系统维护->部门架构] * * * * * * * * * * * * * * * * * * * * * * * * * */
 // [GET]部门架构>TREE

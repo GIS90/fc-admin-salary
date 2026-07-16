@@ -39,10 +39,7 @@
                      :multiple="selectMultiField.multiple" :multiple-limit="selectMultiField.limit" :collapse-tags="selectMultiField.collapseTags"
                      :max-collapse-tags="selectMultiField.maxCollapseTags" :collapse-tags-tooltip="selectMultiField.collapseTagsTooltip"
                      placeholder="请选择请求API类型，支持多选">
-            <el-option v-for="item in apiOption" :key="item.value" :label="item.label" :value="item.value">
-              <span class="el-select-key">{{ item.label }}</span>
-              <span class="el-select-value">{{ item.value }}</span>
-            </el-option>
+            <el-option v-for="item in apiOption" :key="item.value" :label="item.label" :value="item.value" :disabled="item.disabled" />
           </el-select>
         </el-form-item>
       </el-col>
@@ -102,7 +99,7 @@ const submit = () => {
   emit('search', {
     content: content.value,
     dateRange: dateRange.value,
-    api: api.value,
+    method: api.value,
     user: user.value
   });
 };

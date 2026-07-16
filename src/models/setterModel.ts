@@ -29,18 +29,3 @@ export interface ProfilePassword {
     newPassword: string;
     confirmNewPassword: string;
 }
-
-
-
-/**
- * 用户日志
- */
-export interface ProfileLogItem{
-    id: number;
-    ip: string;
-    method: string;
-    path: string;
-    tag: string;
-    cost: number;
-    createTime: string;
-}
