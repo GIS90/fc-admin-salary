@@ -44,24 +44,30 @@
         <el-divider content-position="left">基本信息</el-divider>
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="请求时间" prop="create_time">
-              <el-input v-model.trim="ruleForm.create_time" :size="inputField.size" disabled />
+            <el-form-item label="请求时间" prop="createTime">
+              <el-input v-model.trim="ruleForm.createTime" :size="inputField.size" disabled />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="系统用户" prop="rtx_id">
-              <el-input v-model.trim="ruleForm.rtx_id" :size="inputField.size" disabled />
+            <el-form-item label="系统用户" prop="rtxId">
+              <el-input v-model.trim="ruleForm.rtxId" :size="inputField.size" disabled />
             </el-form-item>
           </el-col>
         </el-row>
+
+        <el-divider content-position="left">请求信息</el-divider>
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="IP来源" prop="ip">
               <el-input v-model.trim="ruleForm.ip" :size="inputField.size" disabled />
             </el-form-item>
           </el-col>
+          <el-col :span="12">
+            <el-form-item label="请求方式" prop="method">
+              <el-input v-model.trim="ruleForm.method" :size="inputField.size" disabled />
+            </el-form-item>
+          </el-col>
         </el-row>
-        <el-divider content-position="left">请求信息</el-divider>
         <el-form-item label="请求URL" prop="url">
           <el-input v-model.trim="ruleForm.url" :size="inputField.size" disabled>
             <template #append>
@@ -83,14 +89,14 @@
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="请求方式" prop="method">
-              <el-input v-model.trim="ruleForm.method" :size="inputField.size" disabled />
+            <el-form-item label="MD5" prop="method">
+              <el-input v-model.trim="ruleForm.md5" :size="inputField.size" disabled />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="花销时间" prop="cost">
               <el-input v-model.trim="ruleForm.cost" :size="inputField.size" disabled>
-                <template #append>（单位：S）</template>
+                <template #append>（单位：s）</template>
               </el-input>
             </el-form-item>
           </el-col>
@@ -99,17 +105,19 @@
     </div>
 
     <!--footer-->
+    <!--
     <template #footer>
       <div class="my-dialog-footer">
         <el-button @click="closeDialog">关 闭</el-button>
       </div>
     </template>
+    -->
   </el-dialog>
 </template>
 
 <script setup lang='ts'>
 import { ref, reactive, defineProps, watch, defineEmits } from 'vue';
-import { LogModelList } from "@/models/systemModel";
+import { LogModelDetail } from "@/models/systemModel";
 import { SysOpsLogApi } from "@/api/modules/systemOps";
 import { dialogField, inputField, formField } from "@/utils/attrs/field";
 
@@ -122,23 +130,21 @@ const dgField = {...dialogField, ...dgConfigField}; // DIALOG属性
 const fullView = ref(dgField.fullScreen); // 全屏控制
 const fullViewText = ref('全屏');
 const emit = defineEmits(['update:visible']);
-const ruleForm = reactive<LogModelList>({
-  apiname: "",
-  blueprint: "",
-  cost: 0,
-  create_date: "",
-  create_time: "",
-  endpoint: "",
-  host_url: "",
-  id: 0,
-  ip: "",
+const ruleForm = reactive<LogModelDetail>({
   md5: "",
+  rtxId: "",
+  ip: "",
+  blueprint: "",
+  apiName: "",
+  endPoint: "",
   method: "",
   path: "",
-  rtx_id: "",
   url: "",
-  params: ""
-});
+  params: "",
+  hostUrl: "",
+  cost: 0,
+  createTime: ""
+} as LogModelDetail);
 const props = defineProps({
   visible: {
     type: Boolean,

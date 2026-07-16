@@ -37,12 +37,12 @@ export const SysOpsLogListApi = (params: any) => {
 
 // [DELETE]系统日志>单条删除
 export const SysOpsLogDeleteApi = (params: RequestMd5Model) => {
-    return http.delete('/system/ops/log.batch.delete', params);
+    return http.delete('/system/ops/log.delete', params);
 };
 
 // [PUT]系统日志>批量删除
 export const SysOpsLogsDeleteApi = (params: RequestMd5Models) => {
-    return http.put('/system/ops/log.delete', params);
+    return http.put('/system/ops/log.batch.delete', params);
 };
 
 // [GET]系统日志>详情

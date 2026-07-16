@@ -55,7 +55,7 @@
           </el-col>
         </el-row>
         <el-divider content-position="left">任务信息</el-divider>
-        <el-form-item label="任务MD5" prop="md5">
+        <el-form-item label="MD5" prop="md5">
           <el-input v-model.trim="ruleForm.md5" :size="inputField.size" disabled>
             <template #append>
               <el-button v-copy="ruleForm.md5" type="primary"><span style="color: red;">一键复制</span></el-button>
@@ -69,9 +69,9 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="耗时（单位：s）" prop="cost">
+            <el-form-item label="花销时间" prop="cost">
               <el-input v-model.trim="ruleForm.cost" :size="inputField.size" disabled>
-                <template #append>（单位：S）</template>
+                <template #append>（单位：s）</template>
               </el-input>
             </el-form-item>
           </el-col>
