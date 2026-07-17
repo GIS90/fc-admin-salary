@@ -211,8 +211,8 @@ const rules = reactive({
 const resetForm = () => {
   ruleForm.label = "";
   ruleForm.description = "";
-  ruleForm.manage_rtx = [];
-  ruleForm.order_id = 1;
+  ruleForm.manageRtx = [];
+  ruleForm.orderId = 1;
   ruleForm.disabled = false;
 };
 
