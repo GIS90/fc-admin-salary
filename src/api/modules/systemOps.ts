@@ -58,40 +58,40 @@ export const SysOpsLogFilterApi = () => {
 /* * * * * * * * * * * * * * * * * * * * * * [系统维护->部门架构] * * * * * * * * * * * * * * * * * * * * * * * * * */
 // [GET]部门架构>TREE
 export const SysOpsDepartTreeApi = () => {
-    return http.get('/ops/depart/tree');
+    return http.get('/system/ops/depart.tree');
 };
 
 // [GET]部门架构>新增枚举
 export const SysOpsDepartAddInitApi = (params: RequestMd5Model) => {
-    return http.get('/ops/depart/init', params);
+    return http.get('/system/ops/depart.init', params);
 };
 
 // [POST]部门架构>新增
 export const SysOpsDepartAddApi = (params: DepartmentNode) => {
-    return http.post('/ops/depart', params);
+    return http.post('/system/ops/depart', params);
 };
 
 // [GET]部门架构>详情
 export const SysOpsDepartApi = (params: RequestMd5Model) => {
-    return http.get('/ops/depart', params);
+    return http.get('/system/ops/depart', params);
 };
 
 // [PUT]部门架构>更新
 export const SysOpsDepartUpdateApi = (params: DepartmentNode) => {
-    return http.put('/ops/depart', params);
+    return http.put('/system/ops/depart', params);
 };
 
 // [DELETE]部门架构>单条删除
 export const SysOpsDepartDeleteApi = (params: RequestMd5Model) => {
-    return http.delete('/ops/depart/delete', params);
+    return http.delete('/system/ops/depart.delete', params);
 };
 
 // [PUT]部门架构>批量删除
 export const SysOpsDepartsDeleteApi = (params: RequestMd5Models) => {
-    return http.put('/ops/depart/delete', params);
+    return http.put('/system/ops/depart.batch.delete', params);
 };
 
 // [PUT]部门架构>拖拽
 export const SysOpsDepartDragApi = (params: DepartmentDragNode) => {
-    return http.put('/ops/depart/drag', params);
+    return http.put('/system/ops/depart.drag', params);
 };

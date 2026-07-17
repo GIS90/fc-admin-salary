@@ -1,6 +1,6 @@
 <template>
-  <div v-if="!props.visible">
-    <h3>操作说明</h3>
+  <div v-if="!props.visible" class="depart-edit-desc">
+    <h3>📌 操作说明</h3>
     <p>1、架构根节点不允许删除、调整操作。</p>
     <p>2、每个节点拥有新增、编辑、删除、调整等操作功能。</p>
     <p>3、节点信息通过点击编辑按钮，在详情中进行信息编辑。</p>
@@ -210,4 +210,57 @@ const confirm = async (formEl: FormInstance | undefined) => {
 </script>
 
 <style scoped>
+.depart-edit-desc {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px 28px;
+  margin-bottom: 20px;
+  border: 1px solid #e4e7ed;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+.depart-edit-desc h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #303133;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.depart-edit-desc p {
+  font-size: 16px;
+  color: #606266;
+  line-height: 1.8;
+  margin: 6px 0;
+  padding-left: 28px;
+  position: relative;
+}
+
+.depart-edit-desc p::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 12px;
+  width: 6px;
+  height: 6px;
+  background: #409eff;
+  border-radius: 50%;
+  opacity: 0.6;
+}
+
+.depart-edit-desc p strong,
+.depart-edit-desc p .highlight {
+  color: #409eff;
+  font-weight: 500;
+}
+
+.depart-edit-desc p .warning {
+  color: #e6a23c;
+}
+
+.depart-edit-desc p .danger {
+  color: #f56c6c;
+}
 </style>
