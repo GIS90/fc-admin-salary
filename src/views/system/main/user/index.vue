@@ -6,6 +6,9 @@
         <el-button id="btn-add" class="table-handle-button" :type="buttonField.type" :plain="buttonField.plain" :size="buttonField.size" icon="Plus" @click="addHandle">
           新增
         </el-button>
+        <el-button id="btn-batch-import" class="table-handle-button" :type="buttonField.type" icon="DocumentAdd" :plain="buttonField.plain" :size="buttonField.size" @click="batchImportHandle">
+          批量导入
+        </el-button>
         <el-button id="btn-batch-status" class="table-handle-button" type="danger" icon="Close" :plain="buttonField.plain" :size="buttonField.size" @click="batchStatusHandle" :disabled="!fcTableRef?.isSelected">
           批量注销
         </el-button>
@@ -16,7 +19,7 @@
           <template #default>
             <div style="line-height: 2.5;">
               <span style="color: #f56c6c;">【注销】</span>：禁止用户登录系统，停止系统配置相关菜单，再次允许使用重新开启状态即可<br/>
-              <span style="color: #e6a23c;">【删除】</span>：直接删除用户，请谨慎操作
+              <span style="color: #e6a23c;">【删除】</span>：直接从数据库删除用户，请谨慎操作，一旦删除不可恢复，建议不用人员改为注销状态
             </div>
           </template>
           <template #reference>
@@ -249,6 +252,15 @@ const batchDeleteHandle = () => {
   tableSelectList = fcTableRef.value?.selectedListKeys;
   batchDeleteVisible2.value = true;
 
+};
+
+const batchImportHandle = () => {
+  ElNotification({
+    title: '提示',
+    dangerouslyUseHTMLString: true,
+    message: '批量导入功能正在开发中，敬请期待',
+    type: 'warning'
+  });
 };
 </script>
 

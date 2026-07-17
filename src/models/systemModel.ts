@@ -188,6 +188,32 @@ export interface LogModelDetail extends __LogModelBase{
 }
 
 
+/**
+ * 部门架构>部门树
+ */
+export interface DepartmentNode {
+    id: number;
+    label: string;
+    md5: string;
+    description: string;
+    pid: number;
+    leaf: boolean;
+    disabled: boolean;
+    deptPath: boolean;
+    manageRtx: string[];
+    // createRtx: string;
+    // createTime: string;
+    // updateRtx: string;
+    // updateTime: string;
+    orderId: number;
+    children: DepartmentNode[];
+}
+
+export interface DepartmentDragNode {
+    md5: string;
+    pid: number;
+}
+
 
 
 
@@ -253,29 +279,3 @@ export interface DictEnumListModel extends DictEnumBaseModel{
 }
 
 
-
-/**
- * 系统>系统维护>部门架构>部门树
- */
-export interface DepartmentNode {
-    id: number;
-    label: string;
-    md5: string;
-    description: string;
-    pid: number;
-    leaf: boolean;
-    disabled: boolean;
-    dept_path: boolean;
-    manage_rtx: string[];
-    create_rtx: string;
-    create_time: string;
-    update_rtx: string;
-    update_time: string;
-    order_id: number;
-    children: DepartmentNode[];
-}
-
-export interface DepartmentDragNode {
-    md5: string;
-    pid: number;
-}

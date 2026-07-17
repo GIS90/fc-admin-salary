@@ -63,7 +63,7 @@ export const SysOpsDepartTreeApi = () => {
 
 // [GET]部门架构>新增枚举
 export const SysOpsDepartAddInitApi = (params: RequestMd5Model) => {
-    return http.get('/system/ops/depart.init', params);
+    return http.get('/system/ops/depart.addEnum', params);
 };
 
 // [POST]部门架构>新增

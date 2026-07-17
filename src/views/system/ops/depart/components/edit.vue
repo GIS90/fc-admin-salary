@@ -16,7 +16,7 @@
         <el-input v-model.trim="ruleForm.id" :size="inputField.size" disabled/>
       </el-form-item>
       <el-form-item label="部门路径">
-        <el-input v-model.trim="ruleForm.dept_path" :size="inputField.size" disabled/>
+        <el-input v-model.trim="ruleForm.deptPath" :size="inputField.size" disabled/>
       </el-form-item>
       <el-form-item label="部门名称" prop="label">
         <el-input v-model.trim="ruleForm.label"
@@ -248,19 +248,5 @@ const confirm = async (formEl: FormInstance | undefined) => {
   background: #409eff;
   border-radius: 50%;
   opacity: 0.6;
-}
-
-.depart-edit-desc p strong,
-.depart-edit-desc p .highlight {
-  color: #409eff;
-  font-weight: 500;
-}
-
-.depart-edit-desc p .warning {
-  color: #e6a23c;
-}
-
-.depart-edit-desc p .danger {
-  color: #f56c6c;
 }
 </style>

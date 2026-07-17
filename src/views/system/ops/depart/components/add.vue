@@ -47,7 +47,7 @@
           <el-input v-model.trim="pNode.id" :size="inputField.size" disabled />
         </el-form-item>
         <el-form-item label="上级路径">
-          <el-input v-model.trim="pNode.dept_path" :size="inputField.size" disabled/>
+          <el-input v-model.trim="pNode.deptPath" :size="inputField.size" disabled/>
         </el-form-item>
 
         <el-divider content-position="left">新部门信息</el-divider>
@@ -122,8 +122,8 @@
 
 <script setup lang='ts'>
 import { ref, reactive, defineProps, defineEmits, watch } from 'vue';
-import {DepartmentNode} from "@/models/systemModel";
-import {SysOpsDepartAddApi, SysOpsDepartAddInitApi} from "@/api/modules/systemOps";
+import { DepartmentNode } from "@/models/systemModel";
+import { SysOpsDepartAddApi, SysOpsDepartAddInitApi } from "@/api/modules/systemOps";
 import { FormInstance, FormRules } from "element-plus";
 import { ElNotification } from 'element-plus';
 import { dialogField, inputField, textAreaField, formField,
