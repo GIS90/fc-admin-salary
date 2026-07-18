@@ -56,7 +56,7 @@ export const SysOpsLogFilterApi = () => {
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * [系统维护->部门架构] * * * * * * * * * * * * * * * * * * * * * * * * * */
-// [GET]部门架构>TREE
+// [GET]部门架构>树结构
 export const SysOpsDepartTreeApi = () => {
     return http.get('/system/ops/depart.tree');
 };

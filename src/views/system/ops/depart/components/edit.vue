@@ -6,7 +6,7 @@
     <p>3、节点信息通过点击编辑按钮，在详情中进行信息编辑。</p>
     <p>4、节点架构通过拖拽的方式进行调整，禁用部门不允许进行调整，如需调整请先解锁。</p>
     <p>5、筛选功能可以根据节点关键字进行筛选过滤。</p>
-    <p>6、部门顺序编号，数字越小越靠前，最大值为10000。</p>
+    <p>6、部门顺序编号，数字越小越靠前，最小值为1，最大值为10000。</p>
   </div>
   <div v-else>
     <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules"
@@ -53,8 +53,8 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item label="管理员" prop="manage_rtx">
-        <el-select v-model="ruleForm.manage_rtx" style="width: 100%;" :size="selectMultiField.size" :clearable="selectMultiField.clearable"
+      <el-form-item label="管理员" prop="manageRtx">
+        <el-select v-model="ruleForm.manageRtx" style="width: 100%;" :size="selectMultiField.size" :clearable="selectMultiField.clearable"
                    :filterable="selectMultiField.filterable" :allow-create="selectMultiField.allowCreate"
                    :no-match-text="selectMultiField.noMatchText" :no-data-text="selectMultiField.noDataText"
                    :multiple="selectMultiField.multiple" :multiple-limit="selectMultiField.limit" :collapse-tags="selectMultiField.collapseTags"
@@ -72,8 +72,8 @@
           <el-radio :value="true">禁用</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="顺序编号" prop="order_id">
-        <el-input-number v-model="ruleForm.order_id"
+      <el-form-item label="排序编号" prop="orderId">
+        <el-input-number v-model="ruleForm.orderId"
                          style="width: 100%;"
                          :min="inputNumberField.min"
                          :max="inputNumberField.max"
@@ -94,8 +94,8 @@
 
 <script setup lang='ts'>
 import { ref, reactive, defineProps, defineEmits, watch } from 'vue';
-import {DepartmentNode} from "@/models/systemModel";
-import {SysOpsDepartUpdateApi, SysOpsDepartApi} from "@/api/modules/systemOps";
+import { DepartmentNode } from "@/models/systemModel";
+import { SysOpsDepartUpdateApi, SysOpsDepartApi } from "@/api/modules/systemOps";
 import { FormInstance, FormRules } from "element-plus";
 import { ElNotification } from 'element-plus';
 import {
@@ -104,7 +104,7 @@ import {
 } from "@/utils/attrs/field";
 import publicLength from "@/utils/attrs/length";
 import publicPlaceHolder from "@/utils/attrs/place";
-import {OptionEnumModelList} from "@/models/X";
+import { OptionEnumModelList } from "@/models/X";
 
 // 数据组件属性值
 const lmodelLen = publicLength.systemDepartModel;
@@ -177,6 +177,9 @@ const rules = reactive({
     { required: true, message: "部门描述不允许为空", trigger: 'blur' },
     { min: 1, max: lmodelLen.description, message: '最大长度支持'+lmodelLen.description+'位', trigger: 'blur' },
   ],
+  orderId: [
+    { required: true, message: "排序编号不允许为空", trigger: 'blur' }
+  ],
 } as FormRules);
 
 const close = () => {
@@ -199,7 +202,7 @@ const confirm = async (formEl: FormInstance | undefined) => {
           type: 'success'
         });
         close();
-        emit('fetchTreeData', false);
+        emit('fetchTreeData', true);
       }).finally(() => {
         btnDisabled.value = false;
         btnLoading.value = false;

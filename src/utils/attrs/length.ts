@@ -47,7 +47,7 @@ let systemDictEnumModel = {
 }
 
 let systemDepartModel = {
-    label: 25,
+    label: 30,
     description: 255
 }
 

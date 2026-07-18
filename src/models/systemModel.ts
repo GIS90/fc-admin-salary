@@ -88,7 +88,7 @@ export interface XtcsModelBase {
     key: string;
     remark: string;
     value: string;
-    orderId?: number;
+    orderId ?: number;
 }
 
 /**
@@ -201,11 +201,7 @@ export interface DepartmentNode {
     disabled: boolean;
     deptPath: boolean;
     manageRtx: string[];
-    // createRtx: string;
-    // createTime: string;
-    // updateRtx: string;
-    // updateTime: string;
-    orderId: number;
+    orderId ?: number;
     children: DepartmentNode[];
 }
 

@@ -74,8 +74,8 @@
                     :disabled="btnDisabled"
           />
         </el-form-item>
-        <el-form-item label="管理员" prop="manage_rtx">
-          <el-select v-model="ruleForm.manage_rtx" style="width: 100%;" :size="selectMultiField.size" :clearable="selectMultiField.clearable"
+        <el-form-item label="管理员" prop="manageRtx">
+          <el-select v-model="ruleForm.manageRtx" style="width: 100%;" :size="selectMultiField.size" :clearable="selectMultiField.clearable"
                      :filterable="selectMultiField.filterable" :allow-create="selectMultiField.allowCreate"
                      :no-match-text="selectMultiField.noMatchText" :no-data-text="selectMultiField.noDataText"
                      :multiple="selectMultiField.multiple" :multiple-limit="selectMultiField.limit" :collapse-tags="selectMultiField.collapseTags"
@@ -93,8 +93,8 @@
             <el-radio :value="true">禁用</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="顺序编号" prop="order_id">
-          <el-input-number v-model="ruleForm.order_id"
+        <el-form-item label="排序编号" prop="orderId">
+          <el-input-number v-model="ruleForm.orderId"
                            style="width: 100%;"
                            :min="inputNumberField.min"
                            :max="inputNumberField.max"
@@ -194,7 +194,7 @@ function openDialog() {
 // 响应式数据
 const ruleFormRef = ref<FormInstance>();
 const ruleForm = reactive({}) as DepartmentNode;
-ruleForm.order_id = 1; // 默认为1
+ruleForm.orderId = undefined; // 默认为1
 ruleForm.disabled = false;
 // from rule
 const rules = reactive({
@@ -206,13 +206,16 @@ const rules = reactive({
     { required: true, message: "部门描述不允许为空", trigger: 'blur' },
     { min: 1, max: lmodelLen.description, message: '最大长度支持'+lmodelLen.description+'位', trigger: 'blur' },
   ],
+  orderId: [
+    { required: true, message: "排序编号不允许为空", trigger: 'blur' }
+  ],
 } as FormRules);
 
 const resetForm = () => {
   ruleForm.label = "";
   ruleForm.description = "";
   ruleForm.manageRtx = [];
-  ruleForm.orderId = 1;
+  ruleForm.orderId = undefined;
   ruleForm.disabled = false;
 };
 
