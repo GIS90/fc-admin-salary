@@ -220,6 +220,14 @@ const confirm = async (formEl: FormInstance | undefined) => {
   margin-bottom: 20px;
   border: 1px solid #e4e7ed;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  /* ===== 新增：过渡动画 ===== */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===== 新增：悬停阴影效果 ===== */
+.depart-edit-desc:hover {
+  box-shadow: 0 12px 48px rgba(64, 158, 255, 0.20);
+  transform: translateY(-4px);
 }
 
 .depart-edit-desc h3 {
