@@ -101,6 +101,9 @@
 
     <!--批量删除-->
     <fc-batch-delete v-model:visible="batchDeleteVisible" :api="apiName" :md5List="treeCheckedKeys" @reFetchTableData="fetchTreeData"/>
+
+    <!--表格下载-->
+    <fc-batch-download v-model:visible="downloadVisible" :api="apiName" :md5List="treeCheckedKeys" />
   </div>
 </template>
 
@@ -126,7 +129,8 @@ const filterText = ref(''); // 过滤器值
 const selectNodeMd5 = ref('');
 const addVisible = ref(false); // 新增
 const editVisible = ref(false); // 编辑
-const batchDeleteVisible = ref(false);
+const batchDeleteVisible = ref(false); // 批量删除
+const downloadVisible = ref(false); // 下载
 const addNodeParent = ref<Node | null>(null);
 
 // Tree属性
@@ -180,12 +184,7 @@ const refreshHandle = () => {
 };
 
 const downloadHandle = () => {
-  ElNotification({
-    title: '提示',
-    message: '功能开发中。。。。。。',
-    type: 'error'
-  });
-  return;
+  downloadVisible.value = true;
 };
 
 const nodeClick = (node: DepartmentNode) => {
