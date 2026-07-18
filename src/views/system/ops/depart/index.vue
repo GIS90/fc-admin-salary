@@ -23,6 +23,9 @@
           <el-button id="btn-reset" icon="RefreshRight" plain @click="resetHandle">
             清空选择
           </el-button>
+          <el-button id="btn-toggle" icon="Fold" plain @click="toggleExpandAll">
+            {{ isExpanded ? '收起全部' : '展开全部' }}
+          </el-button>
         </span>
         <span style="float: right">
           <el-tooltip effect="dark" content="刷新" placement="top">
@@ -132,6 +135,7 @@ const editVisible = ref(false); // 编辑
 const batchDeleteVisible = ref(false); // 批量删除
 const downloadVisible = ref(false); // 下载
 const addNodeParent = ref<Node | null>(null);
+const isExpanded = ref(false);
 
 // Tree属性
 const treeConfigField = reactive({
@@ -310,6 +314,38 @@ const batchDeleteHandle = () => {
   batchDeleteVisible.value = true;
 };
 
+// 一键展开/收起
+const toggleExpandAll = () => {
+  const treeInstance = treeRef.value
+  if (!treeInstance) return
+
+  if (isExpanded.value) {
+    // 收起全部
+    Object.values(treeInstance.store.nodesMap).forEach((node: any) => {
+      if (node.level > 0) {
+        node.collapse()
+      }
+    })
+    treeExpandedKeys.value = []
+    isExpanded.value = false
+  } else {
+    // 展开全部
+    Object.values(treeInstance.store.nodesMap).forEach((node: any) => {
+      if (node.level > 0) {
+        node.expand()
+      }
+    })
+    // 收集所有节点的 md5
+    const allKeys: string[] = []
+    Object.values(treeInstance.store.nodesMap).forEach((node: any) => {
+      if (node.data?.md5 && node.level > 0) {
+        allKeys.push(node.data.md5)
+      }
+    })
+    treeExpandedKeys.value = allKeys
+    isExpanded.value = true
+  }
+}
 </script>
 <style scoped>
 .box {
