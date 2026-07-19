@@ -118,7 +118,57 @@ export interface XtcsModelView extends XtcsModelBase {
     updateRtx: string;
 }
 
+/**
+ * 字典>分类模型.基础
+ */
+export interface DictKeyBaseModel {
+    key: string;
+    remark: string;
+    orderId?: number;
+}
 
+/**
+ * 字典>分类模型.详情
+ */
+export interface DictKeyDetailModel extends DictKeyBaseModel {
+    md5: string;
+}
+
+/**
+ * 字典>分类模型.列表
+ */
+export interface DictKeyListModel extends DictKeyBaseModel {
+    id: number;
+    md5: string;
+    lock: boolean;
+}
+
+/**
+ * 字典>枚举模型.基础
+ */
+export interface DictEnumBaseModel {
+    name: string;
+    key: string;
+    value: string;
+    description: string;
+    orderId?: number;
+}
+
+/**
+ * 字典>枚举模型.详情
+ */
+export interface DictEnumDetailModel extends DictEnumBaseModel {
+    md5: string;
+}
+
+/**
+ * 字典>枚举模型.列表
+ */
+export interface DictEnumListModel extends DictEnumBaseModel{
+    id: number;
+    md5: string;
+    lock: boolean;
+}
 
 // - - - - - - - - - - - - - - - - - - - - - [系统维护] - - - - - - - - - - - - - - - - - - - - - -
 /**
@@ -208,70 +258,6 @@ export interface DepartmentNode {
 export interface DepartmentDragNode {
     md5: string;
     pid: number;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
- * 字典>分类模型.基础
- */
-export interface DictKeyBaseModel {
-    key: string;
-    remark: string;
-    order_id: number;
-}
-
-/**
- * 字典>分类模型.详情
- */
-export interface DictKeyDetailModel extends DictKeyBaseModel {
-    md5: string;
-}
-
-/**
- * 字典>分类模型.列表
- */
-export interface DictKeyListModel extends DictKeyBaseModel {
-    id: number;
-    md5: string;
-    status: boolean;
-}
-
-/**
- * 字典>枚举模型.基础
- */
-export interface DictEnumBaseModel {
-    name: string;
-    key: string;
-    value: string;
-    description: string;
-    order_id: number;
-}
-
-/**
- * 字典>枚举模型.详情
- */
-export interface DictEnumDetailModel extends DictEnumBaseModel {
-    md5: string;
-}
-
-/**
- * 字典>枚举模型.列表
- */
-export interface DictEnumListModel extends DictEnumBaseModel{
-    id: number;
-    md5: string;
-    status: boolean;
 }
 
 

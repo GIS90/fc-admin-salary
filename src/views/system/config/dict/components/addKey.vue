@@ -42,7 +42,7 @@
       <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules"
                :label-position="formField.labelPosition" :label-width="formField.labelWidth"
                :size="formField.size" style="width: 100%" >
-        <el-form-item label="字典类别标识" prop="key">
+        <el-form-item label="字典分类标识" prop="key">
           <el-input v-model.trim="ruleForm.key"
                     :size="inputField.size"
                     :show-word-limit="inputField.showWordLimit"
@@ -54,7 +54,7 @@
           />
           <div class="el-form-item-msg">字典类别唯一标识，设定后不允许修改</div>
         </el-form-item>
-        <el-form-item label="字典类别名称" prop="remark">
+        <el-form-item label="字典分类名称" prop="remark">
           <el-input v-model.trim="ruleForm.remark"
                     :size="inputField.size"
                     :show-word-limit="inputField.showWordLimit"
@@ -65,8 +65,8 @@
                     :disabled="btnDisabled"
           />
         </el-form-item>
-        <el-form-item label="顺序编号" prop="order_id">
-          <el-input-number v-model="ruleForm.order_id"
+        <el-form-item label="顺序编号" prop="orderId">
+          <el-input-number v-model="ruleForm.orderId"
                            style="width: 100%;"
                            :min="inputNumberField.min"
                            :max="inputNumberField.max"
@@ -154,7 +154,7 @@ const ruleFormRef = ref<FormInstance>();
 const ruleForm = reactive({
   key: "",
   remark: "",
-  order_id: 1
+  orderId: undefined
 }) as DictKeyBaseModel;
 // from rule
 const rules = reactive<FormRules<DictKeyBaseModel>>({
@@ -165,13 +165,16 @@ const rules = reactive<FormRules<DictKeyBaseModel>>({
   remark: [
     { required: true, message: "字典分类名称不允许为空", trigger: 'blur' },
     { min: 1, max: ProfileLen.remark, message: '最大长度支持'+ProfileLen.remark+'位', trigger: 'blur' },
-  ]
+  ],
+  orderId: [
+    { required: true, message: "数据字典分类排序编号不允许为空", trigger: 'blur' }
+  ],
 });
 
 const resetForm = () => {
   ruleForm.key = "";
   ruleForm.remark = "";
-  ruleForm.order_id = 1;
+  ruleForm.orderId = undefined;
 };
 
 // 确认
