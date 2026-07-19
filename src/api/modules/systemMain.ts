@@ -139,18 +139,3 @@ export const SysMainMenuAddApi = (params: Menu.MenuBaseFlat) => {
 export const SysMainMenuAddEnumApi = () => {
     return http.get('/system/main/menu.addEnum');
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

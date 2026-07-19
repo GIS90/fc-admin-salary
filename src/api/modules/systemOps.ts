@@ -3,7 +3,7 @@ import {ResultPage} from "@/api/utils/models";
 import {DepartmentDragNode, DepartmentNode, TaskModelList, LogModelList} from "@/models/systemModel";
 import {RequestMd5Model, RequestMd5Models} from "@/models/X";
 
-/* * * * * * * * * * * * * * * * * * * * * * [任务中心] * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* * * * * * * * * * * * * * * * * * * * * * [系统维护->任务中心] * * * * * * * * * * * * * * * * * * * * * * * * * */
 // [POST]列表
 export const SysOpsTaskListApi = (params: any) => {
     return http.post<ResultPage<TaskModelList>>('/system/ops/task.list', params);
@@ -29,7 +29,7 @@ export const SysOpsTaskApi = (params: RequestMd5Model) => {
     return http.get('/system/ops/task', params);
 };
 
-/* * * * * * * * * * * * * * * * * * * * * * [系统日志] * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* * * * * * * * * * * * * * * * * * * * * * [系统维护->系统日志] * * * * * * * * * * * * * * * * * * * * * * * * * */
 // [POST]系统日志>列表
 export const SysOpsLogListApi = (params: any) => {
     return http.post<ResultPage<LogModelList>>('/system/ops/log.list', params);
