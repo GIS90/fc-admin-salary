@@ -3,7 +3,7 @@ import {ResultPage} from "@/api/utils/models";
 import {DictEnumBaseModel, DictEnumDetailModel, DictEnumListModel, DictKeyBaseModel, DictKeyDetailModel, DictKeyListModel, XtcsModelBase, XtcsModelList} from "@/models/systemModel";
 import {RequestMd5Model, RequestMd5Models, RequestStatusModel} from "@/models/X";
 
-/* * * * * * * * * * * * * * * * * * * * * * [参数配置] * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* * * * * * * * * * * * * * * * * * * * * * [系统配置>参数配置] * * * * * * * * * * * * * * * * * * * * * * * * * */
 // [GET]列表
 export const SysConfigXtcsListApi = (params: any) => {
     return http.get<ResultPage<XtcsModelList>>('/system/config/xtcs.list', params);
@@ -43,20 +43,6 @@ export const SysConfigXtcsAddApi = (params: XtcsModelBase) => {
 export const SysConfigXtcsViewApi = (params: RequestMd5Model) => {
     return http.get('/system/config/xtcs.view', params);
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /* * * * * * * * * * * * * * * * * * * * * * [系统维护->数据字典] * * * * * * * * * * * * * * * * * * * * * * * * * */
 // [GET]数据字典>字典分类列表
