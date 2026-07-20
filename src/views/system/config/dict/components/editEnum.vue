@@ -88,8 +88,8 @@
                     :disabled="btnDisabled"
           />
         </el-form-item>
-        <el-form-item label="顺序编号" prop="order_id">
-          <el-input-number v-model="ruleForm.order_id"
+        <el-form-item label="顺序编号" prop="orderId">
+          <el-input-number v-model="ruleForm.orderId"
                            style="width: 100%;"
                            :min="inputNumberField.min"
                            :max="inputNumberField.max"
@@ -199,7 +199,10 @@ const rules = reactive<FormRules<DictEnumDetailModel>>({
   value: [
     { required: true, message: "字典枚举值名称不允许为空", trigger: 'blur' },
     { min: 1, max: ProfileLen.value, message: '最大长度支持'+ProfileLen.value+'位', trigger: 'blur' },
-  ]
+  ],
+  orderId: [
+    { required: true, message: "系统参数排序编号不允许为空", trigger: 'blur' }
+  ],
 });
 
 

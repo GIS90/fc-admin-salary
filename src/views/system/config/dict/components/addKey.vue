@@ -159,11 +159,11 @@ const ruleForm = reactive({
 // from rule
 const rules = reactive<FormRules<DictKeyBaseModel>>({
   key: [
-    { required: true, message: "字典分类标识不允许为空", trigger: 'blur' },
+    { required: true, message: "数据字典分类标识不允许为空", trigger: 'blur' },
     { min: 1, max: ProfileLen.key, message: '最大长度支持'+ProfileLen.key+'位', trigger: 'blur' },
   ],
   remark: [
-    { required: true, message: "字典分类名称不允许为空", trigger: 'blur' },
+    { required: true, message: "数据字典分类名称不允许为空", trigger: 'blur' },
     { min: 1, max: ProfileLen.remark, message: '最大长度支持'+ProfileLen.remark+'位', trigger: 'blur' },
   ],
   orderId: [

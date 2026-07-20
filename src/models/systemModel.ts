@@ -150,7 +150,7 @@ export interface DictEnumBaseModel {
     name: string;
     key: string;
     value: string;
-    description: string;
+    remark: string;
     orderId?: number;
 }
 

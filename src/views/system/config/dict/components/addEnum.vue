@@ -88,8 +88,8 @@
                     :disabled="btnDisabled"
           />
         </el-form-item>
-        <el-form-item label="顺序编号" prop="order_id">
-          <el-input-number v-model="ruleForm.order_id"
+        <el-form-item label="顺序编号" prop="orderId">
+          <el-input-number v-model="ruleForm.orderId"
                            style="width: 100%;"
                            :min="inputNumberField.min"
                            :max="inputNumberField.max"
@@ -192,22 +192,25 @@ const ruleForm = reactive({
   key: "",
   value: "",
   description: "",
-  order_id: 1
+  orderId: undefined
 }) as DictEnumBaseModel;
 
 // from rule
 const rules = reactive<FormRules<DictEnumBaseModel>>({
   name: [
-    { required: true, message: "字典类别不允许为空", trigger: 'change' },
+    { required: true, message: "数据字典分类不允许为空", trigger: 'change' },
   ],
   key: [
-    { required: true, message: "字典枚举值标识不允许为空", trigger: 'blur' },
+    { required: true, message: "数据字典枚举KEY标识不允许为空", trigger: 'blur' },
     { min: 1, max: ProfileLen.key, message: '最大长度支持'+ProfileLen.key+'位', trigger: 'blur' },
   ],
   value: [
-    { required: true, message: "字典枚举值名称不允许为空", trigger: 'blur' },
+    { required: true, message: "数据字典枚举值名称不允许为空", trigger: 'blur' },
     { min: 1, max: ProfileLen.value, message: '最大长度支持'+ProfileLen.value+'位', trigger: 'blur' },
-  ]
+  ],
+  orderId: [
+    { required: true, message: "数据字典枚举排序编号不允许为空", trigger: 'blur' }
+  ],
 });
 
 // 监听 props.name 变化，自动更新 ruleForm.name
@@ -221,7 +224,7 @@ const resetForm = () => {
   ruleForm.key = "";
   ruleForm.value = "";
   ruleForm.description = "";
-  ruleForm.order_id = 1;
+  ruleForm.orderId = undefined;
 };
 
 // 请求数据API

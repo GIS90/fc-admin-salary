@@ -113,11 +113,11 @@ import { DictKeyListModel, DictEnumListModel } from "@/models/systemModel";
 import { ColumnProps, FcTableInstance } from "@/components/fcTable/model";
 import FcTreeFilter from '@/components/fcTreeFilter/index.vue';
 import { fcTableField, fcTreeFilterField, PopConfirmField, buttonField } from "@/utils/attrs/field";
+import { tableWidth } from "@/utils/attrs/table";
 import KeyAdd from "./components/addKey.vue";
 import EnumAdd from "./components/addEnum.vue";
 import KeyEdit from "./components/editKey.vue";
 import EnumEdit from "./components/editEnum.vue";
-
 
 const allNode = 'ALL'; // 全部节点
 const apiName = "SystemOpsDict"; // 组件标识名称
@@ -132,7 +132,6 @@ const addKeyVisible = ref(false); // 字典Key[新增]组件状态
 const editKeyVisible = ref(false); // 字典Key[编辑]组件状态
 const addEnumVisible = ref(false); // 字典Enum[新增]组件状态
 const editEnumVisible = ref(false); // 字典Enum[编辑]组件状态
-
 
 const fcTreeFilterRef = ref<InstanceType<typeof FcTreeFilter>>()    // fcTreeFilter 实例
 // fc-tree-filter属性
@@ -175,13 +174,13 @@ const ftField = {...fcTableField, ...fcTableConfig};
 // table表格配置
 const columns = reactive<ColumnProps<DictEnumListModel>[]>([
   { type: "selection", fixed: "left", width: 60 },
-  { prop: "id", label: "ID", width: 80 },
+  { prop: "id", label: "ID", width: tableWidth.id },
   { prop: "name", label: "Key值" },
   { prop: "key", label: "名称" },
   { prop: "value", label: "键值" },
-  { prop: "order_id", label: "顺序" },
-  { prop: "options", label: "操作", width: 120, fixed: "right" },
-  { prop: "status", label: "状态管理", width: 160, fixed: "right" }
+  { prop: "orderId", label: "顺序" },
+  { prop: "options", label: "操作", width: tableWidth.option2, fixed: "right" },
+  { prop: "status", label: "状态管理", width: tableWidth.status, fixed: "right" }
 ]);
 
 // 表格数据
