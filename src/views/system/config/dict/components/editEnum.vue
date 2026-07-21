@@ -54,7 +54,7 @@
                     :placeholder="ProfilePlace.key"
                     disabled
           />
-          <div class="el-form-item-msg">字典枚举唯一标识，设定后不允许修改</div>
+          <div class="el-form-item-msg">数据字典枚举唯一标识，设定后不允许修改</div>
         </el-form-item>
         <el-form-item label="字典枚举名称" prop="value">
           <el-input v-model.trim="ruleForm.value"
@@ -179,13 +179,13 @@ const ruleForm = reactive({}) as DictEnumDetailModel;
 
 // from rule
 const rules = reactive<FormRules<DictEnumDetailModel>>({
-  name: [
-    { required: true, message: "数据字典分类不允许为空", trigger: 'change' },
-  ],
-  key: [
-    { required: true, message: "数据字典枚举标识不允许为空", trigger: 'blur' },
-    { min: 1, max: ProfileLen.key, message: '最大长度支持'+ProfileLen.key+'位', trigger: 'blur' },
-  ],
+  // name: [
+  //   { required: true, message: "数据字典分类不允许为空", trigger: 'change' },
+  // ],
+  // key: [
+  //   { required: true, message: "数据字典枚举标识不允许为空", trigger: 'blur' },
+  //   { min: 1, max: ProfileLen.key, message: '最大长度支持'+ProfileLen.key+'位', trigger: 'blur' },
+  // ],
   value: [
     { required: true, message: "数据字典枚举名称不允许为空", trigger: 'blur' },
     { min: 1, max: ProfileLen.value, message: '最大长度支持'+ProfileLen.value+'位', trigger: 'blur' },
