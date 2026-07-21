@@ -91,9 +91,9 @@ export const SysOpsDictEnumsDeleteApi = (params: RequestMd5Models) => {
     return http.put('/system/config/dict/de.batch.delete', params);
 };
 
-// [DELETE]EV>启用/注销
+// [PUT]EV>启用/注销
 export const SysOpsDictEnumStatusApi = (params: RequestStatusModel) => {
-    return http.delete('/system/config/dict/de.status', params);
+    return http.put('/system/config/dict/de.status', params);
 };
 
 // [POST]EV>新增
