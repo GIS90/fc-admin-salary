@@ -42,24 +42,15 @@
       <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules"
                :label-position="formField.labelPosition" :label-width="formField.labelWidth"
                :size="formField.size" style="width: 100%" >
-        <el-form-item label="字典枚举Key值" prop="name">
-          <el-select v-model="ruleForm.name" style="width: 100%;" :size="selectSingleField.size" :clearable="selectSingleField.clearable"
-                     :filterable="selectSingleField.filterable" :allow-create="selectSingleField.allowCreate"
-                     :no-match-text="selectSingleField.noMatchText" :no-data-text="selectSingleField.noDataText"
-                     :placeholder="ProfilePlace.name" :disabled="btnDisabled">
-            <el-option v-for="item in keyOption" :key="item.value" :label="item.label" :value="item.value" :disabled="item.disabled">
-              <span class="el-select-key">{{ item.label }}</span>
-              <span class="el-select-value">{{ item.value }}</span>
-            </el-option>
-          </el-select>
+        <el-form-item label="字典分类标识" prop="name">
+          <el-input v-model.trim="ruleForm.name"
+                    :size="inputField.size"
+                    disabled
+          />
         </el-form-item>
         <el-form-item label="字典枚举标识" prop="key">
           <el-input v-model.trim="ruleForm.key"
                     :size="inputField.size"
-                    :show-word-limit="inputField.showWordLimit"
-                    :clearable="inputField.clearable"
-                    :prefix-icon="inputField.prefixIcon"
-                    :maxlength="ProfileLen.key"
                     :placeholder="ProfilePlace.key"
                     disabled
           />
@@ -76,15 +67,15 @@
                     :disabled="btnDisabled"
           />
         </el-form-item>
-        <el-form-item label="描述" prop="description">
-          <el-input v-model="ruleForm.description"
+        <el-form-item label="字典枚举描述" prop="remark">
+          <el-input v-model="ruleForm.remark"
                     :type="textAreaField.type"
                     :size="textAreaField.size"
                     :show-word-limit="textAreaField.showWordLimit"
                     :clearable="textAreaField.clearable"
                     :autosize="introductionSize"
-                    :maxlength="ProfileLen.description"
-                    :placeholder="ProfilePlace.description"
+                    :maxlength="ProfileLen.remark"
+                    :placeholder="ProfilePlace.remark"
                     :disabled="btnDisabled"
           />
         </el-form-item>
@@ -116,7 +107,7 @@
 
 <script setup lang='ts'>
 import { ref, reactive, defineProps, defineEmits, watch } from 'vue';
-import {DictEnumDetailModel} from "@/models/systemModel";
+import {DictEnumDetailModel, XtcsModelDetail} from "@/models/systemModel";
 import {SysOpsDictEnumApi, SysOpsDictEnumUpdateApi} from "@/api/modules/systemConfig";
 import { FormInstance, FormRules } from "element-plus";
 import { ElNotification } from 'element-plus';
@@ -142,7 +133,6 @@ const btnDisabled = ref(false); // 禁用
 const btnLoading = ref(false); // 加载中
 
 // 字典Key
-const keyOption = ref<OptionEnumModel[]>([]);
 const props = defineProps({
   visible: {
     type: Boolean,
@@ -190,18 +180,18 @@ const ruleForm = reactive({}) as DictEnumDetailModel;
 // from rule
 const rules = reactive<FormRules<DictEnumDetailModel>>({
   name: [
-    { required: true, message: "字典类别不允许为空", trigger: 'change' },
+    { required: true, message: "数据字典分类不允许为空", trigger: 'change' },
   ],
   key: [
-    { required: true, message: "字典枚举值标识不允许为空", trigger: 'blur' },
+    { required: true, message: "数据字典枚举标识不允许为空", trigger: 'blur' },
     { min: 1, max: ProfileLen.key, message: '最大长度支持'+ProfileLen.key+'位', trigger: 'blur' },
   ],
   value: [
-    { required: true, message: "字典枚举值名称不允许为空", trigger: 'blur' },
+    { required: true, message: "数据字典枚举名称不允许为空", trigger: 'blur' },
     { min: 1, max: ProfileLen.value, message: '最大长度支持'+ProfileLen.value+'位', trigger: 'blur' },
   ],
   orderId: [
-    { required: true, message: "系统参数排序编号不允许为空", trigger: 'blur' }
+    { required: true, message: "数据字典枚举排序编号不允许为空", trigger: 'blur' }
   ],
 });
 
@@ -210,9 +200,8 @@ const rules = reactive<FormRules<DictEnumDetailModel>>({
 const fetchApiData = async (md5: string) => {
   const response = await SysOpsDictEnumApi({md5});
   if (response.data) {
-    const res = response as { data: { enum: DictEnumDetailModel, key: OptionEnumModel[] } }; // declare
-    Object.assign(ruleForm, res.data.enum);
-    keyOption.value = res.data.key as OptionEnumModel[];
+    const res = response as { data: DictEnumDetailModel }; // declare
+    Object.assign(ruleForm, res.data);
   }
 };
 

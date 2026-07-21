@@ -36,14 +36,14 @@ let systemMenuModel = {
 
 let systemDictKeyModel = {
     key: 25,
-    remark: 10
+    value: 10
 }
 
 let systemDictEnumModel = {
     name: 25,
     key: 25,
     value: 25,
-    description: 255
+    remark: 255
 }
 
 let systemDepartModel = {

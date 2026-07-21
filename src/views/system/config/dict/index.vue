@@ -138,7 +138,7 @@ const fcTreeFilterRef = ref<InstanceType<typeof FcTreeFilter>>()    // fcTreeFil
 const fcTreeFilterConfig = reactive({
   name: "md5",
   showSearch: true,
-  treeProps: {label: "remark"}, // 设置label显示内容
+  treeProps: {label: "value"}, // 设置label显示内容
   requestApi: SysOpsDictKeyListApi, // 数据API
 });
 const ftfField = {...fcTreeFilterField, ...fcTreeFilterConfig};
@@ -152,7 +152,8 @@ const setKeySelected = (row: any) => {
 
 const clickTreeNode = (node: any) => {
   if (node.status) {
-    ElMessage.warning("数据已锁定，请先解锁");
+    ElMessage.warning("[字典分类]数据已锁定，请先解锁在进行操作");
+    return
   };
   // 设置当前选择
   setKeySelected(node);
@@ -175,10 +176,10 @@ const ftField = {...fcTableField, ...fcTableConfig};
 const columns = reactive<ColumnProps<DictEnumListModel>[]>([
   { type: "selection", fixed: "left", width: 60 },
   { prop: "id", label: "ID", width: tableWidth.id },
-  { prop: "name", label: "Key值" },
-  { prop: "key", label: "名称" },
-  { prop: "value", label: "键值" },
-  { prop: "orderId", label: "顺序" },
+  { prop: "name", label: "字典分类" },
+  { prop: "key", label: "标识" },
+  { prop: "value", label: "值" },
+  { prop: "orderId", label: "顺序编号" },
   { prop: "options", label: "操作", width: tableWidth.option2, fixed: "right" },
   { prop: "status", label: "状态管理", width: tableWidth.status, fixed: "right" }
 ]);
@@ -209,13 +210,13 @@ const reFetchTreeData = (isReload: boolean = false) => {
 // 字典分类.单条删除
 const deleteDictCateHandle = (scope: any) => {
   if (scope?.row?.data?.md5 == allNode) {
-    ElMessage.warning("全部字典类别不允许操作");
+    ElMessage.warning("[字典分类]全部不允许操作");
     return;
   };
   SysOpsDictKeyDeleteApi({ md5: scope.row.data.md5 }).then(() => {
     ElNotification({
       title: '提示',
-      message: '删除成功',
+      message: '[字典分类]删除成功',
       type: 'success'
     });
     // 更新Tree数据
@@ -236,13 +237,13 @@ const deleteDictCateHandle = (scope: any) => {
 // 字典分类.锁定
 const lockDictKeyHandle = (row: DictKeyListModel) => {
   if (row?.md5 == allNode) {
-    ElMessage.warning("全部字典类别不允许操作");
+    ElMessage.warning("[字典枚举]全部不允许操作");
     return;
   };
   SysOpsDictKeyStatusApi({ md5: row.md5, value: true }).then(() => {
     ElNotification({
       title: '提示',
-      message: '数据已锁定，如进行操作请先进行解锁',
+      message: '[字典枚举]数据已锁定，如需操作请先进行解锁',
       type: 'success'
     });
 
@@ -290,7 +291,7 @@ const deleteDictEnumHandle = (md5: string) => {
   SysOpsDictEnumDeleteApi({ md5 }).then(() => {
     ElNotification({
       title: '提示',
-      message: '删除成功',
+      message: '[字典枚举]删除成功',
       type: 'success'
     });
     reFetchTableData(true);
@@ -313,7 +314,7 @@ const batchDeleteDictEnumHandle = () => {
 // 字典枚举.启用/禁用
 const statusDictEnumHandle = (md5: string, value: boolean) => {
   SysOpsDictEnumStatusApi({md5, value}).then(() => {
-    const message = value ? '<strong>状态修改成功</strong><br /><div style="color: red;">禁用状态的字典数据不可选择</div>' : '<strong>状态修改成功</strong>';
+    const message = value ? '<strong>状态修改成功</strong><br /><div style="color: red;">禁用状态的数据字典数据不可选择</div>' : '<strong>状态修改成功</strong>';
     ElNotification({
       title: '提示',
       dangerouslyUseHTMLString: true,

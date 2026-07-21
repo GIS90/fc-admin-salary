@@ -123,7 +123,7 @@ export interface XtcsModelView extends XtcsModelBase {
  */
 export interface DictKeyBaseModel {
     key: string;
-    remark: string;
+    value: string;
     orderId?: number;
 }
 

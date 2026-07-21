@@ -52,16 +52,16 @@
                     :placeholder="ProfilePlace.key"
                     :disabled="btnDisabled"
           />
-          <div class="el-form-item-msg">字典类别唯一标识，设定后不允许修改</div>
+          <div class="el-form-item-msg">数据字典分类唯一标识，设定后不允许修改，允许字母、数字、连字符(-)和点(.)的组合</div>
         </el-form-item>
-        <el-form-item label="字典分类名称" prop="remark">
-          <el-input v-model.trim="ruleForm.remark"
+        <el-form-item label="字典分类名称" prop="value">
+          <el-input v-model.trim="ruleForm.value"
                     :size="inputField.size"
                     :show-word-limit="inputField.showWordLimit"
                     :clearable="inputField.clearable"
                     :prefix-icon="inputField.prefixIcon"
-                    :maxlength="ProfileLen.remark"
-                    :placeholder="ProfilePlace.remark"
+                    :maxlength="ProfileLen.value"
+                    :placeholder="ProfilePlace.value"
                     :disabled="btnDisabled"
           />
         </el-form-item>
@@ -153,7 +153,7 @@ function openDialog() {
 const ruleFormRef = ref<FormInstance>();
 const ruleForm = reactive({
   key: "",
-  remark: "",
+  value: "",
   orderId: undefined
 }) as DictKeyBaseModel;
 // from rule
@@ -162,9 +162,9 @@ const rules = reactive<FormRules<DictKeyBaseModel>>({
     { required: true, message: "数据字典分类标识不允许为空", trigger: 'blur' },
     { min: 1, max: ProfileLen.key, message: '最大长度支持'+ProfileLen.key+'位', trigger: 'blur' },
   ],
-  remark: [
+  value: [
     { required: true, message: "数据字典分类名称不允许为空", trigger: 'blur' },
-    { min: 1, max: ProfileLen.remark, message: '最大长度支持'+ProfileLen.remark+'位', trigger: 'blur' },
+    { min: 1, max: ProfileLen.value, message: '最大长度支持'+ProfileLen.value+'位', trigger: 'blur' },
   ],
   orderId: [
     { required: true, message: "数据字典分类排序编号不允许为空", trigger: 'blur' }
@@ -173,7 +173,7 @@ const rules = reactive<FormRules<DictKeyBaseModel>>({
 
 const resetForm = () => {
   ruleForm.key = "";
-  ruleForm.remark = "";
+  ruleForm.value = "";
   ruleForm.orderId = undefined;
 };
 

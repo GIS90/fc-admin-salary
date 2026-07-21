@@ -52,7 +52,7 @@
                     :placeholder="ProfilePlace.key"
                     disabled
           />
-          <div class="el-form-item-msg">系统参数唯一标识，系统不允许修改</div>
+          <div class="el-form-item-msg">系统参数唯一标识，不允许修改</div>
         </el-form-item>
         <el-form-item label="参数说明" prop="remark">
           <el-input v-model.trim="ruleForm.remark"

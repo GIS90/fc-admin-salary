@@ -42,7 +42,7 @@
       <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules"
                :label-position="formField.labelPosition" :label-width="formField.labelWidth"
                :size="formField.size" style="width: 100%" >
-        <el-form-item label="字典枚举Key值" prop="name">
+        <el-form-item label="字典分类标识" prop="name">
           <el-select v-model="ruleForm.name" style="width: 100%;" :size="selectSingleField.size" :clearable="selectSingleField.clearable"
                      :filterable="selectSingleField.filterable" :allow-create="selectSingleField.allowCreate"
                      :no-match-text="selectSingleField.noMatchText" :no-data-text="selectSingleField.noDataText"
@@ -63,7 +63,7 @@
                     :placeholder="ProfilePlace.key"
                     :disabled="btnDisabled"
           />
-          <div class="el-form-item-msg">字典枚举唯一标识，设定后不允许修改</div>
+          <div class="el-form-item-msg">字典枚举唯一标识，设定后不允许修改，允许字母、数字、连字符(-)和点(.)的组合</div>
         </el-form-item>
         <el-form-item label="字典枚举名称" prop="value">
           <el-input v-model.trim="ruleForm.value"
@@ -76,15 +76,15 @@
                     :disabled="btnDisabled"
           />
         </el-form-item>
-        <el-form-item label="描述" prop="description">
-          <el-input v-model="ruleForm.description"
+        <el-form-item label="字典枚举描述" prop="remark">
+          <el-input v-model="ruleForm.remark"
                     :type="textAreaField.type"
                     :size="textAreaField.size"
                     :show-word-limit="textAreaField.showWordLimit"
                     :clearable="textAreaField.clearable"
                     :autosize="introductionSize"
-                    :maxlength="ProfileLen.description"
-                    :placeholder="ProfilePlace.description"
+                    :maxlength="ProfileLen.remark"
+                    :placeholder="ProfilePlace.remark"
                     :disabled="btnDisabled"
           />
         </el-form-item>
@@ -188,10 +188,10 @@ function openDialog() {
 // 响应式数据
 const ruleFormRef = ref<FormInstance>();
 const ruleForm = reactive({
-  name: "",
+  name: props.name || "",
   key: "",
   value: "",
-  description: "",
+  remark: "",
   orderId: undefined
 }) as DictEnumBaseModel;
 
@@ -201,11 +201,11 @@ const rules = reactive<FormRules<DictEnumBaseModel>>({
     { required: true, message: "数据字典分类不允许为空", trigger: 'change' },
   ],
   key: [
-    { required: true, message: "数据字典枚举KEY标识不允许为空", trigger: 'blur' },
+    { required: true, message: "数据字典枚举标识不允许为空", trigger: 'blur' },
     { min: 1, max: ProfileLen.key, message: '最大长度支持'+ProfileLen.key+'位', trigger: 'blur' },
   ],
   value: [
-    { required: true, message: "数据字典枚举值名称不允许为空", trigger: 'blur' },
+    { required: true, message: "数据字典枚举名称不允许为空", trigger: 'blur' },
     { min: 1, max: ProfileLen.value, message: '最大长度支持'+ProfileLen.value+'位', trigger: 'blur' },
   ],
   orderId: [
@@ -223,7 +223,7 @@ const resetForm = () => {
   // ruleForm.name = "";
   ruleForm.key = "";
   ruleForm.value = "";
-  ruleForm.description = "";
+  ruleForm.remark = "";
   ruleForm.orderId = undefined;
 };
 

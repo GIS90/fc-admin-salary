@@ -2,7 +2,7 @@
  * Set
  * */
 let setterProfileModel = {
-    rtxId: "请输入用户RTX-ID",
+    rtxId: "请输入用户RTX-ID，唯一标识",
     userName: "请输入用户昵称",
     sex: "请选择用户性别",
     email: "请输入用户Email",
@@ -25,9 +25,9 @@ let downloadFormModel = {
 }
 
 let systemRoleModel = {
-    engname: "请输入角色ID",
+    engname: "请输入角色唯一标识",
     chnname: "请输入角色名称",
-    introduction: "请输入角色相关描述。。。"
+    introduction: "请输入角色相关描述。。。。。。"
 }
 
 let systemMenuModel = {
@@ -45,22 +45,21 @@ let systemMenuModel = {
 }
 
 let systemDictKeyModel = {
-    key: "请输入字典类别唯一标识，建议采用英文+中划线",
-    remark: "请输入字典类别名称"
+    key: "请输入数据字典分类唯一标识，建议采用英文+中划线",
+    value: "请输入数据字典分类名称"
 }
 
 let systemDictEnumModel = {
-    key: "请输入字典枚举值唯一标识，建议采用英文+中划线",
-    value: "请输入字典枚举值名称",
-    description: "请输入字典枚举值描述",
-    name: "请选择字典枚举值Key"
+    key: "请输入数据字典枚举唯一标识，建议采用英文+中划线",
+    value: "请输入数据字典枚举名称",
+    remark: "请输入数据字典枚举描述",
+    name: "请选择数据字典分类标识"
 }
 
 let systemDepartModel = {
     label: "请输入部门节点名称",
     description: "请输入部门节点描述",
     manage_rtx: "请选择部门节点管理员，支持多选",
-    name: "请选择字典枚举值Key",
     pnode: "请选择上级部门节点"
 }
 
