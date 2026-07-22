@@ -43,15 +43,7 @@
                :label-position="formField.labelPosition" :label-width="formField.labelWidth"
                :size="formField.size" style="width: 100%" >
         <el-form-item label="参数名称" prop="key">
-          <el-input v-model.trim="ruleForm.key"
-                    :size="inputField.size"
-                    :show-word-limit="inputField.showWordLimit"
-                    :clearable="inputField.clearable"
-                    :prefix-icon="inputField.prefixIcon"
-                    :maxlength="ProfileLen.key"
-                    :placeholder="ProfilePlace.key"
-                    disabled
-          />
+          <el-input v-model.trim="ruleForm.key" :size="inputField.size" disabled/>
           <div class="el-form-item-msg">系统参数唯一标识，不允许修改</div>
         </el-form-item>
         <el-form-item label="参数说明" prop="remark">

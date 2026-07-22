@@ -43,69 +43,44 @@
                :label-position="formField.labelPosition" :label-width="formField.labelWidth">
         <el-divider content-position="left">基本信息</el-divider>
         <el-form-item label="参数名称" prop="key">
-          <el-input v-model.trim="ruleForm.key"
-                    :size="inputField.size"
-                    :placeholder="ProfilePlace.key"
-                    disabled
-          />
+          <el-input v-model.trim="ruleForm.key" :size="inputField.size" disabled/>
         </el-form-item>
         <el-form-item label="参数说明" prop="remark">
-          <el-input v-model.trim="ruleForm.remark"
-                    :size="inputField.size"
-                    :placeholder="ProfilePlace.remark"
-                    disabled
-          />
+          <el-input v-model.trim="ruleForm.remark" :size="inputField.size" disabled/>
         </el-form-item>
         <el-form-item label="参数值" prop="value">
           <el-input v-model="ruleForm.value"
                     :type="textAreaField.type"
                     :size="textAreaField.size"
-                    :placeholder="ProfilePlace.value"
                     :rows="4"
                     disabled
           />
         </el-form-item>
         <el-form-item label="排序编号" prop="orderId">
-          <el-input v-model="ruleForm.orderId"
-                     style="width: 100%;"
-                     :size="inputField.size"
-                     disabled
-          />
+          <el-input v-model="ruleForm.orderId" style="width: 100%;" :size="inputField.size" disabled/>
         </el-form-item>
         <el-divider content-position="left">其他信息</el-divider>
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="创建人" prop="createRtx">
-              <el-input v-model.trim="ruleForm.createRtx"
-                        :size="inputField.size"
-                        disabled
-              />
+              <el-input v-model.trim="ruleForm.createRtx" :size="inputField.size" disabled/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="创建时间" prop="createTime">
-              <el-input v-model.trim="ruleForm.createTime"
-                        :size="inputField.size"
-                        disabled
-              />
+              <el-input v-model.trim="ruleForm.createTime" :size="inputField.size" disabled/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20" v-if="ruleForm.updateRtx">
           <el-col :span="12">
             <el-form-item label="更新人" prop="updateRtx">
-              <el-input v-model.trim="ruleForm.updateRtx"
-                        :size="inputField.size"
-                        disabled
-              />
+              <el-input v-model.trim="ruleForm.updateRtx" :size="inputField.size" disabled/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="更新时间" prop="updateTime">
-              <el-input v-model.trim="ruleForm.updateTime"
-                        :size="inputField.size"
-                        disabled
-              />
+              <el-input v-model.trim="ruleForm.updateTime" :size="inputField.size" disabled/>
             </el-form-item>
           </el-col>
         </el-row>

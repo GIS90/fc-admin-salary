@@ -45,13 +45,9 @@
         <el-form-item label="角色ID" prop="engname">
           <el-input v-model.trim="ruleForm.engname"
                     :size="inputField.size"
-                    :show-word-limit="inputField.showWordLimit"
-                    :clearable="inputField.clearable"
-                    :maxlength="ProfileLen.engname"
-                    :placeholder="ProfilePlace.engname"
                     disabled
           />
-          <div class="el-form-item-msg">角色信息唯一标识，系统不允许修改</div>
+          <div class="el-form-item-msg">角色信息唯一标识，不允许修改</div>
         </el-form-item>
         <el-form-item label="名称" prop="chnname">
           <el-input v-model.trim="ruleForm.chnname"

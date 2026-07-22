@@ -52,7 +52,7 @@
                     :placeholder="ProfilePlace.engname"
                     :disabled="btnDisabled"
           />
-          <div class="el-form-item-msg">只允许包含字母、数字、连字符(-)和点(.)（不能包含空格、标点等特殊字符），示例：tool-ALL</div>
+          <div class="el-form-item-msg">只允许包含大小写英文字母、数字、连字符(-)和点(.)（不能包含空格、标点等特殊字符），示例：tool-ALL</div>
         </el-form-item>
         <el-form-item label="名称" prop="chnname">
           <el-input v-model.trim="ruleForm.chnname"

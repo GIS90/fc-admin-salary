@@ -43,10 +43,7 @@
                :label-position="formField.labelPosition" :label-width="formField.labelWidth"
                :size="formField.size" style="width: 100%" >
         <el-form-item label="字典分类标识" prop="key">
-          <el-input v-model.trim="ruleForm.key"
-                    :size="inputField.size"
-                    disabled
-          />
+          <el-input v-model.trim="ruleForm.key" :size="inputField.size" disabled/>
           <div class="el-form-item-msg">数据字典分类唯一标识，设定后不允许修改</div>
         </el-form-item>
         <el-form-item label="字典分类名称" prop="value">

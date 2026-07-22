@@ -44,7 +44,7 @@
                :size="formField.size" style="width: 100%" >
         <el-form-item label="账号" prop="rtx_id">
           <el-input v-model.trim="ruleForm.rtxId" disabled :size="inputField.size"/>
-          <div class="el-form-item-msg">账号为系统唯一标识，注册后不可修改</div>
+          <div class="el-form-item-msg">账号为系统用户唯一标识，注册后不可修改</div>
         </el-form-item>
         <el-divider content-position="left">基本信息</el-divider>
         <el-row :gutter="20">

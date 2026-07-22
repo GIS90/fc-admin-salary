@@ -52,7 +52,7 @@
                     :placeholder="ProfilePlace.key"
                     :disabled="btnDisabled"
           />
-          <div class="el-form-item-msg">只允许包含大写字母、数字和连字符(-)，请依据规则进行填写，示例：PARAMETER-NAME</div>
+          <div class="el-form-item-msg">只允许包含大写英文字母、数字和连字符(-)，请依据规则进行填写，示例：PARAMETER-NAME</div>
         </el-form-item>
         <el-form-item label="参数说明" prop="remark">
           <el-input v-model.trim="ruleForm.remark"

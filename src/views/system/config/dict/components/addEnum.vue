@@ -63,7 +63,7 @@
                     :placeholder="ProfilePlace.key"
                     :disabled="btnDisabled"
           />
-          <div class="el-form-item-msg">字典枚举唯一标识，设定后不允许修改，允许字母、数字、连字符(-)和点(.)的组合</div>
+          <div class="el-form-item-msg">字典枚举唯一标识，设定后不允许修改，允许大小写英文字母、数字、连字符(-)和点(.)的组合</div>
         </el-form-item>
         <el-form-item label="字典枚举名称" prop="value">
           <el-input v-model.trim="ruleForm.value"
