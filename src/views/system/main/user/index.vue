@@ -26,6 +26,9 @@
             <el-button id="btn-popover" type="info" :plain="buttonField.plain" :size="buttonField.size">说明</el-button>
           </template>
         </el-popover>
+        <el-button id="btn-file-download" class="table-handle-button" type="info" icon="Download" :plain="buttonField.plain" :size="buttonField.size" @click="batchImportHandle">
+          模板下载
+        </el-button>
       </div>
       <div class="right-panel">
         <el-input v-model.trim="requestParam.content" placeholder="支持模糊查询，输入后点击查询" clearable style="width: 250px;" />
