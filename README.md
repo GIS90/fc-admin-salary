@@ -71,6 +71,15 @@ import { UploadPlus } from "@/assets/icons/index.ts";
 ```
 
 
+> ## 自制组件
+
+### 1、批量删除
+
+### 2、文件下载
+
+### 3、文件上传
+
+
 > ## 联系方式
 
 * ***Github:*** https://github.com/GIS90

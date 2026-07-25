@@ -26,7 +26,7 @@
             <el-button id="btn-popover" type="info" :plain="buttonField.plain" :size="buttonField.size">说明</el-button>
           </template>
         </el-popover>
-        <el-button id="btn-file-download" class="table-handle-button" type="info" icon="Download" :plain="buttonField.plain" :size="buttonField.size" @click="batchImportHandle">
+        <el-button id="btn-file-download" class="table-handle-button" type="info" icon="Download" :plain="buttonField.plain" :size="buttonField.size" @click="templateFileDownload">
           模板下载
         </el-button>
       </div>
@@ -80,10 +80,13 @@
     <!--重置密码-->
     <UserResetPwd v-model:visible="rePwdVisible" :md5="tableRowMd5" :rtxId="tableRowRtxId" />
 
-    <!--批量删除-->
+    <!--批量注销-->
     <fc-batch-delete v-model:visible="batchDeleteVisible" :api="apiName" :md5List="tableSelectList" @reFetchTableData="reFetchTableData"/>
-
+    <!--批量删除-->
     <fc-batch-delete v-model:visible="batchDeleteVisible2" :api="apiName2" :md5List="tableSelectList" @reFetchTableData="reFetchTableData"/>
+
+    <!--文件上传-->
+    <fc-upload-file v-model:visible="uploadVisible" uploadType="1" uploadDialogTitle="导入" @reFetchTableData="reFetchTableData"/>
   </el-container>
 </template>
 
@@ -133,6 +136,7 @@ const editVisible = ref(false);
 const rePwdVisible = ref(false);
 const batchDeleteVisible = ref(false);
 const batchDeleteVisible2 = ref(false);
+const uploadVisible = ref(false);
 
 const tableRowMd5 = ref(""); // 默认当前选择的数据MD5
 const tableRowRtxId = ref(""); // 默认当前选择的数据rtx-id
@@ -257,13 +261,17 @@ const batchDeleteHandle = () => {
 
 };
 
-const batchImportHandle = () => {
+const templateFileDownload = () => {
   ElNotification({
     title: '提示',
     dangerouslyUseHTMLString: true,
-    message: '批量导入功能正在开发中，敬请期待',
+    message: '模板文件上传开发中，敬请期待',
     type: 'warning'
   });
+};
+
+const batchImportHandle = () => {
+  uploadVisible.value = true;
 };
 </script>
 

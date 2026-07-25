@@ -83,10 +83,13 @@ declare module 'vue' {
     FcTable: typeof import('./src/components/fcTable/index.vue')['default']
     FcTreeFilter: typeof import('./src/components/fcTreeFilter/index.vue')['default']
     FcTrend: typeof import('./src/components/fcTrend/index.vue')['default']
+    FcUploadFile: typeof import('./src/components/fcUploadFile/index.vue')['default']
     FcUploadImg: typeof import('./src/components/fcUploadImg/index.vue')['default']
     FcUploadImgs: typeof import('./src/components/fcUploadImgs/index.vue')['default']
     FcWangEditor: typeof import('./src/components/fcWangEditor/index.vue')['default']
     FcWordVerify: typeof import('./src/components/fcWordVerify/index.vue')['default']
+    Index1: typeof import('./src/components/fcUploadFile/index1.vue')['default']
+    Index2: typeof import('./src/components/fcUploadFile/index2.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

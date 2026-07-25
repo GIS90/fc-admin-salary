@@ -89,7 +89,7 @@ import { dialogField, inputField, selectSingleField, formField } from "@/utils/a
 import publicLength from "@/utils/attrs/length";
 import publicPlaceHolder from "@/utils/attrs/place";
 import { OptionEnumModel, RequestDownloadModel, FormDownloadModel } from "@/models/X";
-import { DownloadTableApi, DownloadEnumApi } from "@/api/modules/auth";
+import { DownloadTableApi, DownloadEnumApi } from "@/api/modules/common";
 
 const FormLen = publicLength.downloadFormModel;
 const FormPlace = publicPlaceHolder.downloadFormModel;

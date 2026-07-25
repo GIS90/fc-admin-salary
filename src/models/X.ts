@@ -61,3 +61,7 @@ export interface RequestDownloadModel {
     type: string;
     md5: string[];
 }
+
+export interface RequestKeyModel {
+    key: string;
+}

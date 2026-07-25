@@ -1,7 +1,7 @@
 import http from "@/api";
 import {AuthRequestModel, AuthModel, MenuPermissionsModel} from "@/models/authModel";
 import { ECOption } from '@/components/fcEcharts/config';
-import { RequestDownloadModel } from "@/models/X";
+
 
 
 /* * * * * * * * * * * * * * * * * * * * * * [登录、退出] * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -31,16 +31,18 @@ export const AuthTaskApi = (params: any) => {
     return http.get('/api/task', params);
 };
 
-/* * * * * * * * * * * * * * * * * * * * * * [下载模块] * * * * * * * * * * * * * * * * * * * * * * * * * */
-// [GET]下载>枚举
-export const DownloadEnumApi = () => {
-    return http.get('/api/download.enum');
-};
 
-// [POST]下载
-export const DownloadTableApi = (params: RequestDownloadModel) => {
-    return http.post('/api/download', params);
-};
+
+
+
+
+
+
+
+
+
+
+
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

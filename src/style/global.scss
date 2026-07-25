@@ -1,3 +1,13 @@
+// ======================================= 通用样式 =======================================
+.info_red {
+  color: #f56c6c;
+}
+
+.info_red_weight {
+  color: #f56c6c;
+  font-weight: 600;
+}
+
 // ======================================= 自创UI样式 =======================================
 // table操作ICON样式
 .table-handle-icon {
@@ -60,7 +70,7 @@ $my-dialog-padding: 16px;
 
 // body
 .my-dialog-body {
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   line-height: 2;
   padding: $my-dialog-padding;
 }
@@ -69,6 +79,23 @@ $my-dialog-padding: 16px;
 .my-dialog-footer {
   padding: $my-dialog-padding;
   border-top: 1px solid #e8eaec;
+}
+
+// ------------------------- el-upload -------------------------
+// 文件框
+.el-upload-dragger {
+  width: 80% !important;
+  margin-left: 10%;
+  border: 2px dashed #dcdfe6 !important;
+  border-radius: 10px !important;
+  transition: all 0.3s ease !important;
+  background: linear-gradient(135deg, #f5f7fa 0%, #f0f2f5 100%);
+}
+
+.el-upload-dragger:hover {
+  border-color: #42B984 !important;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e6f7e6 100%);
+  transform: translateY(-2px) scale(1.01) !important;;
 }
 
 //------------------------- el-divider -------------------------
