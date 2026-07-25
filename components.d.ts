@@ -88,8 +88,6 @@ declare module 'vue' {
     FcUploadImgs: typeof import('./src/components/fcUploadImgs/index.vue')['default']
     FcWangEditor: typeof import('./src/components/fcWangEditor/index.vue')['default']
     FcWordVerify: typeof import('./src/components/fcWordVerify/index.vue')['default']
-    Index1: typeof import('./src/components/fcUploadFile/index1.vue')['default']
-    Index2: typeof import('./src/components/fcUploadFile/index2.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }
