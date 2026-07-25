@@ -86,7 +86,7 @@
     <fc-batch-delete v-model:visible="batchDeleteVisible2" :api="apiName2" :md5List="tableSelectList" @reFetchTableData="reFetchTableData"/>
 
     <!--文件上传-->
-    <fc-upload-file v-model:visible="uploadVisible" uploadType="1" uploadDialogTitle="导入" @reFetchTableData="reFetchTableData"/>
+    <fc-upload-file v-model:visible="uploadVisible" uploadType="100" uploadDialogTitle="文件上传" @reFetchTableData="reFetchTableData"/>
   </el-container>
 </template>
 

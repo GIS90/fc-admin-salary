@@ -39,40 +39,32 @@
 
     <!--dialog body-->
     <div class="my-dialog-body"
-         :class="[props.uploadType !== '8' ? 'dialog-content-center' : 'dialog-content-left']"
+         :class="[props.uploadType !== '100' ? 'dialog-content-center' : 'dialog-content-left']"
     >
       <el-upload
           ref="uploadRef"
-          :action="getUploadUrl()"
           :accept="uploadAccept()"
           :file-list="fileList"
-          :headers="uploadApis.headers"
-          :method="uploadApis.method"
-          :data="uploadApis.data"
-          :name="uploadApis.name"
-          :with-credentials="uploadApis.cookie"
-          :show-file-list="uploadShowFileList()"
           :list-type="uploadListType()"
           :auto-upload="uploadAttrs.autoUpload"
           :limit="uploadAttrs.limit"
           :drag="uploadDrag()"
           :multiple="uploadAttrs.multiple"
           :disabled="uploadAttrs.disabled"
-          :on-success="uploadSuccess"
           :on-remove="uploadRemove"
           :on-change="uploadChange"
           :on-exceed="uploadExceed"
           :on-preview="handlePictureCardPreview"
       >
-        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+        <el-icon class="el-upload-icon"><UploadFilled /></el-icon>
 
         <template #tip>
           <!-- 文件类型 -->
-          <div v-if="['1', '2', '6', '7'].includes(uploadType)" class="el-upload__tip avatar-remark">
-            <div class="el-upload__text"><em>拖拽或者点击上传</em></div>
+          <div v-if="['1', '2', '3', '4'].includes(props.uploadType)" class="upload-remark">
+            <div><em>拖拽或者点击上传</em></div>
             <!-- 提示说明 支持html显示-->
             <p v-html="getUploadTip()" />
-            <p>上传文件数量： <strong style="color: red">{{ fileList.length }}</strong>（{{ uploadAttrs.limit>0 ? '单次上传限制'+uploadAttrs.limit : '无限制' }}）</p >
+            <p>上传文件数量： <strong style="color: red">{{ fileList.length }}</strong>（{{ uploadAttrs.limit>0 ? "单次上传限制" + uploadAttrs.limit : "无限制" }}）</p >
             <el-divider v-show="fileList.length > 0">
               <div style="display: flex; align-items: center; gap: 4px;">
                 <el-icon><Menu /></el-icon>
@@ -82,11 +74,11 @@
           </div>
 
           <!-- 图片类型 -->
-          <div v-if="['8'].includes(uploadType)" class="el-upload__tip avatar-remark">
+          <div v-if="props.uploadType === '100'" class="upload-remark">
             <div>上传文件数量： <strong style="color: red">{{ fileList.length }}</strong></div>
-            <el-alert type="warning" show-icon class="avatar-remark-alert">
-              <ol class="avatar-remark-alert-ul">
-                <li>仅支持<span class="info_red_weight">jpg/jpeg/png</span>格式文件上传，且每张图片大小不超过<span class="info_red_weight">2M</span>（2048KB）。</li>
+            <el-alert type="warning" show-icon class="upload-remark-avatar-alert">
+              <ol class="upload-remark-avatar-alert-ul">
+                <li>仅支持<span class="info_red_weight">jpg/jpeg/png</span>格式文件上传，且每张图片大小建议不超过<span class="info_red_weight">2M</span>（2048KB）。</li>
                 <li>单次上传最大限制数量<span class="info_red_weight">{{ uploadAttrs.limit }}</span>个。</li>
               </ol>
             </el-alert>
@@ -125,6 +117,7 @@ import { dialogField } from "@/utils/attrs/field";
 import { useAuthStore } from "@/store/modules/auth";
 import { SysConfigXtcsKeyApi } from "@/api/modules/systemConfig";
 import { XtcsModelDetail } from "@/models/systemModel";
+import { UploadFilesApi} from "@/api/modules/common";
 const store = useAuthStore();
 
 const uploadRef = ref(null);
@@ -142,15 +135,11 @@ const props = defineProps({
   },
   // --------------------------------------------------- //
   // 上传文件类型[依据功能定制化]：                           //
-  //     1：文档工具->表格合并                              //
-  //     2：文档工具->表格拆分                              //
-  //     3：word                                         //
-  //     4：ppt                                          //
-  //     5：text                                         //
-  //     6：文档工具->PDF转WORD                            //
-  //     7：消息通知->钉钉绩效                              //
-  //     8：系统维护->头像管理                              //
-  //     99：other                                       //
+  //     1：工具->文档工具->表格合并                         //
+  //     2：工具->文档工具->表格拆分                         //
+  //     3：工具->文档工具->PDF转WORD                       //
+  //     4：工资->消息通知->钉钉绩效                         //
+  //     100：系统维护->头像管理                            //
   // --------------------------------------------------- //
   uploadType: {
     type: String,
@@ -161,7 +150,7 @@ const props = defineProps({
 
 const dgConfigField = reactive({
   title: props.uploadDialogTitle,
-  width: props.uploadType === "8" ? '75%' : '55%'
+  width: props.uploadType === "100" ? "75%" : "55%"
 });
 const dgField = {...dialogField, ...dgConfigField}; // DIALOG属性
 const fullView = ref(dgField.fullScreen); // 全屏控制
@@ -169,14 +158,13 @@ const fullViewText = ref('全屏');
 const btnDisabled = ref(false); // 禁用
 const btnLoading = ref(false); // 加载中
 const fileList = ref([]);  // 文件列表
-const isManualUpload = ref(true);  // 是否手动上传，值为false：upload组件自带的每次只上传一个，多文件为循环上传
 const uploadSuccessAutoClose = ref(true);  // 上传成功后是否自动关闭
 const dialogImageUrl = ref(''); // 当前选择的图片URL
 const dialogVisible = ref(false); // 是否显示当前选择图片
 
 // 全屏Text侦听器
 watch(fullView, (value) => {
-  fullViewText.value = value ? '取消全屏' : '全屏';
+  fullViewText.value = value ? "取消全屏" : "全屏";
 }, { immediate: true });
 
 // 全屏
@@ -187,22 +175,6 @@ function fullScreen() {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //              ↑Dialog通用配置         ↓定制化方法
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-const uploadApis = reactive({
-  url: import.meta.env.VITE_VUE_API_BASEURL + import.meta.env.VITE_VUE_APP_UPLOAD_FILES_API,
-  // 设置请求上传的请求头部，token验证
-  headers: {
-    'Access-Control-Allow-Origin': '*',
-    'X-Token': store.token
-  },
-  method: 'POST', // 设置上传请求方法
-  // 上传时附带的额外参数
-  data: {
-    'file_type': props.uploadType
-  },
-  name: 'files', // 上传的文件字段名，后台API用
-  cookie: true // 发送 cookie 凭证信息
-});
 const uploadAttrs = reactive({
   multiple: true, // 是否支持多选文件
   autoUpload: false, // 是否自动上传文件
@@ -212,74 +184,41 @@ const uploadAttrs = reactive({
 
 // upload tip内容，支持html
 const getUploadTip = () => {
-  if (props.uploadType === '1') {
+  if (["1", "2", "4"].includes(props.uploadType)) {
     return '<strong>提示</strong>：支持<span class="info_red_weight">.xls</span>、<span class="info_red_weight">.xlsx</span>格式文件上传，.xls格式文件条数最大支持为<strong>65535</strong>行，超出请上传.xlxs格式数据。'
-  } else if (props.uploadType === '2') {
-    return '<strong>提示</strong>：支持<span class="info_red_weight">.xls</span>、<span class="info_red_weight">.xlsx</span>格式文件上传，.xls格式文件条数最大支持为<strong>65535</strong>行，超出请上传.xlxs格式数据。'
-  } else if (props.uploadType === '3') {
-    return '.doc,.docx'
-  } else if (props.uploadType === '4') {
-    return '.ppt,.pptx'
-  } else if (props.uploadType === '5') {
-    return '.txt'
-  } else if (props.uploadType === '6') {
+  } else if (props.uploadType === "3") {
     return '<strong>提示</strong>：仅支持<span class="info_red_weight">.pdf</span>格式文件上传。'
-  } else if (props.uploadType === '7') {
-    return '<strong>提示</strong>：支持<span class="info_red_weight">.xls</span>、<span class="info_red_weight">.xlsx</span>格式文件上传，.xls格式文件条数最大支持为<strong>65535</strong>行，超出请上传.xlxs格式数据。'
-  } else if (props.uploadType === '8') {
-    return ''
-  } else {
-    return ''
+  }  else {
+    return '<strong>暂无其他说明</strong>'
   }
 };
 
 // 上传文件的类型
 const uploadAccept = () => {
-  // 上传文件类型：1-excel merge, 2-excel split, 3-word, 4-ppt, 5-text, 6-pdf, 7-dtalk, 99-other
-  if (['1', '2', '7'].includes(props.uploadType)) {
+  if (['1', '2', '4'].includes(props.uploadType)) {
     return '.xls,.xlsx'
-  } else if (props.uploadType === '3') {
-    return '.doc,.docx'
-  } else if (props.uploadType === '4') {
-    return '.ppt,.pptx'
-  } else if (props.uploadType === '5') {
-    return '.txt'
-  } else if (props.uploadType === '6') {
+  }  else if (props.uploadType === '3') {
     return '.pdf'
-  } else if (props.uploadType === '8') {
+  } else if (props.uploadType === '100') {
     return '.jpg,.jpeg,.png'
   } else {
     return ''
   }
 };
 
-// 是否显示已上传文件列表
-const uploadShowFileList = () => {
-  if (['1', '2', '6', '7'].includes(props.uploadType)) {
-    return true
-  } else if (['8'].includes(props.uploadType)) {
-    return true
-  } else {
-    return false
-  }
-};
 // 是否启用拖拽上传
 const uploadDrag = () => {
-  if (['1', '2', '6', '7'].includes(props.uploadType)) {
-    return true
-  } else if (['8'].includes(props.uploadType)) {
-    return false
-  }
-  return true
+  return props.uploadType !== "100";
 };
+
 // 文件列表的类型 "text" | "picture" | "picture-card"
 const uploadListType = () => {
-  if (['1', '2', '6', '7'].includes(props.uploadType)) {
-    return 'text'
-  } else if (['8'].includes(props.uploadType)) {
-    return 'picture-card'
+  if (["1", "2", "3", "4"].includes(props.uploadType)) {
+    return "text"
+  } else if (props.uploadType === "100") {
+    return "picture-card"
   } else {
-    return 'text'
+    return "text"
   }
 };
 
@@ -294,7 +233,7 @@ const handleOpen = () => {
   // 文件列表
   fileList.value = [];
   // localStore读取设置是否上传成功后自动关闭
-  uploadSuccessAutoClose.value = localStorage.getItem('uploadSuccessAutoClose') === 'true';
+  uploadSuccessAutoClose.value = localStorage.getItem('uploadSuccessAutoClose') === "true";
 };
 
 onMounted(() => {
@@ -321,31 +260,12 @@ const cancelUpload = () => {
   uploadRef.value?.abort()
 };
 
-// 手动提交上传文件
-const submitUpload = () => {
-  isManualUpload.value ? manualUpload() : uploadRef.value?.submit();
-};
-
-const getUploadUrl = () => {
-  return !isManualUpload.value ? uploadApis.url : ''
-};
-
-// 文件上传成功的hook
-const uploadSuccess = (response, uploadFile) => {
-  const { code, message } = response;
-  ElNotification({
-    title: "提示",
-    message: code === 100 ? (uploadFile?.name ? uploadFile.name + '上传成功' : '文件上传成功') : message,
-    type: code === 100 ? 'success' : 'warning'
-  });
-};
-
 // 文件上传超过限制的hook
 const uploadExceed = (files, UploadFiles) => {
   ElNotification({
     title: "提示",
     message: "文件数量超过上传最大限制",
-    type: 'warning',
+    type: "warning",
     duration: 2 * 1000
   });
 };
@@ -356,7 +276,7 @@ const uploadRemove = (uploadFile, uploadFiles) => {
   ElNotification({
     title: "提示",
     message: uploadFile?.name ? uploadFile.name + '移除列表成功' : '文件移除列表成功',
-    type: 'success',
+    type: "success",
     duration: 2 * 1000
   });
 };
@@ -368,20 +288,20 @@ const uploadChange = (uploadFile, uploadFiles) => {
 
 // 只有图片类型支持预览
 const handlePictureCardPreview= (file) => {
-  if (props.uploadType === '8') {
+  if (props.uploadType === "100") {
     dialogImageUrl.value = file.url;
     dialogVisible.value = true;
   }
 };
 
 // 手动上传的hook
-const manualUpload = () => {
+const submitUpload = () => {
   // 无上传文件
   if (fileList.value.length < 1) {
     ElNotification({
       title: "提示",
       message: "请选择需要上传的文件",
-      type: 'warning',
+      type: "warning",
       duration: 2 * 1000
     });
     return false
@@ -391,7 +311,7 @@ const manualUpload = () => {
     ElNotification({
       title: "提示",
       message: "文件数量超过上传最大限制",
-      type: 'warning',
+      type: "warning",
       duration: 2 * 1000
     });
     return false
@@ -401,20 +321,22 @@ const manualUpload = () => {
   uploadAttrs.disabled = true;
   btnDisabled.value = true;
   btnLoading.value = true;
+
   // data form parameters
   const uploadForm = new FormData();
-  uploadForm.append('file_type', props.uploadType)
+  uploadForm.append("upload_type", props.uploadType)
   fileList.value.forEach(file => {
-    uploadForm.append(file.name, file.raw)
+    uploadForm.append("files", file.raw)
+    // uploadForm.append(file.name, file.raw)
   });
   return new Promise((resolve, reject) => {
-    uploadMulFiles(uploadForm).then(response => {
-      const { code, message } = response
+    UploadFilesApi(uploadForm).then(response => {
+      const { code, message } = response;
       if (code === 100) {
         ElNotification({
           title: "提示",
           message: '文件上传成功' || message,
-          type: 'success'
+          type: "success"
         });
         handleClear();
       }
@@ -424,8 +346,8 @@ const manualUpload = () => {
       if (code === 100 && uploadSuccessAutoClose.value) {
         // 延迟
         setTimeout(() => {
-          emit('update:visible', true); // 关闭
-          emit('reFetchTableData', true); // 刷新数据
+          emit("update:visible", false); // 关闭
+          emit("reFetchTableData", true); // 刷新数据
         }, 2000)
       }
     }).catch(error => {
@@ -457,25 +379,29 @@ const changeAutoClose= (value: boolean) => {
   text-align: left;
 }
 
-.avatar-remark {
+.upload-remark {
   font-size: 16px !important;
   margin-top: 25px;
 }
 
-.avatar-remark-alert{
+.upload-remark-avatar-alert{
   margin-top: 25px;
 }
 
-.avatar-remark-alert-ul {
+.upload-remark-avatar-alert-ul {
   padding-left: 32px;
   list-style-type: upper-roman;
+
+  li {
+    margin-top: 10px;
+    font-size: 15px;
+    color: black;
+    line-height: 1.5;
+  }
 }
 
-.avatar-remark-alert-ul li {
-  margin-top: 10px;
-  font-size: 15px;
-  color: black;
-  line-height: 1.5;
+.el-upload-icon {
+  font-size: 70px;
 }
 </style>
 
