@@ -1,7 +1,11 @@
 import http from "@/api";
 import { RequestDownloadModel } from "@/models/X";
 
-
+/* * * * * * * * * * * * * * * * * * * * * * [系统] * * * * * * * * * * * * * * * * * * * * * * * * * */
+// [GET]下载>枚举
+export const SystemInfoApi = (params: any) => {
+    return http.get('/api/open/system.info', params);
+};
 /* * * * * * * * * * * * * * * * * * * * * * [下载] * * * * * * * * * * * * * * * * * * * * * * * * * */
 // [GET]下载>枚举
 export const DownloadEnumApi = () => {
@@ -12,7 +16,6 @@ export const DownloadEnumApi = () => {
 export const DownloadTableApi = (params: RequestDownloadModel) => {
     return http.post('/api/download', params);
 };
-
 /* * * * * * * * * * * * * * * * * * * * * * [上传] * * * * * * * * * * * * * * * * * * * * * * * * * */
 // [POST]上传>文件
 export const UploadFileApi = (params: RequestDownloadModel) => {

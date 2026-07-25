@@ -3,8 +3,12 @@
         <div class="login_adv" style="background-image: url(img/login-banner.jpg);">
             <div class="login_adv__title">
                 <h2>{{ appTitle }}{{ appVersion }}</h2>
+                <h4>{{ appFeature }}</h4>
+                <p>{{ appSummary }}</p>
+                <!--
                 <h4>{{ $t('login.slogan') }}</h4>
                 <p>{{ $t('login.describe') }}</p>
+                -->
             </div>
             <div class="login_adv__mask"></div>
             <div class="login_adv__bottom">
@@ -78,14 +82,16 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import passwordForm from './components/passwordForm.vue'
-import phoneForm from './components/phoneForm.vue'
+import passwordForm from './components/passwordForm.vue';
+import phoneForm from './components/phoneForm.vue';
 import { useI18n } from "vue-i18n";
 import { useSysGlobalStore } from "@/store/system/global";
 import { useSysViewTagsStore } from "@/store/system/viewTags";
 import { useSysKeepAliveStore } from "@/store/system/keepAlive";
 import { useAuthStore } from "@/store/modules/auth";
 import { useMenuStore } from "@/store/modules/menu";
+import { SystemInfoModel } from "@/models/X";
+import { SystemInfoApi } from "@/api/modules/common";
 
 const { locale } = useI18n()
 const sysGlobalStore = useSysGlobalStore()
@@ -106,8 +112,10 @@ const lang = ref([
 const WechatLoginCode = ref("");
 const showWechatLogin = ref(false);
 const isWechatLoginResult = ref(false);
-const appTitle = import.meta.env.VITE_VUE_TITLE;
-const appVersion = import.meta.env.VITE_VUE_VERSION;
+const appTitle = ref(import.meta.env.VITE_SYSTEM_TITLE);
+const appVersion = ref(import.meta.env.VITE_SYSTEM_VERSION);
+const appFeature = ref(import.meta.env.VITE_SYSTEM_FEATURE);
+const appSummary = ref(import.meta.env.VITE_SYSTEM_SUMMARY);
 const isOtherLogin = import.meta.env.VITE_IS_OTHER_LOGIN === 'true';
 const currentYear = new Date().getFullYear();
 
@@ -117,15 +125,28 @@ sysGlobalStore.$subscribe((_mutation, state) => {
 });
 
 onMounted(() => {
-
     authStore.$reset();
     menuStore.$reset();
     sysViewTagsStore.$reset();
     sysKeepAliveStore.$reset();
 
+    fetchApiData();
+
     console.log('基于VUE3语言研发，基于Fc-admin脚手架开发的平台前端项目')
     console.log('欢迎来到智行工具平台，有问题请联系系统管理员：高明亮')
 });
+
+// 请求数据API
+const fetchApiData = async () => {
+  const response = await SystemInfoApi({"name": "salary"});
+  if (response.data) {
+    const res = response as { data: SystemInfoModel }; // declare
+    appTitle.value = res.data?.title;
+    appVersion.value = res.data?.version;
+    appFeature.value = res.data?.feature;
+    appSummary.value = res.data?.summary;
+  }
+};
 
 const configLang = (command: any) => {
     sysGlobalStore.sysLang = command.value
@@ -166,8 +187,9 @@ const wechatLogin = () => {
     left: 0px;
     right: 0px;
     z-index: 2;
+    line-height: 2.3;
     p {
-      font-size: 15px;
+      font-size: 16px;
     }
 }
 

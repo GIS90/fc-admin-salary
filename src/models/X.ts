@@ -65,3 +65,10 @@ export interface RequestDownloadModel {
 export interface RequestKeyModel {
     key: string;
 }
+
+export interface SystemInfoModel {
+    title: string;
+    version: string;
+    feature: string;
+    summary: string;
+}
