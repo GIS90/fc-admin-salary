@@ -132,8 +132,13 @@ onMounted(() => {
 
     fetchApiData();
 
-    console.log('基于VUE3语言研发，基于Fc-admin脚手架开发的平台前端项目')
-    console.log('欢迎来到智行工具平台，有问题请联系系统管理员：高明亮')
+    console.log('欢迎');
+    console.log('欢迎');
+    console.log('热烈欢迎');
+    console.log('平台是基于VUE3语言研发，在Fc-admin脚手架上开发的前端项目');
+    console.log('来到智行工具平台，有问题请联系管理员：高明亮');
+    console.log('作者博客：https://pygo.space/');
+    console.log('作者邮箱：gaoming971366@163.com');
 });
 
 // 请求数据API
