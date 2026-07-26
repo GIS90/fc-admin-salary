@@ -1,0 +1,132 @@
+<template>
+  <div class="step-upload">
+    <el-upload
+        ref="uploadRef"
+        :drag="uploadAttrs.drag"
+        :multiple="uploadAttrs.multiple"
+        :auto-upload="uploadAttrs.autoUpload"
+        :limit="uploadAttrs.limit"
+        :show-file-list="uploadAttrs.showFileList"
+        :accept="uploadAttrs.accept"
+        :on-change="uploadChange"
+        :on-exceed="uploadExceed"
+        :on-remove="uploadRemove"
+    >
+      <el-icon class="el-icon--upload"><UploadFilled /></el-icon>
+      <div class="el-upload__text">
+        拖拽或 <em>点击上传</em> Excel 文件
+      </div>
+      <template #tip>
+        <div class="step-upload-tip">
+          <p>1、仅支持 .xls、.xlsx 文件格式，每次仅限导入一个文件</p>
+          <p>2、单次导入最大200条数据</p>
+          <el-button class="step-upload-tip-button" type="primary" link @click="downloadTemplate">
+            <el-icon><Download /></el-icon> 下载导入模板
+          </el-button>
+        </div>
+      </template>
+    </el-upload>
+
+    <!-- 已选文件信息 -->
+    <div v-if="selectedFile">
+      <el-alert type="success" :closable="false" show-icon>
+        <template #title>
+          <span class="step-upload-file-info">已选择文件：<strong>{{ selectedFile.name }}</strong></span>
+          <span class="step-upload-file-info" style="margin-left: 20px; color: #909399;">
+            大小：{{ formatFileSize(selectedFile.size) }}
+          </span>
+        </template>
+      </el-alert>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, reactive } from 'vue';
+import { ElNotification } from 'element-plus';
+import { UploadFilled, Download } from '@element-plus/icons-vue';
+
+const emit = defineEmits(['file-selected']);
+const uploadAttrs = reactive({
+  drag: true, // 是否支持拖拽
+  multiple: false, // 是否支持多选文件
+  autoUpload: false, // 是否自动上传文件
+  showFileList: true, // 是否显示文件列表
+  limit: 1,
+  accept: ".xls,.xlsx"
+});
+
+const uploadRef = ref();
+const selectedFile = ref<File | null>(null);
+
+const uploadChange = (file: any) => {
+  selectedFile.value = file.raw;
+  emit('file-selected', file.raw);
+}
+
+// 文件上传超过限制的hook
+const uploadExceed = (files, UploadFiles) => {
+  ElNotification({
+    title: "提示",
+    message: "只允许上传一个文件",
+    type: "warning",
+    duration: 2 * 1000
+  });
+};
+
+// 文件移除列表成功的hook
+const uploadRemove = (uploadFile, uploadFiles) => {
+  selectedFile.value = null;
+  emit('file-selected', null);
+  ElNotification({
+    title: "提示",
+    message: uploadFile?.name ? uploadFile.name + '移除列表成功' : '文件移除列表成功',
+    type: "success",
+    duration: 2 * 1000
+  });
+};
+
+const formatFileSize = (size: number) => {
+  if (size < 1024) return size + ' B'
+  if (size < 1024 * 1024) return (size / 1024).toFixed(2) + ' KB'
+  return (size / (1024 * 1024)).toFixed(2) + ' MB'
+};
+
+const downloadTemplate = () => {
+  // 下载模板逻辑
+  window.open(import.meta.env.VITE_TEMPLATE_USER_IMPORT, '_blank')
+};
+
+defineExpose({
+  clearFiles: () => {
+    if (uploadRef.value) {
+      uploadRef.value.clearFiles();
+    }
+    selectedFile.value = null;
+  }
+});
+</script>
+
+<style scoped>
+.step-upload {
+  width: 100%;
+}
+
+.step-upload-tip {
+  font-size: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 2;
+}
+
+.step-upload-tip-button {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.step-upload-file-info {
+  font-size: 16px;
+}
+</style>

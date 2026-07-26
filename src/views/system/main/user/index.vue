@@ -74,6 +74,9 @@
     <!--新增-->
     <UserAdd v-model:visible="addVisible" @reFetchTableData="reFetchTableData" />
 
+    <!--批量导入-->
+    <Import v-model:visible="uploadVisible" @reFetchTableData="reFetchTableData" />
+
     <!--编辑-->
     <UserEdit v-model:visible="editVisible" :md5="tableRowMd5" @reFetchTableData="reFetchTableData" />
 
@@ -84,9 +87,6 @@
     <fc-batch-delete v-model:visible="batchDeleteVisible" :api="apiName" :md5List="tableSelectList" @reFetchTableData="reFetchTableData"/>
     <!--批量删除-->
     <fc-batch-delete v-model:visible="batchDeleteVisible2" :api="apiName2" :md5List="tableSelectList" @reFetchTableData="reFetchTableData"/>
-
-    <!--文件上传-->
-    <fc-upload-file v-model:visible="uploadVisible" uploadType="100" uploadDialogTitle="文件上传" @reFetchTableData="reFetchTableData"/>
   </el-container>
 </template>
 
@@ -98,6 +98,7 @@ import { UserModelList } from "@/models/systemModel";
 import UserResetPwd from "./components/resetPwd.vue";
 import UserEdit from "./components/edit.vue";
 import UserAdd from "./components/add.vue";
+import Import from "./components/import.vue";
 import { ElMessage, ElNotification } from 'element-plus';
 import { fcTableField, buttonField } from "@/utils/attrs/field";
 import { tableWidth } from "@/utils/attrs/table";
@@ -131,12 +132,12 @@ const columns = reactive<ColumnProps<UserModelList>[]>([
 ]);
 
 // Dialog状态管理
-const addVisible= ref(false);
-const editVisible = ref(false);
-const rePwdVisible = ref(false);
-const batchDeleteVisible = ref(false);
-const batchDeleteVisible2 = ref(false);
-const uploadVisible = ref(false);
+const addVisible= ref(false); // 新增
+const editVisible = ref(false); // 编辑
+const rePwdVisible = ref(false);  // 重置密码
+const batchDeleteVisible = ref(false); // 批量注销
+const batchDeleteVisible2 = ref(false); // 批量删除
+const uploadVisible = ref(false); // 上传
 
 const tableRowMd5 = ref(""); // 默认当前选择的数据MD5
 const tableRowRtxId = ref(""); // 默认当前选择的数据rtx-id

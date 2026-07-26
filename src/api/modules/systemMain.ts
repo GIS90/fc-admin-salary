@@ -58,6 +58,16 @@ export const SysMainUserAddApi = (params: UserModelDetail) => {
     return http.post('/system/main/user', params);
 };
 
+// [POST]上传文件，并返回预览数据
+export const SysMainUserImportPreviewApi = (data: any) => {
+    return http.post('/system/main/user.preview', data);
+};
+
+// [POST]导入
+export const SysMainUserImportApi = (data: []) => {
+    return http.post('/system/main/user.import', data);
+};
+
 /* * * * * * * * * * * * * * * * * * * * * * [权限管理>角色管理] * * * * * * * * * * * * * * * * * * * * * * * * * */
 // [GET]列表
 export const SysMainRoleListApi = (params: any) => {

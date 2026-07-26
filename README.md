@@ -78,6 +78,10 @@ import { UploadPlus } from "@/assets/icons/index.ts";
 ### 2、文件下载
 
 ### 3、文件上传
+```VUE
+<!--文件上传-->
+<fc-upload-file v-model:visible="uploadVisible" uploadType="1" uploadDialogTitle="文件上传" @reFetchTableData="reFetchTableData"/>
+```
 
 
 > ## 联系方式
