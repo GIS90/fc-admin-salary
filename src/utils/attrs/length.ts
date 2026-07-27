@@ -3,7 +3,7 @@
  * */
 let setterProfileModel = {
     rtxId: 35,
-    userName: 20,
+    userName: 30,
     sex: 2,
     email: 80,
     phone: 11,

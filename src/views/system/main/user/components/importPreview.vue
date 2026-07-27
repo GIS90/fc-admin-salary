@@ -2,7 +2,7 @@
   <div class="step-preview">
 
     <div class="preview-header">
-      <span>共 <strong>{{ props.previewData.length }}</strong> 条数据</span>
+      <span>共 <strong>{{ totalCount }}</strong> 条数据</span>
       <div v-if="invalidCount > 0">
         <el-tag type="danger">存在校验未通过人员，请检查</el-tag>
       </div>
@@ -44,7 +44,7 @@
     <!-- 数据统计 -->
     <div v-if="totalCount > 0" class="preview-stats">
       <el-descriptions :column="3" border>
-        <el-descriptions-item label="总数据" align="center">{{ props.previewData.length }}</el-descriptions-item>
+        <el-descriptions-item label="总数据" align="center">{{ totalCount }}</el-descriptions-item>
         <el-descriptions-item label="有效数据" align="center">{{ validCount }}</el-descriptions-item>
         <el-descriptions-item label="无效数据" align="center">{{ invalidCount }}</el-descriptions-item>
       </el-descriptions>
@@ -79,7 +79,10 @@ const headerCellStyle = {
   color: '#303133',
   fontWeight: 700
 };
-
+// 总数
+const totalCount = computed(() => {
+  return props.previewData.length
+});
 // 有效数据
 const validCount = computed(() => {
   return props.previewData.filter(item => item.status === false).length
@@ -88,6 +91,13 @@ const validCount = computed(() => {
 const invalidCount = computed(() => {
   return props.previewData.length - validCount.value
 });
+
+// 暴露给父组件
+defineExpose({
+  totalCount,
+  validCount,
+  invalidCount
+})
 </script>
 
 <style scoped>
