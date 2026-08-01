@@ -26,9 +26,6 @@
             <el-button id="btn-popover" type="info" :plain="buttonField.plain" :size="buttonField.size">说明</el-button>
           </template>
         </el-popover>
-        <el-button id="btn-file-download" class="table-handle-button" type="info" icon="Download" :plain="buttonField.plain" :size="buttonField.size" @click="templateFileDownload">
-          模板下载
-        </el-button>
       </div>
       <div class="right-panel">
         <el-input v-model.trim="requestParam.content" placeholder="支持模糊查询，输入后点击查询" clearable style="width: 250px;" />
@@ -87,11 +84,12 @@
     <fc-batch-delete v-model:visible="batchDeleteVisible" :api="apiName" :md5List="tableSelectList" @reFetchTableData="reFetchTableData"/>
     <!--批量删除-->
     <fc-batch-delete v-model:visible="batchDeleteVisible2" :api="apiName2" :md5List="tableSelectList" @reFetchTableData="reFetchTableData"/>
+
   </el-container>
 </template>
 
 <script setup lang='ts'>
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { SysMainUserListApi, SysMainUserStatusApi } from '@/api/modules/systemMain';
 import { ColumnProps, FcTableInstance } from "@/components/fcTable/model";
 import { UserModelList } from "@/models/systemModel";
@@ -260,15 +258,6 @@ const batchDeleteHandle = () => {
   tableSelectList = fcTableRef.value?.selectedListKeys;
   batchDeleteVisible2.value = true;
 
-};
-
-const templateFileDownload = () => {
-  ElNotification({
-    title: '提示',
-    dangerouslyUseHTMLString: true,
-    message: '模板文件上传开发中，敬请期待',
-    type: 'warning'
-  });
 };
 
 const batchImportHandle = () => {

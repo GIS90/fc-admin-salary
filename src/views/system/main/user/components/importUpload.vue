@@ -42,9 +42,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { ElNotification } from 'element-plus';
 import { UploadFilled, Download } from '@element-plus/icons-vue';
+import { SysConfigXtcsKeyApi } from "@/api/modules/systemConfig";
+import { XtcsModelDetail } from "@/models/systemModel";
+const templateUrl = ref(""); // 模板下载地址
+
+onMounted(() => {
+  onMountedApi();
+});
+
+// 请求数据API
+const onMountedApi = async () => {
+  const response = await SysConfigXtcsKeyApi({ "key": "USER-IMPORT-URL" });
+  if (response.data) {
+    const res = response as { data: XtcsModelDetail }; // declare
+    templateUrl.value = res.data.value;
+  }
+};
 
 const emit = defineEmits(['file-selected']);
 const uploadAttrs = reactive({
@@ -93,8 +109,16 @@ const formatFileSize = (size: number) => {
 };
 
 const downloadTemplate = () => {
+  if (!templateUrl.value) {
+    ElNotification({
+      title: '提示',
+      message: '模板文件配置为空，请联系管理员',
+      type: 'warning'
+    });
+    return;
+  }
   // 下载模板逻辑
-  window.open(import.meta.env.VITE_TEMPLATE_USER_IMPORT, '_blank')
+  window.open(templateUrl.value, '_blank')
 };
 
 defineExpose({

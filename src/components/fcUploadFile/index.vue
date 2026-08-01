@@ -237,11 +237,11 @@ const handleOpen = () => {
 };
 
 onMounted(() => {
-  fetchApiData();
+  onMountedApi();
 });
 
 // 请求数据API
-const fetchApiData = async () => {
+const onMountedApi = async () => {
   const response = await SysConfigXtcsKeyApi({ "key": "UPLOAD-FILE-MAX" });
   if (response.data) {
     const res = response as { data: XtcsModelDetail }; // declare
