@@ -74,8 +74,16 @@ import { UploadPlus } from "@/assets/icons/index.ts";
 > ## 自制组件
 
 ### 1、批量删除
+```VUE
+<!--批量删除-->
+<fc-batch-delete v-model:visible="batchDeleteVisible" :api="apiName" :md5List="tableSelectList" @reFetchTableData="reFetchTableData"/>
+```
 
 ### 2、文件下载
+```VUE
+<!-- 下载按钮 -->
+<el-button v-if="showDownloadBtn" icon="Download" circle @click="downTableList"/>
+```
 
 ### 3、文件上传
 ```VUE
