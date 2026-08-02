@@ -122,10 +122,10 @@
 import 'vue-cropper/dist/index.css'
 import { VueCropper }  from "vue-cropper";
 import { Plus, Minus, RefreshLeft, RefreshRight } from '@element-plus/icons-vue'
-import {ElMessage, ElNotification} from 'element-plus'
-import {defineEmits, defineProps, reactive, ref, watch, getCurrentInstance} from "vue";
-import {dialogField} from "@/utils/attrs/field";
-import {SetProfileAvatarApi} from "@/api/modules/setter";
+import { ElMessage, ElNotification } from 'element-plus'
+import { defineEmits, defineProps, reactive, ref, watch, getCurrentInstance } from "vue";
+import { dialogField } from "@/utils/attrs/field";
+import { SetProfileAvatarApi } from "@/api/modules/setter";
 import { useAuthStore } from "@/store/modules/auth";
 
 const authStore = useAuthStore();
