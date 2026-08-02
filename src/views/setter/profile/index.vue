@@ -11,7 +11,6 @@
               <el-button class="upload-avatar-btn" type="primary" effect="dark" disable-transitions :icon="Upload" @click="openAvatar">
                 上传头像
               </el-button>
-
             </p>
           </div>
         </el-header>
