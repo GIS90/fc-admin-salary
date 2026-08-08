@@ -1,1 +1,0 @@
-import{_ as e,o,j as t}from"./index.CBnmIRJF.js";const r={name:"configreport"},c={style:{color:"red"}};function n(s,a,_,p,d,f){return o(),t("h1",c,"开发中，后续会陆续上线。。。。。。")}const l=e(r,[["render",n]]);export{l as default};

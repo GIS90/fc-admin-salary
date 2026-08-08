@@ -1,0 +1,1 @@
+import{_ as o,o as t,c as a,b as r,e as c}from"./index.DrRx6J4D.js";import{E as s}from"./el-card.BF7k0vf1.js";const _={},n=c("h1",null,"开发中。。。。。。",-1);function d(f,l){const e=s;return t(),a(e,{shadow:"hover",header:"头像超市"},{default:r(()=>[n]),_:1})}const i=o(_,[["render",d]]);export{i as default};

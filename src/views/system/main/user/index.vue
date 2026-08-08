@@ -69,13 +69,13 @@
     </el-main>
 
     <!--新增-->
-    <UserAdd v-model:visible="addVisible" @reFetchTableData="reFetchTableData" />
+    <UserAdd v-model:visible="addVisible" :departmentData="departmentData" @reFetchTableData="reFetchTableData" />
 
     <!--批量导入-->
     <Import v-model:visible="uploadVisible" @reFetchTableData="reFetchTableData" />
 
     <!--编辑-->
-    <UserEdit v-model:visible="editVisible" :md5="tableRowMd5" @reFetchTableData="reFetchTableData" />
+    <UserEdit v-model:visible="editVisible" :md5="tableRowMd5" :departmentData="departmentData" @reFetchTableData="reFetchTableData" />
 
     <!--重置密码-->
     <UserResetPwd v-model:visible="rePwdVisible" :md5="tableRowMd5" :rtxId="tableRowRtxId" />
@@ -89,10 +89,10 @@
 </template>
 
 <script setup lang='ts'>
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { SysMainUserListApi, SysMainUserStatusApi } from '@/api/modules/systemMain';
 import { ColumnProps, FcTableInstance } from "@/components/fcTable/model";
-import { UserModelList } from "@/models/systemModel";
+import {DepartmentNode, UserModelList} from "@/models/systemModel";
 import UserResetPwd from "./components/resetPwd.vue";
 import UserEdit from "./components/edit.vue";
 import UserAdd from "./components/add.vue";
@@ -100,6 +100,7 @@ import Import from "./components/import.vue";
 import { ElMessage, ElNotification } from 'element-plus';
 import { fcTableField, buttonField } from "@/utils/attrs/field";
 import { tableWidth } from "@/utils/attrs/table";
+import { SysOpsDepartTreeApi } from "@/api/modules/systemOps";
 
 // fc-table属性
 const fcTableConfig = reactive({
@@ -122,7 +123,7 @@ const columns = reactive<ColumnProps<UserModelList>[]>([
   { prop: "phone", label: "手机号", width: 140 },
   { prop: "sex", label: "性别", width: 120 },
   // { prop: "introduction", label: "描述", width: 240, align: "left" },
-  // { prop: "department", label: "部门", width: 180, align: "left" },
+  { prop: "department", label: "部门名称", width: 200 },
   { prop: "createTime", label: "创建时间", width: tableWidth.createTime },
   { prop: "createRtx", label: "创建人", width: tableWidth.createRtx },
   { prop: "options", label: "操作", width: tableWidth.option2, fixed: "right" },
@@ -143,6 +144,19 @@ const apiName = "SystemMainUser"; // 组件标识名称
 const apiName2 = "SystemMainUser2"; // 组件标识名称
 let tableSelectList = reactive([] as string[]); // 当前选择数据Keys列表
 const requestParam = reactive({"content": "" });  // 查询内容
+const departmentData = ref([] as DepartmentNode[]); // 部门树
+
+onMounted(() => {
+  fetchTreeData(); // 部门树
+});
+
+const fetchTreeData = async () => {
+  const response = await SysOpsDepartTreeApi();
+  if (response.data) {
+    const res = response.data as { data: DepartmentNode[] }; // declare
+    departmentData.value = res.data as DepartmentNode[];
+  }
+};
 
 // 表格数据
 const fetchTableData = async (params: any) => {

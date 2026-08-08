@@ -109,6 +109,23 @@
             </el-form-item>
           </el-col>
         </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="部门">
+              <el-tree-select
+                  v-model="ruleForm.department"
+                  node-key="md5"
+                  :data="props.departmentData"
+                  :props="defaultTreeProps"
+                  :check-strictly="true"
+                  placeholder="请选择用户所属部门"
+                  empty-text="无数据，请联系管理员进行部门配置"
+                  clearable
+                  filterable
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item label="个性签名" prop="introduction">
           <el-input v-model="ruleForm.introduction"
                     :type="textAreaField.type"
@@ -154,7 +171,7 @@ import { ref, reactive, defineProps, defineEmits, watch } from 'vue';
 import { UserModelDetail } from "@/models/systemModel";
 import { SysMainUserAddEnumApi, SysMainUserAddApi } from "@/api/modules/systemMain";
 import { FormInstance, FormRules } from "element-plus";
-import {OptionEnumModel, OptionExtendEnumModel} from "@/models/X";
+import { OptionEnumModel, OptionExtendEnumModel } from "@/models/X";
 import { ElNotification } from 'element-plus';
 import { dialogField, inputField, textAreaField, selectSingleField, selectMultiField, formField } from "@/utils/attrs/field";
 import publicLength from "@/utils/attrs/length";
@@ -174,11 +191,21 @@ const fullViewText = ref('全屏');
 const emit = defineEmits(['update:visible', 'reFetchTableData']);
 const btnDisabled = ref(false); // 禁用
 const btnLoading = ref(false); // 加载中
+// 默认的树节点属性
+const defaultTreeProps = {
+  label: 'label',
+  children: 'children',
+  disabled: 'disabled'
+};
 const props = defineProps({
   visible: {
     type: Boolean,
     required: true,
     default: false
+  },
+  departmentData: {
+    type: Array,
+    required: false,
   }
 });
 
@@ -202,8 +229,7 @@ function fullScreen() {
 function openDialog() {
   // 重置验证
   ruleFormRef.value?.clearValidate();
-  // 请求数据
-  fetchApiData();
+  fetchApiData(); // 枚举数据
 };
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

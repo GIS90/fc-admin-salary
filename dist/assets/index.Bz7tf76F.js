@@ -1,0 +1,1 @@
+import{_ as o,o as e,j as t}from"./index.DrRx6J4D.js";const n={name:"pdf2Word"};function r(c,s,a,f,p,d){return e(),t("h1",null,"tool>office>pdf2Word")}const l=o(n,[["render",r]]);export{l as default};

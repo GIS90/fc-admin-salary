@@ -1,0 +1,1 @@
+import{_ as e,o,j as t}from"./index.DrRx6J4D.js";const c={name:"configapi"},n={style:{color:"red"}};function s(r,a,_,p,i,d){return o(),t("h1",n,"开发中，后续会陆续上线。。。。。。")}const l=e(c,[["render",s]]);export{l as default};
