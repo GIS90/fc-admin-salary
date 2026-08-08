@@ -1,5 +1,5 @@
 <template>
-    <el-alert title="以下配置为实时预览，不建议更新默认主题设置。" type="error" :closable="false" />
+    <el-alert title="配置为实时预览，存储到浏览器缓存，不建议更新默认主题设置。" type="error" :closable="false" />
     <el-divider class="divider" content-position="center">
         <el-icon>
             <Notification />
