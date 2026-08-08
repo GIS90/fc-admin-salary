@@ -58,6 +58,7 @@ import avatarUpload from "./components/avatar.vue"
 const authStore = useAuthStore();
 
 const account = defineAsyncComponent(() => import('./components/account.vue'));
+const market = defineAsyncComponent(() => import('./components/market.vue'));
 const setting = defineAsyncComponent(() => import('./components/setting.vue'));
 const password = defineAsyncComponent(() => import('./components/password.vue'));
 const logs = defineAsyncComponent(() => import('./components/logs.vue'));
@@ -85,6 +86,11 @@ const menu = [
         icon: "Postcard",
         title: "账号信息",
         component: account
+      },
+      {
+        icon: "Picture",
+        title: "头像超市",
+        component: market
       },
       {
         icon: "Lock",
