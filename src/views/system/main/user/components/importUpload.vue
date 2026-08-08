@@ -18,8 +18,8 @@
       </div>
       <template #tip>
         <div class="step-upload-tip">
-          <p>1、仅支持 .xls、.xlsx 文件格式，每次仅限导入一个文件</p>
-          <p>2、单次导入最大200条数据</p>
+          <p>1、仅支持 <span class="info_red_weight">.xlsx</span> 文件格式，每次仅限导入一个文件</p>
+          <p>2、单次导入最大 <span class="info_red_weight">200</span> 条数据</p>
           <el-button class="step-upload-tip-button" type="primary" link @click="downloadTemplate">
             <el-icon><Download /></el-icon> 下载导入模板
           </el-button>

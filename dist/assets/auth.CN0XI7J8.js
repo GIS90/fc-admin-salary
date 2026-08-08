@@ -1,0 +1,1 @@
+import{h as t}from"./index.BnIyajOp.js";const o=s=>t.post("/access/login",s),r=()=>t.get("/access/logout"),u=()=>t.get("/api/auth"),e=()=>t.get("/api/dashboard"),n=s=>t.get("/api/task",s);export{e as A,o as a,u as b,n as c,r as d};

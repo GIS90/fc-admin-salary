@@ -1,1 +1,0 @@
-import{_ as e,o as r,c as t}from"./index.Dfz8aDy2.js";const c={},o={src:"https://cn.vuejs.org/",frameborder:"0",width:"100%",height:"100%"};function s(n,a){return r(),t("iframe",o)}const f=e(c,[["render",s]]);export{f as default};

@@ -1,1 +1,0 @@
-import{_ as e,o,c as t}from"./index.Dfz8aDy2.js";const c={name:"excelHistory"};function n(r,s,a,l,_,f){return o(),t("h1",null,"tool>office>excelHistory")}const p=e(c,[["render",n]]);export{p as default};
