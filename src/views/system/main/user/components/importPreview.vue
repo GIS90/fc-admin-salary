@@ -85,7 +85,7 @@ const totalCount = computed(() => {
 });
 // 有效数据
 const validCount = computed(() => {
-  return props.previewData.filter(item => item.status === false).length
+  return props.previewData.filter((item: { status: boolean }) => !item.status).length
 });
 // 无效数据
 const invalidCount = computed(() => {

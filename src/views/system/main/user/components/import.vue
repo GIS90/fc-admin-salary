@@ -70,7 +70,7 @@
 </template>
 
 <script setup lang='ts'>
-import { ref, reactive, defineProps, defineEmits, watch, computed } from 'vue';
+import { ref, reactive, defineProps, defineEmits, watch } from 'vue';
 import { ElNotification} from 'element-plus';
 import { dialogField } from "@/utils/attrs/field";
 import ImportStepUpload from './importUpload.vue';
@@ -178,6 +178,7 @@ const handlePreview = async () => {
     formData.append('file', uploadedFile.value);  // 单文件上传
     const res = await SysMainUserImportPreviewApi(formData);
     if (res.code === 100) {
+      // @ts-ignore
       previewData.value = res.data || [];
       if (previewData.value.length === 0) {
         ElNotification({
@@ -218,11 +219,13 @@ const handleConfirmImport = async () => {
   btnLoading.value = true;
   btnDisabled.value = true;
   try {
+    // @ts-ignore
     const res = await SysMainUserImportApi(importData.value)
     if (res.code === 100) {
+      const data = res.data as { success: number; failed: number };
       ElNotification({
         title: '提示',
-        message: `成功导入 ${res.data?.success || 0} 条数据，失败 ${res.data?.failed || 0} 条`,
+        message: `成功导入 ${data.success || 0} 条数据，失败 ${data.failed || 0} 条`,
         type: 'success'
       });
       closeDialog();

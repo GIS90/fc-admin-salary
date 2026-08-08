@@ -107,14 +107,13 @@
 
 <script setup lang='ts'>
 import { ref, reactive, defineProps, defineEmits, watch } from 'vue';
-import {DictEnumDetailModel, XtcsModelDetail} from "@/models/systemModel";
-import {SysOpsDictEnumApi, SysOpsDictEnumUpdateApi} from "@/api/modules/systemConfig";
+import { DictEnumDetailModel } from "@/models/systemModel";
+import {SysOpsDictEnumApi, SysOpsDictEnumUpdateApi } from "@/api/modules/systemConfig";
 import { FormInstance, FormRules } from "element-plus";
 import { ElNotification } from 'element-plus';
-import { dialogField, inputField, formField, inputNumberField, selectSingleField, textAreaField } from "@/utils/attrs/field";
+import { dialogField, inputField, formField, inputNumberField, textAreaField } from "@/utils/attrs/field";
 import publicLength from "@/utils/attrs/length";
 import publicPlaceHolder from "@/utils/attrs/place";
-import {OptionEnumModel} from "@/models/X";
 
 // 数据组件属性值
 const ProfileLen = publicLength.systemDictEnumModel;

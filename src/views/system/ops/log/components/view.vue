@@ -187,7 +187,7 @@ function openDialog() {
 const fetchApiData = async (md5: string) => {
   const response = await SysOpsLogApi({ md5 });
   if (response.data) {
-    const res = response as { data: LogModelList }; // declare
+    const res = response as { data: LogModelDetail }; // declare
     Object.assign(ruleForm, res.data);
   }
 };

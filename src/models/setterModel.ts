@@ -29,3 +29,16 @@ export interface ProfilePassword {
     newPassword: string;
     confirmNewPassword: string;
 }
+
+/**
+ * 用户密码
+ */
+export interface ProfileLogItem {
+    id: string;
+    ip: string;
+    method: string;
+    url: string;
+    cost: number;
+    createTime: string;
+}
+

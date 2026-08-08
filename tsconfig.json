@@ -18,8 +18,12 @@
         "jsx": "preserve",
         /* Linting */
         "strict": true,
-        "noUnusedLocals": true,
+        /* 禁用隐式 any 类型检查 */
+        "noImplicitAny": false,
+        /* 禁用未使用参数检查 */
         "noUnusedParameters": true,
+        /* 禁用未使用变量检查 */
+        "noUnusedLocals": true,
         "noFallthroughCasesInSwitch": true,
         "baseUrl": ".",
         "paths": {

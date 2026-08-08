@@ -91,6 +91,34 @@ import { UploadPlus } from "@/assets/icons/index.ts";
 <fc-upload-file v-model:visible="uploadVisible" uploadType="1" uploadDialogTitle="文件上传" @reFetchTableData="reFetchTableData"/>
 ```
 
+> ## 禁用构建代码检查
+
+### 全局禁用
+在 tsconfig.json 中禁用
+```vue
+{
+"compilerOptions": {
+    // 禁用隐式 any 类型检查
+    "noImplicitAny": false,
+    // 禁用未使用参数检查
+    "noUnusedParameters": false,
+    // 禁用未使用变量检查
+    "noUnusedLocals": false
+  }
+}
+```
+### 单个文件
+```vue
+<script setup lang="ts">
+/* eslint-disable */
+// @ts-nocheck  // 禁用整个文件的TypeScript检查
+```
+
+### 单个方法
+```vue
+// @ts-ignore
+具体检查的代码行
+```
 
 > ## 联系方式
 

@@ -95,10 +95,7 @@ import { XtcsModelView } from "@/models/systemModel";
 import { SysConfigXtcsViewApi } from "@/api/modules/systemConfig";
 import { FormInstance } from "element-plus";
 import { dialogField, inputField, textAreaField, formField } from "@/utils/attrs/field";
-import publicPlaceHolder from "@/utils/attrs/place";
 
-// 数据组件属性值
-const ProfilePlace = publicPlaceHolder.systemXtcsModel;
 
 const dgConfigField = reactive({
   title: '查看',
