@@ -87,11 +87,11 @@ const menu = [
         title: "账号信息",
         component: account
       },
-      {
-        icon: "Picture",
-        title: "头像超市",
-        component: market
-      },
+      // {
+      //   icon: "Picture",
+      //   title: "头像超市",
+      //   component: market
+      // },
       {
         icon: "Lock",
         title: "密码",
