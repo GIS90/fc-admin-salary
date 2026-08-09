@@ -17,7 +17,7 @@
         <!-- 菜单图标 -->
         <template #icon="scope">
           <el-icon :size="18">
-            <component :is="scope.row.icon" />
+            <component :is="scope.row.icon" v-if="scope.row.icon"/>
           </el-icon>
         </template>
 
