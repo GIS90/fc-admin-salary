@@ -18,6 +18,13 @@
       <el-form-item label="部门路径">
         <el-input v-model.trim="ruleForm.deptPath" :size="inputField.size" disabled/>
       </el-form-item>
+      <el-form-item label="部门MD5">
+        <el-input v-model.trim="ruleForm.md5" :size="inputField.size" disabled>
+          <template #append>
+            <el-button v-copy="ruleForm.md5" type="primary"><span style="color: red;">一键复制</span></el-button>
+          </template>
+        </el-input>
+      </el-form-item>
       <el-form-item label="部门名称" prop="label">
         <el-input v-model.trim="ruleForm.label"
                   :size="inputField.size"
