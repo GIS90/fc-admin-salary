@@ -120,7 +120,7 @@ const columns = reactive<ColumnProps<UserModelList>[]>([
   { prop: "avatar", label: "头像", width: 120 },
   { prop: "name", label: "昵称", width: tableWidth.name },
   { prop: "email", label: "邮箱", width: 200 },
-  { prop: "phone", label: "手机号", width: 140 },
+  { prop: "phone", label: "电话", width: 140 },
   { prop: "sex", label: "性别", width: 120 },
   // { prop: "introduction", label: "描述", width: 240, align: "left" },
   { prop: "department", label: "部门名称", width: 200 },

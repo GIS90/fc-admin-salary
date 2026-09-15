@@ -30,7 +30,8 @@
         </template>
       </el-table-column>
       <el-table-column prop="email" label="邮箱" align="center" />
-      <el-table-column prop="phone" label="手机号" align="center" />
+      <el-table-column prop="phone" label="电话" align="center" />
+      <el-table-column prop="department" label="部门" align="center" />
       <el-table-column prop="introduction" label="个性签名" align="center" />
       <el-table-column prop="role" label="权限" align="center" />
       <el-table-column prop="introduction" label="数据状态" align="center">
