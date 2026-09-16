@@ -51,7 +51,7 @@
             </el-icon>
           </el-tooltip>
           <el-tooltip effect="dark" content="重置密码" placement="top">
-            <el-icon class="table-handle-icon margin-left-25px" @click="resetPwdHandle(scope.row)">
+            <el-icon class="table-handle-icon margin-left-30px" @click="resetPwdHandle(scope.row)">
               <Unlock />
             </el-icon>
           </el-tooltip>
@@ -127,7 +127,7 @@ const columns = reactive<ColumnProps<UserModelList>[]>([
   { prop: "createTime", label: "创建时间", width: tableWidth.createTime },
   { prop: "createRtx", label: "创建人", width: tableWidth.createRtx },
   { prop: "options", label: "操作", width: tableWidth.option2, fixed: "right" },
-  { prop: "status", label: "状态管理", width: 160, fixed: "right" }
+  { prop: "status", label: "状态管理", width: tableWidth.status, fixed: "right" }
 ]);
 
 // Dialog状态管理

@@ -24,13 +24,13 @@
         <!-- 表格操作 -->
         <template #options="scope">
           <el-button type="primary" icon="Plus" link @click="addMenuHandle(scope.row.id)">添加子菜单</el-button>
-          <el-button type="primary" icon="Edit" link @click="editeHandle(scope.row.md5)">编辑</el-button>
+          <el-button class="margin-left-10px" type="primary" icon="Edit" link @click="editeHandle(scope.row.md5)">编辑</el-button>
           <el-popconfirm :title="pcField.title" :confirm-button-text="pcField.confirmText" :cancel-button-text="pcField.cancelText"
                          :confirm-button-type="pcField.confirmType" :cancel-button-type="pcField.cancelType"
                          :icon="pcField.icon" :icon-color="pcField.iconColor" :width="pcField.width"
                          @confirm="deleteHandle(scope.row.md5)">
             <template #reference>
-              <el-button type="danger" link>删除</el-button>
+              <el-button class="margin-left-10px" type="danger" link>删除</el-button>
             </template>
           </el-popconfirm>
         </template>

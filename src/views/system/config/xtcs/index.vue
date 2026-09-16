@@ -30,7 +30,7 @@
             </el-icon>
           </el-tooltip>
           <el-tooltip effect="dark" content="编辑" placement="top">
-            <el-icon class="table-handle-icon margin-left-25px" @click="editHandle(scope.row)">
+            <el-icon class="table-handle-icon margin-left-30px" @click="editHandle(scope.row)">
               <EditPen />
             </el-icon>
           </el-tooltip>
@@ -39,7 +39,7 @@
                          :icon="pcField.icon" :icon-color="pcField.iconColor" :width="pcField.width"
                          @confirm="deleteHandle(scope.row.md5)">
             <template #reference>
-              <el-icon class="table-handle-icon margin-left-25px">
+              <el-icon class="table-handle-icon margin-left-30px">
                 <Delete />
               </el-icon>
             </template>
@@ -100,7 +100,7 @@ const columns = reactive<ColumnProps<XtcsModelList>[]>([
   { prop: "value", label: "参数值" },
   { prop: "orderId", label: "排序编号" },
   { prop: "options", label: "操作", width: tableWidth.option3, fixed: "right" },
-  { prop: "lock", label: "状态管理", width: 160, fixed: "right" }
+  { prop: "lock", label: "状态管理", width: tableWidth.status, fixed: "right" }
 ]);
 
 // Dialog状态管理

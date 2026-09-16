@@ -5,8 +5,8 @@ export let tableWidth = {
     name: 200,
     createTime: 180,
     createRtx: 180,
-    option2: 120,
-    option3: 160,
-    status: 160,
-    optionMenu: 260,
+    option2: 150,
+    option3: 200,
+    status: 180,
+    optionMenu: 300,
 }

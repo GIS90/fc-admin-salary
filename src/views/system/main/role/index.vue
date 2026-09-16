@@ -30,7 +30,7 @@
             </el-icon>
           </el-tooltip>
           <el-tooltip effect="dark" content="授权" placement="top">
-            <el-icon class="table-handle-icon margin-left-25px" @click="authHandle(scope.row)">
+            <el-icon class="table-handle-icon margin-left-30px" @click="authHandle(scope.row)">
               <Menu />
             </el-icon>
           </el-tooltip>
@@ -39,7 +39,7 @@
                          :icon="pcField.icon" :icon-color="pcField.iconColor" :width="pcField.width"
                          @confirm="deleteHandle(scope.row.md5)">
             <template #reference>
-              <el-icon class="table-handle-icon margin-left-25px">
+              <el-icon class="table-handle-icon margin-left-30px">
                 <Delete />
               </el-icon>
             </template>
