@@ -35,7 +35,7 @@
 
     <!--数据区-->
     <el-main class="nopadding">
-      <fc-table ref="fcTableRef" :tableName="apiName" :requestApi="fetchTableData" :initParam="requestParam" :columns="columns"
+      <fc-filter-table ref="fcTableRef" :tableName="apiName" :requestApi="fetchTableData" :initParam="requestParam" :columns="columns"
                 :rowKey="ftField.rowKey" :stripe="ftField.stripe" :border="ftField.border" :pagination="ftField.pagination"
                 :showBottomView="ftField.showBottomView" :showRefreshBtn="ftField.showRefreshBtn"
                 :showColumnBtn="ftField.showColumnBtn" :showDownloadBtn="ftField.showDownloadBtn">
@@ -65,7 +65,7 @@
                      style="--el-switch-on-color: #ff4949; --el-switch-off-color: #13ce66;"
                      @change="statusHandle(scope.row.md5, $event)" />
         </template>
-      </fc-table>
+      </fc-filter-table>
     </el-main>
 
     <!--新增-->
@@ -91,7 +91,7 @@
 <script setup lang='ts'>
 import { ref, reactive, onMounted } from 'vue';
 import { SysMainUserListApi, SysMainUserStatusApi } from '@/api/modules/systemMain';
-import { ColumnProps, FcTableInstance } from "@/components/fcTable/model";
+import { ColumnProps, FcFilterTableInstance } from "@/components/fcFilterTable/model";
 import {DepartmentNode, UserModelList} from "@/models/systemModel";
 import UserResetPwd from "./components/resetPwd.vue";
 import UserEdit from "./components/edit.vue";
@@ -111,21 +111,24 @@ const fcTableConfig = reactive({
 const ftField = {...fcTableField, ...fcTableConfig};
 
 // fc-Table 实例
-const fcTableRef = ref<FcTableInstance>();
+const fcTableRef = ref<FcFilterTableInstance>();
 
 const columns = reactive<ColumnProps<UserModelList>[]>([
   { prop: "", width: tableWidth.selection, type: "selection", fixed: "left" },
-  { prop: "id", label: "数据ID", width: tableWidth.id },
-  { prop: "rtxId", label: "账号", width: tableWidth.rtx },
+  { prop: "id", label: "ID", width: tableWidth.id },
+  { prop: "rtxId", label: "账号", width: tableWidth.rtx, filter: { type: "input", placeholder: "请输入账号" } },
   { prop: "avatar", label: "头像", width: 120 },
-  { prop: "name", label: "昵称", width: tableWidth.name },
-  { prop: "email", label: "邮箱", width: 200 },
-  { prop: "phone", label: "电话", width: 140 },
-  { prop: "sex", label: "性别", width: 120 },
-  // { prop: "introduction", label: "描述", width: 240, align: "left" },
-  { prop: "department", label: "部门名称", width: 200 },
-  { prop: "createTime", label: "创建时间", width: tableWidth.createTime },
-  { prop: "createRtx", label: "创建人", width: tableWidth.createRtx },
+  { prop: "name", label: "昵称", width: tableWidth.name, filter: { type: "input", placeholder: "请输入昵称" } },
+  { prop: "email", label: "邮箱", width: 200, filter: { type: "input", placeholder: "请输入邮箱" } },
+  { prop: "phone", label: "电话", width: 140, filter: { type: "input", placeholder: "请输入电话" } },
+  { prop: "sex", label: "性别", width: 120, filter: { 
+    type: "select", 
+    placeholder: "请选择性别",
+    options: [{ label: "男", value: "男" }, { label: "女", value: "女" }] } 
+  },
+  { prop: "department", label: "部门名称", width: 200, filter: { type: "input", placeholder: "请输入部门" } },
+  { prop: "createTime", label: "创建时间", width: tableWidth.createTime, filter: { type: "daterange", placeholder: "请选择创建时间" } },
+  { prop: "createRtx", label: "创建人", width: tableWidth.createRtx, filter: { type: "input", placeholder: "请输入创建人" } },
   { prop: "options", label: "操作", width: tableWidth.option2, fixed: "right" },
   { prop: "status", label: "状态管理", width: tableWidth.status, fixed: "right" }
 ]);

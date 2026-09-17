@@ -16,7 +16,7 @@
 }
 
 .table-handle-icon:hover{
-  color: #42B984;
+  color: var(--el-color-primary) !important;
   font-size: 1.4rem;
   font-weight: 800;
 }
@@ -108,7 +108,7 @@ $my-dialog-padding: 16px;
 
 //------------------------- el-divider -------------------------
 .el-divider__text {
-  background-color: #34BFA3 !important;
+  background-color: var(--el-color-primary) !important;
   padding: 0 15px !important;
   color: #FFFFFF !important;
   font-size: 13px !important;
