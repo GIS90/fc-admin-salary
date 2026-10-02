@@ -124,7 +124,7 @@ const columns = reactive<ColumnProps<UserModelList>[]>([
   { prop: "sex", label: "性别", width: 120, filter: { 
     type: "select", 
     placeholder: "请选择性别",
-    options: [{ label: "男", value: "男" }, { label: "女", value: "女" }] } 
+    options: [{ label: "男", value: "男" }, { label: "女", value: "女" }, { label: "保密", value: "保密" }] } 
   },
   { prop: "department", label: "部门名称", width: 200, filter: { type: "input", placeholder: "请输入部门" } },
   { prop: "createTime", label: "创建时间", width: tableWidth.createTime, filter: { type: "daterange", placeholder: "请选择创建时间" } },

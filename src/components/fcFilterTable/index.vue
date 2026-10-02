@@ -30,7 +30,8 @@
                             <template v-else>
                                 <div class="filter-header-cell">
                                     <span>{{ scope.column.label }}</span>
-                                    <el-popover v-if="item.filter" placement="bottom" :width="filterPopoverWidth(item.filter)" trigger="click" :hide-after="0">
+                                    <el-popover v-if="item.filter" placement="bottom" :width="filterPopoverWidth(item.filter)"
+                                        trigger="click" :hide-after="0">
                                         <template #reference>
                                             <el-icon class="filter-icon" :class="{ 'is-active': hasFilterValue(item.filter!, item.prop) }">
                                                 <Filter />
@@ -52,6 +53,7 @@
                                                     :multiple="item.filter.multiple"
                                                     clearable
                                                     size="small"
+                                                    :teleported="false"
                                                     style="width: 100%;"
                                                     @clear="handleFilterClear(item.filter!, item.prop)">
                                                     <el-option
@@ -70,6 +72,7 @@
                                                     end-placeholder="结束日期"
                                                     :value-format="item.filter.valueFormat || 'YYYY-MM-DD'"
                                                     :shortcuts="item.filter.shortcuts"
+                                                    :teleported="false"
                                                     size="small"
                                                     style="width: 100%;" />
                                             </template>
@@ -78,6 +81,7 @@
                                                     v-model="tempFilterParam[item.filter.field || item.prop]"
                                                     :placeholder="item.filter.placeholder || '请选择'"
                                                     clearable
+                                                    :teleported="false"
                                                     size="small"
                                                     style="width: 100%;"
                                                     @clear="handleFilterClear(item.filter!, item.prop)">
