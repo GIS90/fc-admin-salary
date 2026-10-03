@@ -121,16 +121,20 @@ const columns = reactive<ColumnProps<UserModelList>[]>([
   { prop: "name", label: "昵称", width: tableWidth.name, filter: { type: "input", placeholder: "请输入昵称" } },
   { prop: "email", label: "邮箱", width: 200, filter: { type: "input", placeholder: "请输入邮箱" } },
   { prop: "phone", label: "电话", width: 140, filter: { type: "input", placeholder: "请输入电话" } },
-  { prop: "sex", label: "性别", width: 120, filter: { 
-    type: "select", 
+  { prop: "sex", label: "性别", width: 120, filter: {
+    type: "select",
     placeholder: "请选择性别",
-    options: [{ label: "男", value: "男" }, { label: "女", value: "女" }, { label: "保密", value: "保密" }] } 
+    options: [{ label: "男", value: "男" }, { label: "女", value: "女" }, { label: "保密", value: "保密" }] }
   },
   { prop: "department", label: "部门名称", width: 200, filter: { type: "input", placeholder: "请输入部门" } },
   { prop: "createTime", label: "创建时间", width: tableWidth.createTime, filter: { type: "daterange", placeholder: "请选择创建时间" } },
   { prop: "createRtx", label: "创建人", width: tableWidth.createRtx, filter: { type: "input", placeholder: "请输入创建人" } },
   { prop: "options", label: "操作", width: tableWidth.option2, fixed: "right" },
-  { prop: "status", label: "状态管理", width: tableWidth.status, fixed: "right" }
+  { prop: "status", label: "状态管理", width: tableWidth.status, filter: {
+      type: "select",
+      placeholder: "请选择状态",
+      options: [{ label: "启用", value: false }, { label: "注销", value: true }]
+  }, fixed: "right" }
 ]);
 
 // Dialog状态管理
