@@ -4,7 +4,7 @@ import FcFilterTable from "@/components/fcFilterTable/index.vue";
 
 /** 列筛选器配置 */
 export interface ColumnFilterProps {
-    type: "input" | "select" | "daterange" | "boolean" | "number";
+    type: "input" | "select" | "radio" | "daterange" | "boolean" | "number";
     field?: string;
     options?: Array<{ label: string; value: any }>;
     placeholder?: string;

@@ -63,6 +63,18 @@
                                                         :value="opt.value" />
                                                 </el-select>
                                             </template>
+                                            <template v-else-if="item.filter.type === 'radio'">
+                                                <el-radio-group
+                                                    v-model="tempFilterParam[item.filter.field || item.prop]"
+                                                    size="small">
+                                                    <el-radio
+                                                        v-for="opt in item.filter.options"
+                                                        :key="opt.value"
+                                                        :value="opt.value">
+                                                        {{ opt.label }}
+                                                    </el-radio>
+                                                </el-radio-group>
+                                            </template>
                                             <template v-else-if="item.filter.type === 'daterange'">
                                                 <el-date-picker
                                                     v-model="tempFilterParam[item.filter.field || item.prop]"
@@ -333,6 +345,8 @@ const applyLocalFilter = (list: any[]) => {
                     return String(rowVal).toLowerCase().includes(String(value).toLowerCase());
                 case 'select':
                     if (Array.isArray(value)) return value.includes(rowVal);
+                    return rowVal === value;
+                case 'radio':
                     return rowVal === value;
                 case 'boolean':
                     return Boolean(rowVal) === Boolean(value);

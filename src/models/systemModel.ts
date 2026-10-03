@@ -260,4 +260,78 @@ export interface DepartmentDragNode {
     pid: number;
 }
 
+// - - - - - - - - - - - - - - - - - - - - - [系统配置>报表配置] - - - - - - - - - - - - - - - - - - - - - -
+/**
+ * 系统报表>基础模型
+ */
+export interface ReportModelBase {
+    name: string;
+    table: string;
+    remark?: string;
+    mode?: boolean;
+}
+
+/**
+ * 系统报表>编辑
+ */
+export interface ReportModelDetail extends ReportModelBase {
+    md5: string;
+}
+
+/**
+ * 系统报表>列表
+ */
+export interface ReportModelList extends ReportModelBase {
+    id: number;
+    md5: string;
+}
+
+/**
+ * 系统报表>查看
+ */
+export interface ReportModelView extends ReportModelBase {
+    md5: string;
+    createTime: string;
+    createRtx: string;
+    updateTime: string;
+    updateRtx: string;
+}
+
+/**
+ * 系统报表字段>基础
+ */
+export interface ReportFieldModelBase {
+    field: string;
+    nameZh: string;
+    nameCh: string;
+    xtbbMd5: string;
+    remark?: string;
+    width?: number;
+    fixed?: string;
+    list?: boolean;
+    listType?: string;
+    export?: boolean;
+    exportType?: string;
+    null?: boolean;
+    idAuto?: boolean;
+    extend?: boolean;
+    filter?: string;
+    orderId?: number;
+}
+
+/**
+ * 系统报表字段>列表
+ */
+export interface ReportFieldModelList extends ReportFieldModelBase {
+    id: number;
+    md5: string;
+}
+
+/**
+ * 系统报表字段>详情（含md5，用于更新）
+ */
+export interface ReportFieldModelDetail extends ReportFieldModelBase {
+    md5: string;
+}
+
 

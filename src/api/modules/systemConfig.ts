@@ -3,7 +3,8 @@ import { ResultPage } from "@/api/utils/models";
 import {
     DictEnumBaseModel, DictEnumDetailModel, DictEnumListModel,
     DictKeyBaseModel, DictKeyDetailModel, DictKeyListModel,
-    XtcsModelBase, XtcsModelList
+    XtcsModelBase, XtcsModelList,
+    ReportModelBase, ReportModelList
 } from "@/models/systemModel";
 import {RequestKeyModel, RequestMd5Model, RequestMd5Models, RequestStatusModel} from "@/models/X";
 
@@ -123,4 +124,66 @@ export const SysOpsDictEnumApi = (params: RequestMd5Model) => {
 // [PUT]EV>更新
 export const SysOpsDictEnumUpdateApi = (params: DictEnumDetailModel) => {
     return http.put('/system/config/dict/de', params);
+};
+
+/* * * * * * * * * * * * * * * * * * * * * * [系统配置>报表配置] * * * * * * * * * * * * * * * * * * * * * * * * * */
+// [GET]列表
+export const SysConfigReportListApi = (params: any) => {
+    return http.get<ResultPage<ReportModelList>>('/system/config/report.list', params);
+};
+
+// [DELETE]单条删除
+export const SysConfigReportDeleteApi = (params: RequestMd5Model) => {
+    return http.delete('/system/config/report.delete', params);
+};
+
+// [PUT]批量删除
+export const SysConfigReportDeleteApis = (params: RequestMd5Models) => {
+    return http.put('/system/config/report.batch.delete', params);
+};
+
+// [GET]详情
+export const SysConfigReportApi = (params: RequestMd5Model) => {
+    return http.get('/system/config/report', params);
+};
+
+// [PUT]更新
+export const SysConfigReportUpdateApi = (params: ReportModelBase) => {
+    return http.put('/system/config/report', params);
+};
+
+// [POST]新增
+export const SysConfigReportAddApi = (params: ReportModelBase) => {
+    return http.post('/system/config/report', params);
+};
+
+// [GET]查看
+export const SysConfigReportViewApi = (params: RequestMd5Model) => {
+    return http.get('/system/config/report.view', params);
+};
+
+/* * * * * * * * * * * * * * * * * * * * * * [系统配置>报表配置>字段] * * * * * * * * * * * * * * * * * * * * * */
+// [GET]列表-按报表Md5
+export const SysConfigReportFieldListApi = (params: { xtbbMd5: string }) => {
+    return http.get<any[]>('/system/config/report.field.list', params);
+};
+
+// [POST]新增
+export const SysConfigReportFieldAddApi = (params: any) => {
+    return http.post('/system/config/report.field', params);
+};
+
+// [PUT]更新
+export const SysConfigReportFieldUpdateApi = (params: any) => {
+    return http.put('/system/config/report.field', params);
+};
+
+// [DELETE]单条删除
+export const SysConfigReportFieldDeleteApi = (params: RequestMd5Model) => {
+    return http.delete('/system/config/report.field.delete', params);
+};
+
+// [PUT]批量删除
+export const SysConfigReportFieldBatchDeleteApi = (params: RequestMd5Models) => {
+    return http.put('/system/config/report.field.batch.delete', params);
 };
