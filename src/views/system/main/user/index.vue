@@ -15,7 +15,7 @@
         <el-button id="btn-batch-delete" class="table-handle-button" type="warning" icon="Delete" :plain="buttonField.plain" :size="buttonField.size" @click="batchDeleteHandle" :disabled="!fcTableRef?.isSelected">
           批量删除
         </el-button>
-        <el-popover placement="bottom" title="操作说明" width="350" trigger="hover">
+        <el-popover placement="bottom" width="350" trigger="hover">
           <template #default>
             <div style="line-height: 2.5;">
               <span style="color: #f56c6c;">【注销】</span>：禁止用户登录系统，停止系统配置相关菜单，再次允许使用重新开启状态即可<br/>
@@ -23,7 +23,7 @@
             </div>
           </template>
           <template #reference>
-            <el-button id="btn-popover" type="info" :plain="buttonField.plain" :size="buttonField.size">说明</el-button>
+            <el-button id="btn-popover" type="info" icon="Reading" :plain="buttonField.plain" :size="buttonField.size">操作说明</el-button>
           </template>
         </el-popover>
       </div>

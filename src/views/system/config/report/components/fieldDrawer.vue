@@ -30,6 +30,16 @@
         <div class="left-panel">
           <el-button type="primary" icon="Plus" @click="addHandle">新增字段</el-button>
           <el-button type="danger" icon="Delete" :plain="true" :disabled="!isSelected" @click="batchDeleteHandle">批量删除</el-button>
+          <el-popover placement="bottom" width="400" trigger="hover">
+            <template #default>
+              <div style="line-height: 2.5;">
+                <span style="color: #f56c6c;">新增、编辑、删除</span>只支持单条数据操作，请勿新增/编辑多个报表字段，点击保存时，只会保存当前操作数据
+              </div>
+            </template>
+            <template #reference>
+              <el-button id="btn-popover" type="info" icon="Reading">操作说明</el-button>
+            </template>
+          </el-popover>
         </div>
         <div class="right-panel">
           <el-button icon="Refresh" circle @click="fetchData" />

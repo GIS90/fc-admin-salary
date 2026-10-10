@@ -25,14 +25,14 @@
         </template>
         <!-- 表格操作 -->
         <template #options="scope">
-          <el-tooltip effect="dark" content="配置字段" placement="top">
-            <el-icon class="table-handle-icon" @click="fieldHandle(scope.row)">
-              <Operation />
+          <el-tooltip effect="dark" content="编辑" placement="top">
+            <el-icon class="table-handle-icon" @click="editHandle(scope.row)">
+              <EditPen />
             </el-icon>
           </el-tooltip>
-          <el-tooltip effect="dark" content="编辑" placement="top">
-            <el-icon class="table-handle-icon margin-left-30px" @click="editHandle(scope.row)">
-              <EditPen />
+          <el-tooltip effect="dark" content="配置字段" placement="top">
+            <el-icon class="table-handle-icon margin-left-30px" @click="fieldHandle(scope.row)">
+              <Operation />
             </el-icon>
           </el-tooltip>
           <el-popconfirm :title="pcField.title" :confirm-button-text="pcField.confirmText" :cancel-button-text="pcField.cancelText"
