@@ -163,8 +163,8 @@ export const SysConfigReportViewApi = (params: RequestMd5Model) => {
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * [系统配置>报表配置>字段] * * * * * * * * * * * * * * * * * * * * * */
-// [GET]列表-按报表Md5
-export const SysConfigReportFieldListApi = (params: { xtbbMd5: string }) => {
+// [GET]列表-按报表
+export const SysConfigReportFieldListApi = (params: { xtbb: string }) => {
     return http.get<any[]>('/system/config/report.field.list', params);
 };
 

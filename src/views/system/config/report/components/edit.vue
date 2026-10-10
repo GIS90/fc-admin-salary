@@ -43,15 +43,7 @@
                :label-position="formField.labelPosition" :label-width="formField.labelWidth"
                :size="formField.size" style="width: 100%" >
         <el-form-item label="报表名称" prop="name">
-          <el-input v-model.trim="ruleForm.name"
-                    :size="inputField.size"
-                    :show-word-limit="inputField.showWordLimit"
-                    :clearable="inputField.clearable"
-                    :prefix-icon="inputField.prefixIcon"
-                    :maxlength="35"
-                    placeholder="请输入报表名称"
-                    :disabled="btnDisabled"
-          />
+          <el-input v-model.trim="ruleForm.name" :size="inputField.size" disabled/>
         </el-form-item>
         <el-form-item label="数据库表名" prop="table">
           <el-input v-model.trim="ruleForm.table"

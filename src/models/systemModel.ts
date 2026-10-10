@@ -304,7 +304,7 @@ export interface ReportFieldModelBase {
     field: string;
     nameZh: string;
     nameCh: string;
-    xtbbMd5: string;
+    xtbb: string;
     remark?: string;
     width?: number;
     fixed?: string;

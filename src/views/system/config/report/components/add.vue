@@ -52,6 +52,7 @@
                     placeholder="请输入报表名称"
                     :disabled="btnDisabled"
           />
+          <div class="el-form-item-msg">报表唯一标识，建议采用驼峰式写法，新增后不可用修改字段，示例：SystemMainUser</div>
         </el-form-item>
         <el-form-item label="数据库表名" prop="table">
           <el-input v-model.trim="ruleForm.table"

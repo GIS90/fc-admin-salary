@@ -35,7 +35,7 @@
             </el-icon>
           </el-tooltip>
           <el-tooltip effect="dark" content="编辑" placement="top">
-            <el-icon class="table-handle-icon margin-left-20px" @click="editHandle(scope.row)">
+            <el-icon class="table-handle-icon margin-left-30px" @click="editHandle(scope.row)">
               <EditPen />
             </el-icon>
           </el-tooltip>
@@ -44,7 +44,7 @@
                          :icon="pcField.icon" :icon-color="pcField.iconColor" :width="pcField.width"
                          @confirm="deleteHandle(scope.row.md5)">
             <template #reference>
-              <el-icon class="table-handle-icon margin-left-20px">
+              <el-icon class="table-handle-icon margin-left-30px">
                 <Delete />
               </el-icon>
             </template>
@@ -65,8 +65,8 @@
     <!--配置字段 Drawer-->
     <FieldDrawer
       v-model:visible="fieldDrawerVisible"
-      :xtbb-md5="fieldDrawerXtbbMd5"
       :report-name="fieldDrawerReportName"
+      :report-table="fieldDrawerReportTable"
       :report-mode="fieldDrawerReportMode"
       @reFetchTableData="reFetchTableData" />
   </el-container>
@@ -111,8 +111,8 @@ const batchDeleteVisible = ref(false);
 
 // 配置字段 Drawer
 const fieldDrawerVisible = ref(false);
-const fieldDrawerXtbbMd5 = ref("");
 const fieldDrawerReportName = ref("");
+const fieldDrawerReportTable = ref("");
 const fieldDrawerReportMode = ref(false);
 
 const tableRowMd5 = ref("");
@@ -147,8 +147,8 @@ const editHandle = (row: ReportModelList) => {
 
 // 配置字段
 const fieldHandle = (row: ReportModelList) => {
-  fieldDrawerXtbbMd5.value = row.md5;
   fieldDrawerReportName.value = row.name;
+  fieldDrawerReportTable.value = row.table;
   fieldDrawerReportMode.value = !!row.mode;
   fieldDrawerVisible.value = true;
 };

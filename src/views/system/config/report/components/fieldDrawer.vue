@@ -10,9 +10,10 @@
       <div class="drawer-header">
         <div class="drawer-header-left">
           <span class="drawer-title">配置报表字段</span>
-          <el-tag v-if="reportName" type="primary" size="small" effect="plain">{{ reportName }}</el-tag>
-          <el-tag v-if="reportMode" type="success" size="small">百分比模式</el-tag>
-          <el-tag v-else type="primary" size="small">固定数值模式</el-tag>
+          <el-tag v-if="reportTable" type="info" size="large" effect="plain">报表名称：{{ reportName }}</el-tag>
+          <el-tag v-if="reportTable" type="danger" size="large" effect="plain">数据库表名：{{ reportTable }}</el-tag>
+          <el-tag v-if="reportMode" type="success" size="large">百分比模式</el-tag>
+          <el-tag v-else type="primary" size="large">固定数值模式</el-tag>
         </div>
         <div class="drawer-header-right">
           <span class="width-sum-label">宽度之和：</span>
@@ -146,8 +147,8 @@ import { ReportFieldModelList } from '@/models/systemModel';
 
 const props = defineProps<{
   visible: boolean;
-  xtbbMd5: string;
   reportName: string;
+  reportTable: string;
   reportMode: boolean;
 }>();
 
@@ -161,7 +162,7 @@ const handleClose = () => {
 };
 
 watch(() => props.visible, (val) => {
-  if (val && props.xtbbMd5) {
+  if (val && props.reportName) {
     fetchData();
   }
 });
@@ -201,11 +202,11 @@ const popSnapshot = (row: FieldRow): FieldRow | undefined => {
 };
 
 const fetchData = async () => {
-  if (!props.xtbbMd5) return;
+  if (!props.reportName) return;
   editingSet.clear();
   snapshotMap.clear();
   try {
-    const res = await SysConfigReportFieldListApi({ xtbbMd5: props.xtbbMd5 });
+    const res = await SysConfigReportFieldListApi({ xtbb: props.reportName });
     const data = (res?.data as ReportFieldModelList[]) || [];
     fieldList.value = data.map((r) => ({ ...r, _rowKey: r.md5 }));
   } catch (e) {
@@ -227,7 +228,7 @@ const addHandle = () => {
     field: '',
     nameZh: '',
     nameCh: '',
-    xtbbMd5: props.xtbbMd5,
+    xtbb: props.reportName,
     remark: '',
     width: 0,
     fixed: '',
@@ -280,7 +281,7 @@ const saveHandle = async (row: FieldRow) => {
     field: row.field,
     nameZh: row.nameZh,
     nameCh: row.nameCh,
-    xtbbMd5: row.xtbbMd5,
+    xtbb: row.xtbb,
     remark: row.remark,
     width: row.width,
     fixed: row.fixed,
@@ -343,7 +344,7 @@ const batchDeleteHandle = async () => {
   gap: 8px;
 }
 .drawer-title {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: bold;
   margin-right: 12px;
 }
