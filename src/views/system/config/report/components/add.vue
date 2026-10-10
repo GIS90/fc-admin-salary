@@ -105,9 +105,9 @@ import { ElNotification } from 'element-plus';
 import { dialogField, inputField, textAreaField, formField } from "@/utils/attrs/field";
 
 const dgConfigField = reactive({
-  title: '新增报表',
+  title: '新增',
 });
-const introductionSize = ref({minRows: 3, maxRows: 4});
+const introductionSize = ref({minRows: 4, maxRows: 5});
 const dgField = {...dialogField, ...dgConfigField};
 const fullView = ref(dgField.fullScreen);
 const fullViewText = ref('全屏');
@@ -157,7 +157,7 @@ const rules = reactive<FormRules<ReportModelBase>>({
     { min: 1, max: 35, message: '最大长度支持35位', trigger: 'blur' },
   ],
   remark: [
-    { min: 1, max: 100, message: '最大长度支持100位', trigger: 'blur' },
+    { max: 100, message: '最大长度支持100位', trigger: 'blur' },
   ]
 });
 

@@ -39,20 +39,20 @@
       <el-main class="nopadding">
         <el-table ref="tableRef" :data="fieldList" border stripe row-key="_rowKey" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="45" align="center" :selectable="row => !isEditing(row)" />
-          <el-table-column type="index" label="序号" width="60" align="center" />
-          <el-table-column prop="field" label="数据库字段" min-width="140">
+          <el-table-column type="index" label="序号" width="70" align="center" />
+          <el-table-column prop="field" label="数据库字段" min-width="150">
             <template #default="scope">
               <el-input v-if="isEditing(scope.row)" v-model="scope.row.field" placeholder="字段名" :disabled="isExistingRow(scope.row)" size="small" />
               <span v-else>{{ scope.row.field }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="nameCh" label="中文名称" min-width="130">
+          <el-table-column prop="nameCh" label="中文名称" min-width="150">
             <template #default="scope">
               <el-input v-if="isEditing(scope.row)" v-model="scope.row.nameCh" placeholder="中文名" size="small" />
               <span v-else>{{ scope.row.nameCh }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="nameZh" label="英文名称" min-width="130">
+          <el-table-column prop="nameZh" label="英文名称" min-width="150">
             <template #default="scope">
               <el-input v-if="isEditing(scope.row)" v-model="scope.row.nameZh" placeholder="英文名" size="small" />
               <span v-else>{{ scope.row.nameZh }}</span>
@@ -75,19 +75,19 @@
               <span v-else>-</span>
             </template>
           </el-table-column>
-          <el-table-column label="列表" width="80" align="center">
+          <el-table-column label="列表" width="90" align="center">
             <template #default="scope">
               <el-switch v-if="isEditing(scope.row)" v-model="scope.row.list" size="small" />
               <el-tag v-else :type="scope.row.list ? 'success' : 'info'" size="small">{{ scope.row.list ? '是' : '否' }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="导出" width="80" align="center">
+          <el-table-column label="导出" width="90" align="center">
             <template #default="scope">
               <el-switch v-if="isEditing(scope.row)" v-model="scope.row.export" size="small" />
               <el-tag v-else :type="scope.row.export ? 'success' : 'info'" size="small">{{ scope.row.export ? '是' : '否' }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="扩展" width="80" align="center">
+          <el-table-column label="扩展" width="90" align="center">
             <template #default="scope">
               <el-switch v-if="isEditing(scope.row)" v-model="scope.row.extend" size="small" />
               <el-tag v-else :type="scope.row.extend ? 'warning' : 'info'" size="small">{{ scope.row.extend ? '是' : '否' }}</el-tag>
