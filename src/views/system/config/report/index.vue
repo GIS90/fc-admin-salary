@@ -10,15 +10,11 @@
           批量删除
         </el-button>
       </div>
-      <div class="right-panel">
-        <el-input v-model.trim="requestParam.content" placeholder="支持模糊查询，输入后点击查询" clearable style="width: 250px;" />
-        <el-button id="btn-search" :type="buttonField.type" :plain="buttonField.plain" :size="buttonField.size" icon="Search" @click="reFetchTableData" />
-      </div>
     </el-header>
 
     <!--数据区-->
     <el-main class="nopadding">
-      <fc-filter-table ref="fcTableRef" :tableName="apiName" :requestApi="fetchTableData" :initParam="requestParam" :columns="columns"
+      <fc-filter-table ref="fcTableRef" :tableName="apiName" :requestApi="fetchTableData" :columns="columns"
                 :rowKey="ftField.rowKey" :stripe="ftField.stripe" :border="ftField.border" :pagination="ftField.pagination"
                 :showBottomView="ftField.showBottomView" :showRefreshBtn="ftField.showRefreshBtn"
                 :showColumnBtn="ftField.showColumnBtn" :showDownloadBtn="ftField.showDownloadBtn">
@@ -118,7 +114,6 @@ const fieldDrawerReportMode = ref(false);
 const tableRowMd5 = ref("");
 const apiName = "SystemConfigReport";
 let tableSelectList = reactive([] as string[]);
-const requestParam = reactive({"content": "" });
 
 // 表格数据
 const fetchTableData = async (params: any) => {
