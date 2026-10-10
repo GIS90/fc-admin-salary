@@ -47,7 +47,7 @@
       </el-header>
 
       <el-main class="nopadding">
-        <el-table ref="tableRef" :data="fieldList" border stripe row-key="_rowKey" @selection-change="handleSelectionChange">
+        <el-table ref="tableRef" :data="fieldList" border stripe row-key="_rowKey" height="calc(100vh - 200px)" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="45" align="center" :selectable="row => !isEditing(row)" />
           <el-table-column type="index" label="序号" width="70" align="center" />
           <el-table-column prop="field" label="数据库字段" min-width="150">
