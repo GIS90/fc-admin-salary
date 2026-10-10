@@ -391,4 +391,9 @@ const batchDeleteHandle = async () => {
   &:hover { color: #409eff; }
 }
 .margin-left-30px { margin-left: 30px; }
+:deep(.el-table th.el-table__cell) {
+  background-color: #ebeef5 !important;
+  color: #303133;
+  font-weight: 600;
+}
 </style>
