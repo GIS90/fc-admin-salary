@@ -99,8 +99,8 @@ import UserAdd from "./components/add.vue";
 import Import from "./components/import.vue";
 import { ElMessage, ElNotification } from 'element-plus';
 import { fcTableField, buttonField } from "@/utils/attrs/field";
-import { tableWidth } from "@/utils/attrs/table";
 import { SysOpsDepartTreeApi } from "@/api/modules/systemOps";
+import { TableFieldColumnApi } from "@/api/modules/common";
 
 // fc-table属性
 const fcTableConfig = reactive({
@@ -112,7 +112,9 @@ const ftField = {...fcTableField, ...fcTableConfig};
 
 // fc-Table 实例
 const fcTableRef = ref<FcFilterTableInstance>();
+const columns = ref<ColumnProps<UserModelList>[]>([]);
 
+/*
 const columns = reactive<ColumnProps<UserModelList>[]>([
   { prop: "", width: tableWidth.selection, type: "selection", fixed: "left" },
   { prop: "id", label: "ID", width: tableWidth.id },
@@ -136,6 +138,7 @@ const columns = reactive<ColumnProps<UserModelList>[]>([
       options: [{ label: "启用", value: false }, { label: "注销", value: true }]
   }, fixed: "right" }
 ]);
+*/
 
 // Dialog状态管理
 const addVisible= ref(false); // 新增
@@ -154,8 +157,23 @@ const requestParam = reactive({"content": "" });  // 查询内容
 const departmentData = ref([] as DepartmentNode[]); // 部门树
 
 onMounted(() => {
+  fetchTableFieldColumn(); // 表头数据
   fetchTreeData(); // 部门树
 });
+
+const fetchTableFieldColumn = async () => {
+  const response = await TableFieldColumnApi({xtbb: apiName});
+  if (response.code === 100 && response.data) {
+    console.log("=====================>TableFieldColumnApi", response.data)
+    columns.value = response.data;
+  } else {
+    ElNotification({
+      title: '提示',
+      message: '报表未配置表头，请联系平台管理员！',
+      type: 'warning'
+    });
+  }
+};
 
 const fetchTreeData = async () => {
   const response = await SysOpsDepartTreeApi();

@@ -21,3 +21,8 @@ export const DownloadTableApi = (params: RequestDownloadModel) => {
 export const UploadFilesApi = (data: any) => {
     return http.post('/api/uploads', data);
 };
+/* * * * * * * * * * * * * * * * * * * * * * [Table] * * * * * * * * * * * * * * * * * * * * * * * * * */
+// [GET]报表Column
+export const TableFieldColumnApi = (params: { xtbb: string }) => {
+    return http.get<any[]>('/system/config/report.field.column', params);
+};

@@ -186,7 +186,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, reactive, computed } from 'vue';
+import { onMounted, ref, reactive, computed, watch } from 'vue';
 import { ElTable } from "element-plus";
 import { useTable, useSelection } from '@/components/fcTable/hooks';
 import { ColumnProps, TypeProps, ColumnFilterProps } from "./model";
@@ -241,6 +241,11 @@ const { tableData: hooksTableData, pageable, loading, getTableList } =
 const { selectionChange, selectedList, selectedListKeys, isSelected } = useSelection(props.rowKey);
 const radio = ref("");
 const tableColumns = ref<ColumnProps[]>(props.columns);
+watch(() => props.columns, (val) => {
+    if (val && val.length > 0) {
+        tableColumns.value = JSON.parse(JSON.stringify(val));
+    }
+}, { deep: true });
 const columnTypes: TypeProps[] = ["selection", "radio", "index", "expand", "sort"];
 
 const tempFilterParam = reactive<Record<string, any>>({});
