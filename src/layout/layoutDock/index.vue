@@ -25,7 +25,7 @@
                 <router-view v-slot="{ Component }">
                     <transition appear name="fade-transform" mode="out-in">
                         <keep-alive :include="sysKeepAliveStore.list">
-                            <component :is="Component" :key="route.fullPath" v-if="isRouterShow" />
+                            <component :is="Component" :key="route.name" v-if="isRouterShow" />
                         </keep-alive>
                     </transition>
                 </router-view>
