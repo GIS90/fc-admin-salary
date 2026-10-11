@@ -164,7 +164,6 @@ onMounted(() => {
 const fetchTableFieldColumn = async () => {
   const response = await TableFieldColumnApi({xtbb: apiName});
   if (response.code === 100 && response.data) {
-    console.log("=====================>TableFieldColumnApi", response.data)
     columns.value = response.data;
   } else {
     ElNotification({
