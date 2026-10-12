@@ -2,6 +2,7 @@
   <el-container>
     <el-header>
       <el-button id="btn-add" :type="buttonField.type" :plain="buttonField.plain" :size="buttonField.size" icon="Plus" @click="addMenuHandle()">新增</el-button>
+      <el-button :type="buttonField.type" :plain="buttonField.plain" :size="buttonField.size" :icon="allExpanded ? 'Fold' : 'Expand'" @click="toggleAllExpand">{{ allExpanded ? '全部关闭' : '全部展开' }}</el-button>
       <el-alert class="alert" :title="alertContent" type="success" />
     </el-header>
     <el-main class="nopadding">
@@ -75,6 +76,7 @@ const pcField = {...PopConfirmField, ...{}};
 
 // fc-Table 实例
 const fcTableRef = ref<FcTableInstance>();
+const allExpanded = ref(false);
 // 表格配置项
 const columns = reactive<ColumnProps<Menu.MenuOptions>[]>([
   // { prop: "", width: 80, type: "selection", fixed: "left" },
@@ -149,6 +151,21 @@ const deleteHandle = (md5: string) => {
     });
     reFetchTableData(true); // 成功后刷新数据
   })
+}
+
+const toggleAllExpand = () => {
+  const elTable = fcTableRef.value?.element;
+  if (!elTable) return;
+  allExpanded.value = !allExpanded.value;
+  const walk = (list: any[]) => {
+    list.forEach((row) => {
+      if (row.children && row.children.length > 0) {
+        elTable.toggleRowExpansion(row, allExpanded.value);
+        walk(row.children);
+      }
+    });
+  };
+  walk(elTable.store.states.data.value);
 }
 
 </script>
