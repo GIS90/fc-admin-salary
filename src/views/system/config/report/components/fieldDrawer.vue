@@ -85,22 +85,57 @@
               <span v-else>-</span>
             </template>
           </el-table-column>
-          <el-table-column label="列表" width="90" align="center">
+          <el-table-column label="列表" width="100" align="center">
             <template #default="scope">
               <el-switch v-if="isEditing(scope.row)" v-model="scope.row.list" size="small" />
               <el-tag v-else :type="scope.row.list ? 'success' : 'info'" size="small">{{ scope.row.list ? '是' : '否' }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="导出" width="90" align="center">
+          <el-table-column label="列表类型" width="130" align="center">
+            <template #default="scope">
+              <el-select v-if="isEditing(scope.row)" v-model="scope.row.listType" placeholder="类型" clearable size="small" style="width:110px;">
+                <el-option v-for="op in fieldTypeOptions" :key="op.value" :label="op.label" :value="op.value" />
+              </el-select>
+              <span v-else>{{ fieldTypeOptions.find(o => o.value === scope.row.listType)?.label || scope.row.listType || '-' }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="导出" width="100" align="center">
             <template #default="scope">
               <el-switch v-if="isEditing(scope.row)" v-model="scope.row.export" size="small" />
               <el-tag v-else :type="scope.row.export ? 'success' : 'info'" size="small">{{ scope.row.export ? '是' : '否' }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="扩展" width="90" align="center">
+
+          <el-table-column label="导出类型" width="130" align="center">
+            <template #default="scope">
+              <el-select v-if="isEditing(scope.row)" v-model="scope.row.exportType" placeholder="类型" clearable size="small" style="width:110px;">
+                <el-option v-for="op in fieldTypeOptions" :key="op.value" :label="op.label" :value="op.value" />
+              </el-select>
+              <span v-else>{{ fieldTypeOptions.find(o => o.value === scope.row.exportType)?.label || scope.row.exportType || '-' }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="扩展" width="100" align="center">
             <template #default="scope">
               <el-switch v-if="isEditing(scope.row)" v-model="scope.row.extend" size="small" />
               <el-tag v-else :type="scope.row.extend ? 'warning' : 'info'" size="small">{{ scope.row.extend ? '是' : '否' }}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="允许空值" width="100" align="center">
+            <template #default="scope">
+              <el-switch v-if="isEditing(scope.row)" v-model="scope.row.null" size="small" />
+              <el-tag v-else :type="scope.row.null ? 'success' : 'info'" size="small">{{ scope.row.null ? '是' : '否' }}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="ID自增" width="100" align="center">
+            <template #default="scope">
+              <el-switch v-if="isEditing(scope.row)" v-model="scope.row.idAuto" size="small" />
+              <el-tag v-else :type="scope.row.idAuto ? 'success' : 'info'" size="small">{{ scope.row.idAuto ? '是' : '否' }}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="filter" label="字段筛选" min-width="180" show-overflow-tooltip>
+            <template #default="scope">
+              <el-input v-if="isEditing(scope.row)" v-model="scope.row.filter" placeholder="筛选配置JSON" size="small" />
+              <span v-else>{{ scope.row.filter || '-' }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="orderId" label="排序" width="100" align="right">
@@ -151,9 +186,10 @@ import {
   SysConfigReportFieldAddApi,
   SysConfigReportFieldUpdateApi,
   SysConfigReportFieldDeleteApi,
-  SysConfigReportFieldBatchDeleteApi
+  SysConfigReportFieldBatchDeleteApi,
 } from '@/api/modules/systemConfig';
 import { ReportFieldModelList } from '@/models/systemModel';
+import {DictEnumOptionApi} from "@/api/modules/common";
 
 const props = defineProps<{
   visible: boolean;
@@ -171,8 +207,20 @@ const handleClose = () => {
   emit('update:visible', false);
 };
 
+interface DictOption { label: string; value: any }
+const fieldTypeOptions = ref<DictOption[]>([]);
+
+const fetchFieldTypeEnums = async () => {
+  try {
+    const response = await DictEnumOptionApi({ name: 'xtbb-field-type' });
+    fieldTypeOptions.value = (response?.data as DictOption[]) || [];
+    console.log(response?.data)
+  } catch (e) {}
+};
+
 watch(() => props.visible, (val) => {
   if (val && props.reportName) {
+    fetchFieldTypeEnums();
     fetchData();
   }
 });

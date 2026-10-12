@@ -26,3 +26,8 @@ export const UploadFilesApi = (data: any) => {
 export const TableFieldColumnApi = (params: { xtbb: string }) => {
     return http.get<any[]>('/system/config/report.field.column', params);
 };
+
+// [GET]EV>通过Key获取枚举值(option格式)
+export const DictEnumOptionApi = (params: { name: string }) => {
+    return http.get<{ label: string; value: any }[]>('/system/config/dict/de.option', params);
+};
