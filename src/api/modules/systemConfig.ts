@@ -186,4 +186,9 @@ export const SysConfigReportFieldDeleteApi = (params: RequestMd5Model) => {
 // [PUT]批量删除
 export const SysConfigReportFieldBatchDeleteApi = (params: RequestMd5Models) => {
     return http.put('/system/config/report.field.batch.delete', params);
+}
+
+// [POST]Field>字段校验
+export const SysConfigReportFieldCheckApi = (params: { table: string; fields: string[] }) => {
+    return http.post('/system/config/report.field.check', params);
 };

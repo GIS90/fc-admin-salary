@@ -30,6 +30,7 @@
         <div class="left-panel">
           <el-button type="primary" icon="Plus" @click="addHandle">新增字段</el-button>
           <el-button type="danger" icon="Delete" :plain="true" :disabled="!isSelected" @click="batchDeleteHandle">批量删除</el-button>
+          <el-button type="success" icon="CircleCheck" @click="checkHandle">字段校验</el-button>
           <el-popover placement="bottom" width="400" trigger="hover">
             <template #default>
               <div style="line-height: 2.5;">
@@ -175,6 +176,8 @@
         </el-table>
       </el-main>
     </el-container>
+
+    <FieldValidate v-model:visible="checkDialogVisible" :report-table="props.reportTable" :field-list="fieldList.map(r => r.field)" />
   </el-drawer>
 </template>
 
@@ -190,6 +193,7 @@ import {
 } from '@/api/modules/systemConfig';
 import { ReportFieldModelList } from '@/models/systemModel';
 import {DictEnumOptionApi} from "@/api/modules/common";
+import FieldValidate from './fieldValidate.vue';
 
 const props = defineProps<{
   visible: boolean;
@@ -214,7 +218,6 @@ const fetchFieldTypeEnums = async () => {
   try {
     const response = await DictEnumOptionApi({ name: 'xtbb-field-type' });
     fieldTypeOptions.value = (response?.data as DictOption[]) || [];
-    console.log(response?.data)
   } catch (e) {}
 };
 
@@ -386,6 +389,14 @@ const batchDeleteHandle = async () => {
     ElNotification({ title: '提示', message: '批量删除成功', type: 'success' });
     fetchData();
   } catch (e) {}
+};
+
+const checkDialogVisible = ref(false);
+const checkHandle = () => {
+  if (!props.reportTable) { ElMessage.warning('未指定数据库表名'); return; }
+  const fields = fieldList.value.map(r => r.field).filter(Boolean);
+  if (!fields.length) { ElMessage.warning('暂无字段可校验'); return; }
+  checkDialogVisible.value = true;
 };
 </script>
 
