@@ -174,7 +174,7 @@
             <slot name="pagination">
                 <div v-if="pagination">
                     <el-pagination background layout="total, sizes, prev, pager, next, jumper"
-                        :current-page="pageable.page" :page-size="hasAnyFilter ? userPreferredPageSize : pageable.pageSize" :total="localTotal"
+                        :current-page="pageable.page" :page-size="currentPageSize" :total="localTotal"
                         :page-sizes="pageSizes" @current-change="handleCurrentChange"
                         @size-change="handleSizeChange"></el-pagination>
                 </div>
@@ -232,12 +232,21 @@ const props = withDefaults(defineProps<FcFilterTableProps>(), {
 const tableRef = ref<InstanceType<typeof ElTable>>();
 
 const PAGE_SIZE_KEY = 'FC_FILTER_TABLE_PAGESIZE_' + props.tableName;
-const userPreferredPageSize = ref<number>(SelfStorage.getItem(PAGE_SIZE_KEY) ?? tablePageSize);
+const storedPageSize = SelfStorage.getItem(PAGE_SIZE_KEY);
+const userPreferredPageSize = ref<number>(
+    !storedPageSize || isNaN(Number(storedPageSize)) ? tablePageSize : Number(storedPageSize)
+);
+const currentPageSize = ref<number>(userPreferredPageSize.value);
 
-const hasAnyFilter = computed(() => props.columns.some(c => !!(c as ColumnProps).filter));
-
-const { tableData: hooksTableData, pageable, loading, getTableList } =
+const { tableData: hooksTableData, pageable, loading, getTableList: hooksGetTableList } =
     useTable(props.requestApi, props.initParam, props.pagination, props.dataCallback, props.requestError);
+
+const getTableList = async () => {
+    if (!props.pagination) return hooksGetTableList();
+    pageable.value.pageSize = currentPageSize.value;
+    return hooksGetTableList();
+};
+
 const { selectionChange, selectedList, selectedListKeys, isSelected } = useSelection(props.rowKey);
 const radio = ref("");
 const tableColumns = ref<ColumnProps[]>(props.columns);
@@ -246,6 +255,7 @@ watch(() => props.columns, (val) => {
         tableColumns.value = JSON.parse(JSON.stringify(val));
     }
 }, { deep: true });
+
 const columnTypes: TypeProps[] = ["selection", "radio", "index", "expand", "sort"];
 
 const tempFilterParam = reactive<Record<string, any>>({});
@@ -253,30 +263,21 @@ const activeFilterParam = reactive<Record<string, any>>({});
 
 const handleSizeChange = (val: number) => {
     pageable.value.page = 1;
+    currentPageSize.value = val;
     SelfStorage.setItem(PAGE_SIZE_KEY, val);
-    if (hasAnyFilter.value) {
-        userPreferredPageSize.value = val;
-    } else {
-        pageable.value.pageSize = val;
-        getTableList();
-    }
+    getTableList();
 };
 const handleCurrentChange = (val: number) => {
     pageable.value.page = val;
-    if (!hasAnyFilter.value) {
-        getTableList();
-    }
+    getTableList();
 };
 
 onMounted(() => {
     dragSort();
     if (props.requestApi) {
-        if (hasAnyFilter.value && props.pagination) {
-            pageable.value.pageSize = tablePageSizes[tablePageSizes.length - 1];
-        } else {
-            pageable.value.pageSize = userPreferredPageSize.value;
-        }
-        getTableList()
+        currentPageSize.value = userPreferredPageSize.value;
+        pageable.value.pageSize = currentPageSize.value;
+        getTableList();
     }
 });
 
@@ -373,13 +374,17 @@ const applyLocalFilter = (list: any[]) => {
 };
 
 const filteredData = computed(() => applyLocalFilter(sourceData.value));
-const localTotal = computed(() => filteredData.value.length);
+const localTotal = computed(() => {
+    const backendTotal = pageable.value.total;
+    const localLen = filteredData.value.length;
+    if (backendTotal > 0 && props.pagination) {
+        return backendTotal;
+    }
+    return localLen;
+});
 
 const processTableData = computed(() => {
-    if (!props.pagination) return filteredData.value;
-    const pageSize = hasAnyFilter.value ? userPreferredPageSize.value : pageable.value.pageSize;
-    const start = (pageable.value.page - 1) * pageSize;
-    return filteredData.value.slice(start, start + pageSize);
+    return filteredData.value;
 });
 const _height = computed(() => props.height ? props.height + 'px' : '100%');
 const _table_height = computed(() =>

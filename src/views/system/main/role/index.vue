@@ -18,7 +18,7 @@
 
     <!--数据区-->
     <el-main class="nopadding">
-      <fc-table ref="fcTableRef" :tableName="apiName" :requestApi="fetchTableData" :initParam="requestParam" :columns="columns"
+      <fc-filter-table ref="fcTableRef" :tableName="apiName" :requestApi="fetchTableData" :initParam="requestParam" :columns="columns"
                 :rowKey="ftField.rowKey" :stripe="ftField.stripe" :border="ftField.border" :pagination="ftField.pagination"
                 :showBottomView="ftField.showBottomView" :showRefreshBtn="ftField.showRefreshBtn"
                 :showColumnBtn="ftField.showColumnBtn" :showDownloadBtn="ftField.showDownloadBtn">
@@ -45,7 +45,7 @@
             </template>
           </el-popconfirm>
         </template>
-      </fc-table>
+      </fc-filter-table>
     </el-main>
 
     <!--新增-->
@@ -65,7 +65,7 @@
 <script setup lang='ts'>
 import { ref, reactive } from 'vue';
 import { SysMainRoleListApi, SysMainRoleDeleteApi } from '@/api/modules/systemMain';
-import { ColumnProps, FcTableInstance } from "@/components/fcTable/model";
+import { ColumnProps, FcFilterTableInstance } from "@/components/fcFilterTable/model";
 import { RoleModelList } from "@/models/systemModel";
 import { ElMessage, ElNotification } from 'element-plus';
 import { fcTableField, PopConfirmField, buttonField } from "@/utils/attrs/field";
@@ -82,7 +82,7 @@ const ftField = {...fcTableField, ...fcTableConfig};
 const pcField = {...PopConfirmField, ...{}};
 
 // fc-Table 实例
-const fcTableRef = ref<FcTableInstance>();
+const fcTableRef = ref<FcFilterTableInstance>();
 
 const columns = reactive<ColumnProps<RoleModelList>[]>([
   { prop: "", width: tableWidth.selection, type: "selection", fixed: "left" },
