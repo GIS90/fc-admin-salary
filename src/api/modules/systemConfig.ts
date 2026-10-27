@@ -168,6 +168,11 @@ export const SysConfigReportFieldListApi = (params: { xtbb: string }) => {
     return http.get<any[]>('/system/config/report.field.list', params);
 };
 
+// [GET]字段配置用到的枚举值
+export const SysConfigReportFieldEnumApi = () => {
+    return http.get<any[]>('/system/config/report.field.enum');
+};
+
 // [POST]新增
 export const SysConfigReportFieldAddApi = (params: any) => {
     return http.post('/system/config/report.field', params);

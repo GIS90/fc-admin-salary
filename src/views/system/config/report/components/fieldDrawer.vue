@@ -18,7 +18,7 @@
         <div class="drawer-header-right">
           <span class="width-sum-label">宽度之和：</span>
           <span class="width-sum-value" :class="widthSumClass">{{ widthSumText }}</span>
-          <el-tag v-if="reportMode && Math.abs(widthSum - 100) > 0.001" type="danger" size="small" class="margin-left-10px">
+          <el-tag v-if="reportMode && Math.abs(widthSum - 100) > 0.001" type="danger" size="large" class="margin-left-10px">
             宽度之和需等于 100
           </el-tag>
         </div>
@@ -49,50 +49,55 @@
 
       <el-main class="nopadding">
         <el-table ref="tableRef" :data="fieldList" border stripe row-key="_rowKey" height="calc(100vh - 200px)" @selection-change="handleSelectionChange">
-          <el-table-column type="selection" width="45" align="center" :selectable="row => !isEditing(row)" />
-          <el-table-column type="index" label="序号" width="70" align="center" />
-          <el-table-column prop="field" label="数据库字段" min-width="150">
+          <el-table-column type="selection" min-width="60" align="center" :selectable="row => !isEditing(row)" />
+          <el-table-column type="index" label="序号" width="100" align="center" />
+          <el-table-column prop="field" label="数据库字段" min-width="150" align="center">
             <template #default="scope">
               <el-input v-if="isEditing(scope.row)" v-model="scope.row.field" placeholder="字段名" :disabled="isExistingRow(scope.row)" size="small" />
               <span v-else>{{ scope.row.field }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="nameCh" label="中文名称" min-width="150">
+          <el-table-column prop="nameCh" label="中文名称" min-width="150" align="center">
             <template #default="scope">
               <el-input v-if="isEditing(scope.row)" v-model="scope.row.nameCh" placeholder="中文名" size="small" />
               <span v-else>{{ scope.row.nameCh }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="nameZh" label="英文名称" min-width="150">
+          <el-table-column prop="nameZh" label="英文名称" min-width="150" align="center">
             <template #default="scope">
               <el-input v-if="isEditing(scope.row)" v-model="scope.row.nameZh" placeholder="英文名" size="small" />
               <span v-else>{{ scope.row.nameZh }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="width" label="宽度" width="130" align="right">
+          <el-table-column prop="width" label="宽度" min-width="140" align="center">
             <template #default="scope">
-              <el-input-number v-if="isEditing(scope.row)" v-model="scope.row.width" :min="0" :precision="4" :step="1" controls-position="right" size="small" style="width:110px;" />
+              <el-input-number v-if="isEditing(scope.row)" v-model="scope.row.width" :min="0" :precision="2" :step="1" controls-position="right" size="small" style="width:110px;" />
               <span v-else :class="{ 'text-danger': reportMode && Math.abs(scope.row.width) > 100 }">{{ scope.row.width }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="fixed" label="锁定" width="110" align="center">
-            <template #default="scope">
-              <el-select v-if="isEditing(scope.row)" v-model="scope.row.fixed" placeholder="锁定" clearable size="small" style="width:90px;">
-                <el-option label="无" value="" />
-                <el-option label="left" value="left" />
-                <el-option label="right" value="right" />
+          <el-table-column prop="align" label="对齐方式" min-width="130" align="center">
+             <template #default="scope">
+              <el-select v-if="isEditing(scope.row)" v-model="scope.row.align" placeholder="对齐方式" clearable size="small" style="width:100px;">
+                <el-option v-for="op in fieldAlignOptions" :key="op.value" :label="op.label" :value="op.value" />
               </el-select>
-              <el-tag v-else-if="scope.row.fixed" size="small" type="info">{{ scope.row.fixed }}</el-tag>
-              <span v-else>-</span>
+              <span v-else>{{ fieldAlignOptions.find(o => o.value === scope.row.align)?.label || scope.row.align || '-' }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="列表" width="100" align="center">
+          <el-table-column prop="fixed" label="锁定" min-width="130" align="center">
+            <template #default="scope">
+              <el-select v-if="isEditing(scope.row)" v-model="scope.row.fixed" placeholder="锁定" clearable size="small" style="width:100px;">
+                <el-option v-for="op in fieldFixedOptions" :key="op.value" :label="op.label" :value="op.value" />
+              </el-select>
+              <span v-else>{{ fieldFixedOptions.find(o => o.value === scope.row.fixed)?.label || scope.row.fixed || '-' }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="列表" min-width="100" align="center">
             <template #default="scope">
               <el-switch v-if="isEditing(scope.row)" v-model="scope.row.list" size="small" />
               <el-tag v-else :type="scope.row.list ? 'success' : 'info'" size="small">{{ scope.row.list ? '是' : '否' }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="列表类型" width="130" align="center">
+          <el-table-column label="列表类型" min-width="140" align="center">
             <template #default="scope">
               <el-select v-if="isEditing(scope.row)" v-model="scope.row.listType" placeholder="类型" clearable size="small" style="width:110px;">
                 <el-option v-for="op in fieldTypeOptions" :key="op.value" :label="op.label" :value="op.value" />
@@ -100,14 +105,13 @@
               <span v-else>{{ fieldTypeOptions.find(o => o.value === scope.row.listType)?.label || scope.row.listType || '-' }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="导出" width="100" align="center">
+          <el-table-column label="导出" min-width="100" align="center">
             <template #default="scope">
               <el-switch v-if="isEditing(scope.row)" v-model="scope.row.export" size="small" />
               <el-tag v-else :type="scope.row.export ? 'success' : 'info'" size="small">{{ scope.row.export ? '是' : '否' }}</el-tag>
             </template>
           </el-table-column>
-
-          <el-table-column label="导出类型" width="130" align="center">
+          <el-table-column label="导出类型" min-width="140" align="center">
             <template #default="scope">
               <el-select v-if="isEditing(scope.row)" v-model="scope.row.exportType" placeholder="类型" clearable size="small" style="width:110px;">
                 <el-option v-for="op in fieldTypeOptions" :key="op.value" :label="op.label" :value="op.value" />
@@ -115,37 +119,37 @@
               <span v-else>{{ fieldTypeOptions.find(o => o.value === scope.row.exportType)?.label || scope.row.exportType || '-' }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="扩展" width="100" align="center">
+          <el-table-column label="扩展" min-width="100" align="center">
             <template #default="scope">
               <el-switch v-if="isEditing(scope.row)" v-model="scope.row.extend" size="small" />
               <el-tag v-else :type="scope.row.extend ? 'warning' : 'info'" size="small">{{ scope.row.extend ? '是' : '否' }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="允许空值" width="100" align="center">
+          <el-table-column label="允许空值" min-width="100" align="center">
             <template #default="scope">
               <el-switch v-if="isEditing(scope.row)" v-model="scope.row.null" size="small" />
               <el-tag v-else :type="scope.row.null ? 'success' : 'info'" size="small">{{ scope.row.null ? '是' : '否' }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="ID自增" width="100" align="center">
+          <el-table-column label="ID自增" min-width="100" align="center">
             <template #default="scope">
               <el-switch v-if="isEditing(scope.row)" v-model="scope.row.idAuto" size="small" />
               <el-tag v-else :type="scope.row.idAuto ? 'success' : 'info'" size="small">{{ scope.row.idAuto ? '是' : '否' }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="filter" label="字段筛选" min-width="180" show-overflow-tooltip>
+          <el-table-column prop="filter" label="字段筛选" min-width="200" show-overflow-tooltip align="left">
             <template #default="scope">
               <el-input v-if="isEditing(scope.row)" v-model="scope.row.filter" placeholder="筛选配置JSON" size="small" />
               <span v-else>{{ scope.row.filter || '-' }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="orderId" label="排序" width="100" align="right">
+          <el-table-column prop="orderId" label="排序" min-width="100" align="center">
             <template #default="scope">
               <el-input-number v-if="isEditing(scope.row)" v-model="scope.row.orderId" :min="0" controls-position="right" size="small" style="width:80px;" />
               <span v-else>{{ scope.row.orderId ?? '-' }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="remark" label="说明" min-width="150" show-overflow-tooltip>
+          <el-table-column prop="remark" label="说明" min-width="180" show-overflow-tooltip align="left">
             <template #default="scope">
               <el-input v-if="isEditing(scope.row)" v-model="scope.row.remark" placeholder="字段说明" size="small" />
               <span v-else>{{ scope.row.remark }}</span>
@@ -192,7 +196,7 @@ import {
   SysConfigReportFieldBatchDeleteApi,
 } from '@/api/modules/systemConfig';
 import { ReportFieldModelList } from '@/models/systemModel';
-import {DictEnumOptionApi} from "@/api/modules/common";
+import { SysConfigReportFieldEnumApi } from '@/api/modules/systemConfig';
 import FieldValidate from './fieldValidate.vue';
 
 const props = defineProps<{
@@ -212,12 +216,16 @@ const handleClose = () => {
 };
 
 interface DictOption { label: string; value: any }
+const fieldFixedOptions = ref<DictOption[]>([]);
 const fieldTypeOptions = ref<DictOption[]>([]);
+const fieldAlignOptions = ref<DictOption[]>([]);
 
 const fetchFieldTypeEnums = async () => {
   try {
-    const response = await DictEnumOptionApi({ name: 'xtbb-field-type' });
-    fieldTypeOptions.value = (response?.data as DictOption[]) || [];
+    const response = await SysConfigReportFieldEnumApi();
+    fieldFixedOptions.value = (response?.data?.xtbbFieldFixed as DictOption[]) || [];
+    fieldTypeOptions.value = (response?.data?.xtbbFieldType as DictOption[]) || [];
+    fieldAlignOptions.value = (response?.data?.xtbbFieldAlign as DictOption[]) || [];
   } catch (e) {}
 };
 
@@ -245,7 +253,7 @@ const isSelected = ref(false);
 const widthSum = computed(() => {
   return fieldList.value.reduce((acc, row) => acc + (Number(row.width) || 0), 0);
 });
-const widthSumText = computed(() => widthSum.value.toFixed(4));
+const widthSumText = computed(() => widthSum.value.toFixed(2));
 const widthSumClass = computed(() => {
   if (props.reportMode) {
     return Math.abs(widthSum.value - 100) > 0.001 ? 'text-danger' : 'text-success';
@@ -292,6 +300,7 @@ const addHandle = () => {
     xtbb: props.reportName,
     remark: '',
     width: 0,
+    align: '',
     fixed: '',
     list: true,
     listType: '',
@@ -345,6 +354,7 @@ const saveHandle = async (row: FieldRow) => {
     xtbb: row.xtbb,
     remark: row.remark,
     width: row.width,
+    align: row.align,
     fixed: row.fixed,
     list: row.list,
     listType: row.listType,
