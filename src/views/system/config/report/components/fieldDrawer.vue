@@ -298,7 +298,7 @@ const addHandle = () => {
     export: true,
     exportType: '',
     null: true,
-    idAuto: true,
+    idAuto: false,
     extend: false,
     filter: '',
     orderId: 0,
