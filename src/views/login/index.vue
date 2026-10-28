@@ -2,9 +2,9 @@
     <div class="login_bg">
         <div class="login_adv" style="background-image: url(img/login-banner.jpg);">
             <div class="login_adv__title">
-                <h2>{{ appTitle }}{{ appVersion }}</h2>
-                <h4>{{ appFeature }}</h4>
-                <p>{{ appSummary }}</p>
+                <div class="login_adv__title__title">{{ appTitle }}{{ appVersion }}</div>
+                <div class="login_adv__title__feature">{{ appFeature }}</div>
+                <div class="login_adv__title__summary">{{ appSummary }}</div>
                 <!--
                 <h4>{{ $t('login.slogan') }}</h4>
                 <p>{{ $t('login.describe') }}</p>
@@ -135,7 +135,7 @@ onMounted(() => {
     console.log('欢迎');
     console.log('欢迎');
     console.log('热烈欢迎');
-    console.log('平台是基于VUE3语言研发，在Fc-admin脚手架上开发的前端项目');
+    console.log('平台是基于Python+VUE3语言研发，前端在Fc-admin脚手架上开发的前端项目，后台采用FastAPI框架开发的Restful API');
     console.log('来到智行工具平台，有问题请联系管理员：高明亮');
     console.log('作者博客：https://pygo.space/');
     console.log('作者邮箱：gaoming971366@163.com');
@@ -198,11 +198,19 @@ const wechatLogin = () => {
     }
 }
 
-.login_adv__title h2 {
-    font-size: 40px;
+.login_adv__title__title {
+    font-size: 45px;
+    font-weight: bold;
 }
 
-.login_adv__title h4 {
+.login_adv__title__feature {
+    font-size: 28px;
+    margin-top: 10px;
+    font-weight: normal;
+}
+
+.login_adv__title__summary {
+    color: rgba(255, 255, 255, 0.8);
     font-size: 18px;
     margin-top: 10px;
     font-weight: normal;

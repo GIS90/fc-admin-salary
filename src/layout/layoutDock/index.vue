@@ -30,8 +30,9 @@
                     </transition>
                 </router-view>
             </div>
-            <div class="powered-bottom" v-html="footerTip">
-            </div>
+           <!--
+            <div class="powered-bottom" v-html="footerTip"></div>
+            -->
         </div>
     </section>
 </template>
