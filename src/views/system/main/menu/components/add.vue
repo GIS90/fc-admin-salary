@@ -126,8 +126,8 @@
               <el-form-item label="菜单图标" prop="icon">
                 <fc-icon-select v-model="ruleForm.icon" clearable />
               </el-form-item>
-              <el-form-item label="排序编号" prop="order_id">
-                <el-input-number v-model="ruleForm.order_id"
+              <el-form-item label="排序编号" prop="orderId">
+                <el-input-number v-model="ruleForm.orderId"
                                  style="width: 100%;"
                                  :min="inputNumberField.min"
                                  :max="inputNumberField.max"
@@ -289,7 +289,7 @@ const resetForm = () => {
   ruleForm.redirect = "";
   ruleForm.component = "";
   ruleForm.level = undefined;
-  ruleForm.order_id = 1;
+  ruleForm.orderId = 1;
   ruleForm.icon = "";
   ruleForm.title = "";
   ruleForm.type = "MENU";

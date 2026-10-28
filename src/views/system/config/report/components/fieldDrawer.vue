@@ -314,7 +314,7 @@ const addHandle = () => {
     remark: '',
     width: 0,
     mode: false,
-    align: '',
+    align: 'center',
     fixed: '',
     list: true,
     listType: '',

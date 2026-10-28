@@ -11,7 +11,7 @@ declare namespace Menu {
         /** 菜单级别 */
         level?: number;
         /** 菜单顺序 */
-        order_id?: number;
+        orderId?: number;
         /** 路由元信息 */
         meta: MetaProps;
         /** 多级路由嵌套 */
@@ -57,7 +57,7 @@ declare namespace Menu {
         /** 菜单级别 */
         level?: number;
         /** 菜单顺序 */
-        order_id?: number;
+        orderId?: number;
         /** 菜单和面包屑对应的图标 */
         icon?: string;
         /** 路由标题 (用作 document.title || 菜单的名称) */
