@@ -26,10 +26,20 @@
           <el-button type="primary" icon="Plus" @click="addHandle">新增字段</el-button>
           <el-button type="danger" icon="Delete" :plain="true" :disabled="!isSelected" @click="batchDeleteHandle">批量删除</el-button>
           <el-button type="success" icon="CircleCheck" @click="checkHandle">字段校验</el-button>
-          <el-popover placement="bottom" width="400" trigger="hover">
+          <el-popover placement="bottom" width="650" trigger="hover">
             <template #default>
-              <div style="line-height: 2.5;">
-                <span style="color: #f56c6c;">新增、编辑、删除</span>只支持单条数据操作，请勿新增/编辑多个报表字段，点击保存时，只会保存当前操作数据
+              <div style="line-height: 2.5; color: black;">
+                （1）<span style="color: #f56c6c;">新增、编辑、删除</span>只支持单条数据操作，请勿新增/编辑多个报表字段，点击保存时，只会保存当前操作数据。
+                <br />
+                （2）必填字段：带<span style="color: red;"> * </span>字段（数据库字段、中文名称、英文名称）为必填。
+                <br />
+                （3）宽度模式：固定宽度（无论屏幕宽度多大，始终保持设定宽度不变）；最小宽度（根据凭证宽度自动调整，但不得小于设定的最小宽度）。
+                <br />
+                （4）当宽度设置为0时，该列将不采用固定宽度，而是根据内容自动调整，实现自适应宽度效果。
+                <br />
+                （5）ID自增字段默认只对id字段生效，其他字段不生效。
+                <br />
+                （6）字段筛选支持类型：input、select、radio、daterange、boolean、number，其他字段不支持筛选，格式为：{"type":"input","placeholder":"请输入查询条件"}。
               </div>
             </template>
             <template #reference>
@@ -46,22 +56,37 @@
         <el-table ref="tableRef" :data="fieldList" border stripe row-key="_rowKey" height="calc(100vh - 200px)" @selection-change="handleSelectionChange">
           <el-table-column type="selection" min-width="60" align="center" :selectable="row => !isEditing(row)" />
           <el-table-column type="index" label="序号" width="100" align="center" />
-          <el-table-column prop="field" label="数据库字段" min-width="150" align="center">
+          <el-table-column prop="field" min-width="150" align="center">
+            <template #header>
+              <span style="color: red;">* </span>数据库字段
+            </template>
             <template #default="scope">
               <el-input v-if="isEditing(scope.row)" v-model="scope.row.field" placeholder="字段名" :disabled="isExistingRow(scope.row)" size="small" />
               <span v-else>{{ scope.row.field }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="nameCh" label="中文名称" min-width="150" align="center">
+          <el-table-column prop="nameCh" min-width="150" align="center">
+            <template #header>
+              <span style="color: red;">* </span>中文名称
+            </template>
             <template #default="scope">
               <el-input v-if="isEditing(scope.row)" v-model="scope.row.nameCh" placeholder="中文名" size="small" />
               <span v-else>{{ scope.row.nameCh }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="nameZh" label="英文名称" min-width="150" align="center">
+          <el-table-column prop="nameZh" min-width="150" align="center">
+            <template #header>
+              <span style="color: red;">* </span>英文名称
+            </template>
             <template #default="scope">
               <el-input v-if="isEditing(scope.row)" v-model="scope.row.nameZh" placeholder="英文名" size="small" />
               <span v-else>{{ scope.row.nameZh }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="mode" label="宽度模式" min-width="130" align="center">
+            <template #default="scope">
+              <el-switch v-if="isEditing(scope.row)" v-model="scope.row.mode" size="small" active-text="最小" inactive-text="固定" />
+              <el-tag v-else :type="scope.row.mode ? 'warning' : 'primary'" size="small">{{ scope.row.mode ? '最小宽度' : '固定宽度' }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column prop="width" label="宽度" min-width="140" align="center">
@@ -288,6 +313,7 @@ const addHandle = () => {
     xtbb: props.reportName,
     remark: '',
     width: 0,
+    mode: false,
     align: '',
     fixed: '',
     list: true,
@@ -342,6 +368,7 @@ const saveHandle = async (row: FieldRow) => {
     xtbb: row.xtbb,
     remark: row.remark,
     width: row.width,
+    mode: row.mode,
     align: row.align,
     fixed: row.fixed,
     list: row.list,

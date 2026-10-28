@@ -10,11 +10,15 @@
           批量删除
         </el-button>
       </div>
+      <div class="right-panel">
+        <el-input v-model.trim="requestParam.content" placeholder="支持模糊查询，输入后点击查询" clearable style="width: 250px;" />
+        <el-button id="btn-search" :type="buttonField.type" :plain="buttonField.plain" :size="buttonField.size" icon="Search" @click="reFetchTableData" /> <!--采用手工查询按钮模式-->
+      </div>
     </el-header>
 
     <!--数据区-->
     <el-main class="nopadding">
-      <fc-filter-table ref="fcTableRef" :tableName="apiName" :requestApi="fetchTableData" :columns="columns"
+      <fc-filter-table ref="fcTableRef" :tableName="apiName" :requestApi="fetchTableData" :initParam="requestParam" :columns="columns"
                 :rowKey="ftField.rowKey" :stripe="ftField.stripe" :border="ftField.border" :pagination="ftField.pagination"
                 :showBottomView="ftField.showBottomView" :showRefreshBtn="ftField.showRefreshBtn"
                 :showColumnBtn="ftField.showColumnBtn" :showDownloadBtn="ftField.showDownloadBtn">
@@ -92,6 +96,7 @@ const columns = reactive<ColumnProps<ReportModelList>[]>([
   { prop: "remark", label: "报表说明", filter: { type: "input", placeholder: "请输入报表说明" } },
   { prop: "options", label: "操作", width: tableWidth.option3, fixed: "right" }
 ]);
+const requestParam = reactive({"content": "" });  // 查询内容
 
 // Dialog状态管理
 const addVisible= ref(false);

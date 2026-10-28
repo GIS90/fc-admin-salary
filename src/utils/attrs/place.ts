@@ -6,8 +6,8 @@ let setterProfileModel = {
     userName: "请输入用户昵称",
     sex: "请选择用户性别",
     email: "请输入用户Email",
-    phone: "请输入用户电话",
-    introduction: "请输入自我简介。。。。。。",
+    phone: "请输入用户电话，格式为11位数字",
+    introduction: "请输入用户个性签名",
     role: "请选择用户系统菜单权限"
 }
 
@@ -27,7 +27,7 @@ let downloadFormModel = {
 let systemRoleModel = {
     engname: "请输入角色唯一标识",
     chnname: "请输入角色名称",
-    introduction: "请输入角色相关描述。。。。。。"
+    introduction: "请输入角色相关描述"
 }
 
 let systemMenuModel = {

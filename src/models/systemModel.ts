@@ -306,6 +306,7 @@ export interface ReportFieldModelBase {
     xtbb: string;
     remark?: string;
     width?: number;
+    mode?: boolean;
     align?: string;
     fixed?: string;
     list?: boolean;
