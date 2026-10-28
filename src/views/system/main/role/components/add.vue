@@ -65,6 +65,10 @@
                     :disabled="btnDisabled"
           />
         </el-form-item>
+        <el-form-item label="排序ID" prop="orderId">
+          <el-input-number v-model="ruleForm.orderId" :min="1" controls-position="right" :disabled="btnDisabled" style="width: 100%;" />
+          <div class="el-form-item-msg">数值越小排序越靠前，默认 1</div>
+        </el-form-item>
         <el-form-item label="描述" prop="introduction">
           <el-input v-model="ruleForm.introduction"
                     :type="textAreaField.type"
@@ -154,7 +158,8 @@ const ruleFormRef = ref<FormInstance>();
 const ruleForm = reactive({
   engname: "",
   chnname: "",
-  introduction: ""
+  introduction: "",
+  orderId: 1
 }) as RoleModelDetail;
 // from rule
 const rules = reactive<FormRules<RoleModelDetail>>({

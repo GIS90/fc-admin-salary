@@ -94,6 +94,7 @@ const columns = reactive<ColumnProps<ReportModelList>[]>([
   { prop: "name", label: "报表名称", filter: { type: "input", placeholder: "请输入报表名称" } },
   { prop: "table", label: "数据库表名", filter: { type: "input", placeholder: "请输入数据库表名" } },
   { prop: "remark", label: "报表说明", filter: { type: "input", placeholder: "请输入报表说明" } },
+  { prop: "orderId", label: "排序ID" },
   { prop: "options", label: "操作", width: tableWidth.option3, fixed: "right" }
 ]);
 const requestParam = reactive({"content": "" });  // 查询内容

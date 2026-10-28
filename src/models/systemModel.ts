@@ -41,6 +41,7 @@ export interface __RoleModelBase {
     chnname: string;
     md5: string;
     introduction: string;
+    orderId?: number;
     createTime: string;
     createTtx: string;
 }
@@ -268,6 +269,7 @@ export interface ReportModelBase {
     name: string;
     table: string;
     remark?: string;
+    orderId?: number;
 }
 
 /**
