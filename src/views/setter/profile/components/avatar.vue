@@ -72,7 +72,7 @@
       <el-row class="avatar-opr">
         <el-col :span="12">
           <el-row>
-            <el-col :span="8">
+            <el-col :span="8" style="text-align: center;">
               <el-upload
                   action="#"
                   :multiple="false"
@@ -84,13 +84,13 @@
                 <el-button type="primary" :disabled="btnDisabled">选择</el-button>
               </el-upload>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="8" style="text-align: center;">
               <el-button-group>
                 <el-button :icon="Plus" @click="changeScale(cropOptions.scale)" :disabled="btnDisabled" />
                 <el-button :icon="Minus" @click="changeScale(-1*cropOptions.scale)" :disabled="btnDisabled" />
               </el-button-group>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="8" style="text-align: center;">
               <el-button-group>
                 <el-button :icon="RefreshLeft" @click="rotateLeft()" :disabled="btnDisabled" />
                 <el-button :icon="RefreshRight" @click="rotateRight()" :disabled="btnDisabled" />

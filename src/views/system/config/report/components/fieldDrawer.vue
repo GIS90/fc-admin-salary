@@ -12,15 +12,10 @@
           <span class="drawer-title">配置报表字段</span>
           <el-tag v-if="reportTable" type="info" size="large" effect="plain">报表名称：{{ reportName }}</el-tag>
           <el-tag v-if="reportTable" type="danger" size="large" effect="plain">数据库表名：{{ reportTable }}</el-tag>
-          <el-tag v-if="reportMode" type="success" size="large">百分比模式</el-tag>
-          <el-tag v-else type="primary" size="large">固定数值模式</el-tag>
         </div>
         <div class="drawer-header-right">
           <span class="width-sum-label">宽度之和：</span>
-          <span class="width-sum-value" :class="widthSumClass">{{ widthSumText }}</span>
-          <el-tag v-if="reportMode && Math.abs(widthSum - 100) > 0.001" type="danger" size="large" class="margin-left-10px">
-            宽度之和需等于 100
-          </el-tag>
+          <span class="width-sum-value text-primary">{{ widthSumText }} px</span>
         </div>
       </div>
     </template>
@@ -72,7 +67,7 @@
           <el-table-column prop="width" label="宽度" min-width="140" align="center">
             <template #default="scope">
               <el-input-number v-if="isEditing(scope.row)" v-model="scope.row.width" :min="0" :precision="2" :step="1" controls-position="right" size="small" style="width:110px;" />
-              <span v-else :class="{ 'text-danger': reportMode && Math.abs(scope.row.width) > 100 }">{{ scope.row.width }}</span>
+              <span v-else>{{ scope.row.width }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="align" label="对齐方式" min-width="130" align="center">
@@ -203,7 +198,6 @@ const props = defineProps<{
   visible: boolean;
   reportName: string;
   reportTable: string;
-  reportMode: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -254,12 +248,6 @@ const widthSum = computed(() => {
   return fieldList.value.reduce((acc, row) => acc + (Number(row.width) || 0), 0);
 });
 const widthSumText = computed(() => widthSum.value.toFixed(2));
-const widthSumClass = computed(() => {
-  if (props.reportMode) {
-    return Math.abs(widthSum.value - 100) > 0.001 ? 'text-danger' : 'text-success';
-  }
-  return 'text-primary';
-});
 
 const isExistingRow = (row: FieldRow) => !row._isNew;
 const isEditing = (row: FieldRow) => editingSet.has(row._rowKey);

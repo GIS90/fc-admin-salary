@@ -268,7 +268,6 @@ export interface ReportModelBase {
     name: string;
     table: string;
     remark?: string;
-    mode?: boolean;
 }
 
 /**

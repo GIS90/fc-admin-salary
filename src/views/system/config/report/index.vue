@@ -18,11 +18,6 @@
                 :rowKey="ftField.rowKey" :stripe="ftField.stripe" :border="ftField.border" :pagination="ftField.pagination"
                 :showBottomView="ftField.showBottomView" :showRefreshBtn="ftField.showRefreshBtn"
                 :showColumnBtn="ftField.showColumnBtn" :showDownloadBtn="ftField.showDownloadBtn">
-        <!-- 宽度模式 -->
-        <template #mode="scope">
-          <el-tag v-if="scope.row.mode" type="success">百分比</el-tag>
-          <el-tag v-else type="primary">固定数值</el-tag>
-        </template>
         <!-- 表格操作 -->
         <template #options="scope">
           <el-tooltip effect="dark" content="编辑" placement="top">
@@ -63,7 +58,6 @@
       v-model:visible="fieldDrawerVisible"
       :report-name="fieldDrawerReportName"
       :report-table="fieldDrawerReportTable"
-      :report-mode="fieldDrawerReportMode"
       @reFetchTableData="reFetchTableData" />
   </el-container>
 </template>
@@ -96,7 +90,6 @@ const columns = reactive<ColumnProps<ReportModelList>[]>([
   { prop: "name", label: "报表名称", filter: { type: "input", placeholder: "请输入报表名称" } },
   { prop: "table", label: "数据库表名", filter: { type: "input", placeholder: "请输入数据库表名" } },
   { prop: "remark", label: "报表说明", filter: { type: "input", placeholder: "请输入报表说明" } },
-  { prop: "mode", label: "宽度模式", filter: { type: "radio", options: [{ label: "固定数值", value: false }, { label: "百分比", value: true }] } },
   { prop: "options", label: "操作", width: tableWidth.option3, fixed: "right" }
 ]);
 
@@ -109,7 +102,6 @@ const batchDeleteVisible = ref(false);
 const fieldDrawerVisible = ref(false);
 const fieldDrawerReportName = ref("");
 const fieldDrawerReportTable = ref("");
-const fieldDrawerReportMode = ref(false);
 
 const tableRowMd5 = ref("");
 const apiName = "SystemConfigReport";
@@ -144,7 +136,6 @@ const editHandle = (row: ReportModelList) => {
 const fieldHandle = (row: ReportModelList) => {
   fieldDrawerReportName.value = row.name;
   fieldDrawerReportTable.value = row.table;
-  fieldDrawerReportMode.value = !!row.mode;
   fieldDrawerVisible.value = true;
 };
 

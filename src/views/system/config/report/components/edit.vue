@@ -68,12 +68,6 @@
                     :disabled="btnDisabled"
           />
         </el-form-item>
-        <el-form-item label="宽度模式" prop="mode">
-          <el-radio-group v-model="ruleForm.mode" :disabled="btnDisabled">
-            <el-radio :value="false">固定数值</el-radio>
-            <el-radio :value="true">百分比（合计100%）</el-radio>
-          </el-radio-group>
-        </el-form-item>
       </el-form>
     </div>
 
@@ -140,8 +134,7 @@ const ruleForm = reactive({
   md5: "",
   name: "",
   table: "",
-  remark: "",
-  mode: false
+  remark: ""
 }) as ReportModelDetail;
 
 const rules = reactive<FormRules<ReportModelDetail>>({
