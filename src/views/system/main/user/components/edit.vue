@@ -260,6 +260,15 @@ const rules = reactive<FormRules<UserModelDetail>>({
 
 // 请求数据API
 const fetchApiData = async (md5: string) => {
+  if (!md5?.trim()) {
+    ElNotification({
+      title: '提示',
+      message: '缺少数据标识md5，无法获取详情',
+      type: 'warning'
+    });
+    closeDialog();
+    return;
+  }
   const response = await SysMainUserApi({ md5 });
   if (response.data) {
     const res = response as { data: { user: UserModelDetail, sexEnum: OptionEnumModel[], roleList: OptionExtendEnumModel[] } }; // declare
