@@ -39,7 +39,7 @@ export const textAreaField = { ...inputField, ..._textAreaField };
  * */
 export let inputNumberField = {
     min: 1, // 最小值
-    max: 10000, // 最大值
+    max: 1000000, // 最大值
     step: 1, // 计数器步长
     stepStrictly: false, // 是否只能输入 step 的倍数
     precision: 0, // 数值精度

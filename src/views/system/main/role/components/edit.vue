@@ -60,9 +60,20 @@
                     :disabled="btnDisabled"
           />
         </el-form-item>
-        <el-form-item label="排序ID" prop="orderId">
-          <el-input-number v-model="ruleForm.orderId" :min="1" controls-position="right" :disabled="btnDisabled" style="width: 100%;" />
-          <div class="el-form-item-msg">数值越小排序越靠前，默认 1</div>
+         <el-form-item label="排序编号" prop="orderId">
+          <el-input-number v-model="ruleForm.orderId"
+                            style="width: 100%;"
+                            :min="inputNumberField.min"
+                            :max="inputNumberField.max"
+                            :step="inputNumberField.step"
+                            :step-strictly="inputNumberField.stepStrictly"
+                            :precision="inputNumberField.precision"
+                            :size="inputNumberField.size"
+                            :controls="inputNumberField.controls"
+                            :controls-position="inputNumberField.controlsPosition"
+                            :disabled="btnDisabled"
+                            />
+            <div class="el-form-item-msg">数值越小排序越靠前，默认 1，最大值为{{inputNumberField.max}}</div>
         </el-form-item>
         <el-form-item label="描述" prop="introduction">
           <el-input v-model="ruleForm.introduction"
@@ -95,7 +106,7 @@ import { RoleModelDetail } from "@/models/systemModel";
 import { SysMainRoleApi, SysMainRoleUpdateApi } from "@/api/modules/systemMain";
 import { FormInstance, FormRules } from "element-plus";
 import { ElNotification } from 'element-plus';
-import { dialogField, inputField, textAreaField, formField } from "@/utils/attrs/field";
+import { dialogField, inputField, textAreaField, formField, inputNumberField } from "@/utils/attrs/field";
 import publicLength from "@/utils/attrs/length";
 import publicPlaceHolder from "@/utils/attrs/place";
 

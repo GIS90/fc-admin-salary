@@ -120,6 +120,7 @@
                   :check-strictly="true"
                   placeholder="请选择用户所属部门"
                   empty-text="无数据，请联系管理员进行部门配置"
+                  :disabled="btnDisabled"
                   clearable
                   filterable
               />

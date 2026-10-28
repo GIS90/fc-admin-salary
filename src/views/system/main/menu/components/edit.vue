@@ -121,6 +121,7 @@
               <el-form-item label="排序编号" prop="orderId">
                 <el-input-number v-model="ruleForm.orderId"
                                  style="width: 100%;"
+                                 :disabled="btnDisabled"
                                  :min="inputNumberField.min"
                                  :max="inputNumberField.max"
                                  :step="inputNumberField.step"
@@ -130,6 +131,7 @@
                                  :controls="inputNumberField.controls"
                                  :controls-position="inputNumberField.controlsPosition"
                                  />
+                <div class="el-form-item-msg">数值越小排序越靠前，默认 1，最大值为{{inputNumberField.max}}</div>
               </el-form-item>
             </el-col>
             <!--属性配置-->
@@ -147,19 +149,19 @@
                 />
               </el-form-item>
               <el-form-item label="页面缓存" prop="isKeepAlive">
-                <el-switch v-model="ruleForm.isKeepAlive" />
+                <el-switch v-model="ruleForm.isKeepAlive" :disabled="btnDisabled"/>
                 <div class="el-form-item-msg">缓存后每次切换标签页，页面内容不会重新加载</div>
               </el-form-item>
               <el-form-item label="导航隐藏" prop="isHide">
-                <el-switch v-model="ruleForm.isHide" />
+                <el-switch v-model="ruleForm.isHide" :disabled="btnDisabled" />
                 <div class="el-form-item-msg">菜单不显示在导航中，但用户依然可以访问</div>
               </el-form-item>
               <el-form-item label="标签固定" prop="isAffix">
-                <el-switch v-model="ruleForm.isAffix" />
+                <el-switch v-model="ruleForm.isAffix" :disabled="btnDisabled" />
                 <div class="el-form-item-msg">固定到标签栏，不允许在标签栏中进行关闭</div>
               </el-form-item>
               <el-form-item label="全屏显示" prop="isFull">
-                <el-switch v-model="ruleForm.isFull" />
+                <el-switch v-model="ruleForm.isFull" :disabled="btnDisabled" />
                 <div class="el-form-item-msg">全屏显示，开启后标签页不会显示页脚</div>
               </el-form-item>
               <el-form-item label="面包屑" prop="isBreadcrumb">

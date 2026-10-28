@@ -92,6 +92,7 @@
                          :controls-position="inputNumberField.controlsPosition"
                          :disabled="btnDisabled"
         />
+        <div class="el-form-item-msg">数值越小排序越靠前，默认 1，最大值为{{inputNumberField.max}}</div>
       </el-form-item>
       <el-button :disabled="btnDisabled" @click="close">取 消</el-button>
       <el-button :disabled="btnDisabled" :loading="btnLoading" type="primary" @click="confirm(ruleFormRef)">确 定</el-button>

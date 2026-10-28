@@ -106,6 +106,7 @@
                            :controls-position="inputNumberField.controlsPosition"
                            :disabled="btnDisabled"
           />
+          <div class="el-form-item-msg">数值越小排序越靠前，默认 1，最大值为{{inputNumberField.max}}</div>
         </el-form-item>
       </el-form>
     </div>
