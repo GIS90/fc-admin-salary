@@ -10,7 +10,7 @@
       <div class="drawer-header">
         <div class="drawer-header-left">
           <span class="drawer-title">配置报表字段</span>
-          <el-tag v-if="reportTable" type="info" size="large" effect="plain">报表名称：{{ reportName }}</el-tag>
+          <el-tag v-if="reportTable" type="primary" size="large" effect="plain">报表名称：{{ reportName }}</el-tag>
           <el-tag v-if="reportTable" type="danger" size="large" effect="plain">数据库表名：{{ reportTable }}</el-tag>
         </div>
         <div class="drawer-header-right">

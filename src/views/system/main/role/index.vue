@@ -63,13 +63,13 @@
 </template>
 
 <script setup lang='ts'>
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { SysMainRoleListApi, SysMainRoleDeleteApi } from '@/api/modules/systemMain';
 import { ColumnProps, FcFilterTableInstance } from "@/components/fcFilterTable/model";
 import { RoleModelList } from "@/models/systemModel";
 import { ElMessage, ElNotification } from 'element-plus';
 import { fcTableField, PopConfirmField, buttonField } from "@/utils/attrs/field";
-import { tableWidth } from "@/utils/attrs/table";
+import { TableFieldColumnApi } from "@/api/modules/common";
 import Edit from "./components/edit.vue";
 import Add from "./components/add.vue";
 import Auth from "./components/auth.vue";
@@ -84,16 +84,24 @@ const pcField = {...PopConfirmField, ...{}};
 // fc-Table 实例
 const fcTableRef = ref<FcFilterTableInstance>();
 
-const columns = reactive<ColumnProps<RoleModelList>[]>([
-  { prop: "", width: tableWidth.selection, type: "selection", fixed: "left" },
-  { prop: "id", label: "序号", width: tableWidth.id },
-  { prop: "engname", label: "角色ID", width: tableWidth.rtx },
-  { prop: "chnname", label: "名称", width: tableWidth.name },
-  { prop: "introduction", label: "简介", align: "left" },
-  { prop: "createTime", label: "创建时间" },
-  { prop: "createRtx", label: "创建人"},
-  { prop: "options", label: "操作", width: tableWidth.option3, fixed: "right" }
-]);
+const columns = ref<ColumnProps<RoleModelList>[]>([]);
+
+onMounted(() => {
+  fetchTableFieldColumn(); // 表头数据
+});
+
+const fetchTableFieldColumn = async () => {
+  const response = await TableFieldColumnApi({xtbb: apiName});
+  if (response.code === 100 && response.data) {
+    columns.value = response.data;
+  } else {
+    ElNotification({
+      title: '提示',
+      message: '报表未配置表头，请联系平台管理员！',
+      type: 'warning'
+    });
+  }
+};
 
 // Dialog状态管理
 const addVisible= ref(false);
