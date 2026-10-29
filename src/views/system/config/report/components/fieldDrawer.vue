@@ -46,6 +46,12 @@
               <el-button id="btn-popover" type="info" icon="Reading">操作说明</el-button>
             </template>
           </el-popover>
+          <el-divider direction="vertical" />
+          <span class="template-label">模板字段：</span>
+          <el-button v-for="tpl in fieldTemplates" :key="tpl.field" size="small" type="primary" plain
+                     :disabled="isFieldExists(tpl.field)" :title="tpl.remark" @click="addTemplateHandle(tpl)">
+            {{ tpl.field }}
+          </el-button>
         </div>
         <div class="right-panel">
           <el-button icon="Refresh" circle @click="fetchData" />
@@ -302,9 +308,40 @@ const handleSelectionChange = (rows: FieldRow[]) => {
 };
 
 // ============ 新增 / 编辑 / 保存 / 取消 ============
-const addHandle = () => {
+interface FieldTemplate {
+  field: string;
+  nameCh: string;
+  nameZh: string;
+  width: number;
+  mode: boolean;
+  align: string;
+  fixed: string;
+  list: boolean;
+  listType: string;
+  export: boolean;
+  exportType: string;
+  null: boolean;
+  idAuto: boolean;
+  remark: string;
+  orderId: number;
+  extend: boolean;
+  filter: string;
+}
+
+// 常用字段模板（与后端 field_column_by_xtbb 的内置列保持一致）
+const fieldTemplates: FieldTemplate[] = [
+  { field: 'id', nameCh: '序号', nameZh: 'id', width: 100, mode: false, align: 'center', fixed: '', list: true, listType: 'integer', export: true, exportType: 'integer', null: false, idAuto: true, remark: '主键自增ID', orderId: 1, extend: false, filter: '' },
+  { field: 'createTime', nameCh: '创建时间', nameZh: 'createTime', width: 0, mode: true, align: 'center', fixed: '', list: true, listType: 'datetime', export: true, exportType: 'datetime', null: true, idAuto: false, remark: '数据创建时间', orderId: 2, extend: false, filter: '{"type":"dateRange","placeholder":"请选择创建时间范围"}' },
+  { field: 'createRtx', nameCh: '创建人', nameZh: 'createRtx', width: 0, mode: true, align: 'center', fixed: '', list: true, listType: 'string', export: true, exportType: 'string', null: true, idAuto: false, remark: '数据创建人RTX-ID', orderId: 3, extend: false, filter: '{"type":"input","placeholder":"请输入创建人RTX-ID"}' },
+  { field: 'orderId', nameCh: '排序编号', nameZh: 'orderId', width: 0, mode: true, align: 'center', fixed: '', list: true, listType: 'integer', export: true, exportType: 'integer', null: true, idAuto: false, remark: '排序字段，数值越小越靠前', orderId: 4, extend: false, filter: '{"type":"input","placeholder":"请输入排序编号"}' },
+  { field: 'options', nameCh: '操作', nameZh: 'options', width: 220, mode: false, align: 'center', fixed: 'right', list: true, listType: '', export: false, exportType: '', null: true, idAuto: false, remark: '表格操作列', orderId: 5, extend: true, filter: '' },
+];
+
+const isFieldExists = (field: string) => fieldList.value.some((r) => r.field === field);
+
+const buildNewRow = (preset?: Partial<FieldRow>): FieldRow => {
   const now = Date.now();
-  const newRow: FieldRow = {
+  return {
     id: 0,
     md5: '',
     field: '',
@@ -326,10 +363,28 @@ const addHandle = () => {
     filter: '',
     orderId: 0,
     _rowKey: `__new_${now}`,
-    _isNew: true
+    _isNew: true,
+    ...preset
   };
+};
+
+const pushNewRow = (newRow: FieldRow) => {
   fieldList.value.push(newRow);
   editingSet.add(newRow._rowKey);
+};
+
+const addHandle = () => {
+  pushNewRow(buildNewRow());
+};
+
+// 模板一键新增（已存在的字段直接拦截）
+const addTemplateHandle = (tpl: FieldTemplate) => {
+  if (isFieldExists(tpl.field)) {
+    ElMessage.warning(`字段【${tpl.field}】已存在，无需重复新增`);
+    return;
+  }
+  pushNewRow(buildNewRow({ ...tpl }));
+  ElMessage.success(`已按模板新增字段【${tpl.field}】，请调整后保存`);
 };
 
 const editHandle = (row: FieldRow) => {
@@ -475,6 +530,11 @@ const checkHandle = () => {
   &:hover { color: #409eff; }
 }
 .margin-left-30px { margin-left: 30px; }
+.template-label {
+  color: #4e4f52;
+  font-size: 15px;
+  margin-right: 5px;
+}
 :deep(.el-table th.el-table__cell) {
   background-color: #ebeef5 !important;
   color: #303133;
