@@ -18,7 +18,7 @@
 
     <!--数据区-->
     <el-main class="nopadding">
-      <fc-table ref="fcTableRef" :tableName="apiName" :requestApi="fetchTableData" :initParam="requestParam" :columns="columns"
+      <fc-filter-table ref="fcTableRef" :tableName="apiName" :requestApi="fetchTableData" :initParam="requestParam" :columns="columns"
                 :rowKey="ftField.rowKey" :stripe="ftField.stripe" :border="ftField.border" :pagination="ftField.pagination"
                 :showBottomView="ftField.showBottomView" :showRefreshBtn="ftField.showRefreshBtn"
                 :showColumnBtn="ftField.showColumnBtn" :showDownloadBtn="ftField.showDownloadBtn">
@@ -53,7 +53,7 @@
                      style="--el-switch-on-color: #ff4949; --el-switch-off-color: #13ce66;"
                      @change="statusHandle(scope.row.md5, $event)" />
         </template>
-      </fc-table>
+      </fc-filter-table>
     </el-main>
 
     <!--新增-->
@@ -71,13 +71,13 @@
 </template>
 
 <script setup lang='ts'>
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import {SysConfigXtcsListApi, SysConfigXtcsDeleteApi, SysConfigXtcsStatusApi} from '@/api/modules/systemConfig';
-import { ColumnProps, FcTableInstance } from "@/components/fcTable/model";
+import { ColumnProps, FcFilterTableInstance } from "@/components/fcFilterTable/model";
 import { XtcsModelList } from "@/models/systemModel";
 import { ElMessage, ElNotification } from 'element-plus';
 import { fcTableField, PopConfirmField, buttonField } from "@/utils/attrs/field";
-import { tableWidth } from "@/utils/attrs/table";
+import { TableFieldColumnApi } from "@/api/modules/common";
 import Add from "./components/add.vue";
 import Edit from "./components/edit.vue";
 import ViewD from "./components/view.vue";
@@ -90,18 +90,27 @@ const ftField = {...fcTableField, ...fcTableConfig};
 const pcField = {...PopConfirmField, ...{}};
 
 // fc-Table 实例
-const fcTableRef = ref<FcTableInstance>();
+const fcTableRef = ref<FcFilterTableInstance>();
 
-const columns = reactive<ColumnProps<XtcsModelList>[]>([
-  { prop: "", width: tableWidth.selection, type: "selection", fixed: "left" },
-  { prop: "id", label: "序号", width: tableWidth.id },
-  { prop: "key", label: "参数名称" },
-  { prop: "remark", label: "参数说明" },
-  { prop: "value", label: "参数值" },
-  { prop: "orderId", label: "排序编号" },
-  { prop: "options", label: "操作", width: tableWidth.option3, fixed: "right" },
-  { prop: "lock", label: "状态管理", width: tableWidth.status, fixed: "right" }
-]);
+// 表格配置项（后端报表配置下发）
+const columns = ref<ColumnProps<XtcsModelList>[]>([]);
+
+onMounted(() => {
+  fetchTableFieldColumn(); // 表头数据
+});
+
+const fetchTableFieldColumn = async () => {
+  const response = await TableFieldColumnApi({xtbb: apiName});
+  if (response.code === 100 && response.data) {
+    columns.value = response.data;
+  } else {
+    ElNotification({
+      title: '提示',
+      message: '报表未配置表头，请联系平台管理员！',
+      type: 'warning'
+    });
+  }
+};
 
 // Dialog状态管理
 const addVisible= ref(false);
