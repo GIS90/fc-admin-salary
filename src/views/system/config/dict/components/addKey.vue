@@ -78,7 +78,9 @@
                            :controls="inputNumberField.controls"
                            :controls-position="inputNumberField.controlsPosition"
           />
-          <div class="el-form-item-msg">数值越小排序越靠前，默认 1，最大值为{{inputNumberField.max}}</div>
+          <div class="el-form-item-msg">
+            数值越小排序越靠前，默认 1，最大值为{{ inputNumberField.max.toLocaleString() }}
+          </div>
         </el-form-item>
       </el-form>
     </div>
