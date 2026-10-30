@@ -53,7 +53,7 @@
         </div>
     </el-header>
     <el-main class="nopadding">
-        <fc-table ref="fcTableRef" :tableName="apiName" :requestApi="fetchTableData" :initParam="requestParam" :columns="columns"
+        <fc-filter-table ref="fcTableRef" :tableName="apiName" :requestApi="fetchTableData" :initParam="requestParam" :columns="columns"
                   :rowKey="ftField.rowKey" :stripe="ftField.stripe" :border="ftField.border" :pagination="ftField.pagination"
                   :showBottomView="ftField.showBottomView" :showRefreshBtn="ftField.showRefreshBtn"
                   :showColumnBtn="ftField.showColumnBtn" :showDownloadBtn="ftField.showDownloadBtn">
@@ -79,7 +79,7 @@
           <template #status="scope">
             <el-switch v-model="scope.row.status" active-text="禁用" inactive-text="启用" style="--el-switch-on-color: #ff4949; --el-switch-off-color: #13ce66;" @change="statusDictEnumHandle(scope.row.md5, $event)" />
           </template>
-        </fc-table>
+        </fc-filter-table>
       </el-main>
     </el-container>
 
@@ -102,7 +102,7 @@
 </template>
 
 <script setup lang='ts'>
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import {ElMessage, ElNotification} from "element-plus";
 import {
   SysOpsDictKeyListApi, SysOpsDictEnumListApi,
@@ -110,10 +110,10 @@ import {
   SysOpsDictEnumStatusApi, SysOpsDictKeyStatusApi,
 } from '@/api/modules/systemConfig';
 import { DictKeyListModel, DictEnumListModel } from "@/models/systemModel";
-import { ColumnProps, FcTableInstance } from "@/components/fcTable/model";
+import { ColumnProps, FcFilterTableInstance } from "@/components/fcFilterTable/model";
 import FcTreeFilter from '@/components/fcTreeFilter/index.vue';
 import { fcTableField, fcTreeFilterField, PopConfirmField, buttonField } from "@/utils/attrs/field";
-import { tableWidth } from "@/utils/attrs/table";
+import { TableFieldColumnApi } from "@/api/modules/common";
 import KeyAdd from "./components/addKey.vue";
 import EnumAdd from "./components/addEnum.vue";
 import KeyEdit from "./components/editKey.vue";
@@ -164,7 +164,7 @@ const clickTreeNode = (node: any) => {
 // 设置checkbox为True，获取选择数据
 const changeTreeFilter = (_keys: []) => {};
 
-const fcTableRef = ref<FcTableInstance>();  // fcTabel 实例
+const fcTableRef = ref<FcFilterTableInstance>();  // fcTabel 实例
 // fc-table属性
 const fcTableConfig= reactive({
   rowKey: "md5",
@@ -172,17 +172,25 @@ const fcTableConfig= reactive({
 });
 const ftField = {...fcTableField, ...fcTableConfig};
 
-// table表格配置
-const columns = reactive<ColumnProps<DictEnumListModel>[]>([
-  { type: "selection", fixed: "left", width: 60 },
-  { prop: "id", label: "ID", width: tableWidth.id },
-  { prop: "name", label: "字典分类" },
-  { prop: "key", label: "标识" },
-  { prop: "value", label: "值" },
-  { prop: "orderId", label: "顺序编号" },
-  { prop: "options", label: "操作", width: tableWidth.option2, fixed: "right" },
-  { prop: "status", label: "状态管理", width: tableWidth.status, fixed: "right" }
-]);
+// 表格配置项（后端报表配置下发）
+const columns = ref<ColumnProps<DictEnumListModel>[]>([]);
+
+onMounted(() => {
+  fetchTableFieldColumn(); // 表头数据
+});
+
+const fetchTableFieldColumn = async () => {
+  const response = await TableFieldColumnApi({xtbb: apiName});
+  if (response.code === 100 && response.data) {
+    columns.value = response.data;
+  } else {
+    ElNotification({
+      title: '提示',
+      message: '报表未配置表头，请联系平台管理员！',
+      type: 'warning'
+    });
+  }
+};
 
 // 表格数据
 const fetchTableData = async (params: any) => {
