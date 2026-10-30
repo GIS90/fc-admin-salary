@@ -18,9 +18,9 @@
             </div>
         </el-tooltip>
         <!--全屏-->
-        <el-tooltip effect="dark" content="全屏" placement="bottom">
+        <el-tooltip effect="dark" :content="isFullScreen ? '退出全屏' : '全屏'" placement="bottom">
             <div class="screen panel-item hidden-sm-and-down" @click="fullScreenClick">
-                <el-icon>
+                <el-icon :class="{ 'is-fullscreen': isFullScreen }">
                     <FullScreen />
                 </el-icon>
             </div>
@@ -157,22 +157,31 @@ const closeUserCard = () => {
     userCardVisible.value = false;
 };
 
-onMounted(() => {})
+// 全屏状态
+const isFullScreen = ref(false);
+
+const syncFullScreen = () => {
+    isFullScreen.value = !!(
+        document.fullscreenElement ||
+        (document as any).mozFullScreen ||
+        (document as any).webkitIsFullScreen ||
+        (document as any).msFullscreenElement // 强制类型断言来处理msFullscreenElement可能不存在的情况
+    );
+};
+
+onMounted(() => {
+    syncFullScreen();
+    document.addEventListener('fullscreenchange', syncFullScreen);
+    document.addEventListener('webkitfullscreenchange', syncFullScreen);
+    document.addEventListener('mozfullscreenchange', syncFullScreen);
+    document.addEventListener('MSFullscreenChange', syncFullScreen);
+});
 
 //全屏
 const fullScreenClick = () => {
     const element = document.documentElement as HTMLElement;
-    // 定义一个类型守卫来检查是否为全屏状态
-    const isFullScreen = (): boolean => {
-        return (
-            !!document.fullscreenElement ||
-            !!(document as any).mozFullScreen ||
-            !!(document as any).webkitIsFullScreen ||
-            !!(document as any).msFullscreenElement // 强制类型断言来处理msFullscreenElement可能不存在的情况
-        );
-    };
 
-    if (isFullScreen()) {
+    if (isFullScreen.value) {
         if (document.exitFullscreen) {
             document.exitFullscreen();
         } else if ((document as any).msExitFullscreen) { // 强制类型断言来处理msExitFullscreen可能不存在的情况
@@ -276,6 +285,15 @@ const logoutClick = () => {
 
 .user-bar .panel-item i {
     font-size: 16px;
+}
+
+/* 全屏状态：图标四角向内折 */
+.user-bar .panel-item .el-icon {
+    transition: transform 0.3s;
+}
+
+.user-bar .panel-item .el-icon.is-fullscreen {
+    transform: rotate(180deg);
 }
 
 .user-bar .panel-item:hover {
