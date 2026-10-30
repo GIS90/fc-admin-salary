@@ -380,11 +380,11 @@ const addHandle = () => {
 // 模板一键新增（已存在的字段直接拦截）
 const addTemplateHandle = (tpl: FieldTemplate) => {
   if (isFieldExists(tpl.field)) {
-    ElMessage.warning(`字段【${tpl.field}】已存在，无需重复新增`);
+    ElNotification({ title: '提示', message: `字段【${tpl.field}】已存在，无需重复新增`, type: 'warning' });
     return;
   }
   pushNewRow(buildNewRow({ ...tpl }));
-  ElMessage.success(`已按模板新增字段【${tpl.field}】，请调整后保存`);
+  ElNotification({ title: '提示', message: `已按模板新增字段【${tpl.field}】，请调整后保存`, type: 'success' });
 };
 
 const editHandle = (row: FieldRow) => {
