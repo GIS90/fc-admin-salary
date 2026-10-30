@@ -67,13 +67,13 @@
 </template>
 
 <script setup lang='ts'>
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import {SysConfigReportListApi, SysConfigReportDeleteApi} from '@/api/modules/systemConfig';
+import { TableFieldColumnApi } from "@/api/modules/common";
 import { ColumnProps, FcFilterTableInstance } from "@/components/fcFilterTable/model";
 import { ReportModelList } from "@/models/systemModel";
 import { ElMessage, ElNotification } from 'element-plus';
 import { fcTableField, PopConfirmField, buttonField } from "@/utils/attrs/field";
-import { tableWidth } from "@/utils/attrs/table";
 import Add from "./components/add.vue";
 import Edit from "./components/edit.vue";
 import FieldDrawer from "./components/fieldDrawer.vue";
@@ -88,15 +88,8 @@ const pcField = {...PopConfirmField, ...{}};
 // fc-Table 实例
 const fcTableRef = ref<FcFilterTableInstance>();
 
-const columns = reactive<ColumnProps<ReportModelList>[]>([
-  { prop: "", width: tableWidth.selection, type: "selection", fixed: "left" },
-  { prop: "id", label: "序号", width: tableWidth.id },
-  { prop: "name", label: "报表名称", filter: { type: "input", placeholder: "请输入报表名称" } },
-  { prop: "table", label: "数据库表名", filter: { type: "input", placeholder: "请输入数据库表名" } },
-  { prop: "remark", label: "报表说明", filter: { type: "input", placeholder: "请输入报表说明" } },
-  { prop: "orderId", label: "排序ID" },
-  { prop: "options", label: "操作", width: tableWidth.option3, fixed: "right" }
-]);
+// 表格配置项（后端报表配置下发）
+const columns = ref<ColumnProps<ReportModelList>[]>([]);
 const requestParam = reactive({"content": "" });  // 查询内容
 
 // Dialog状态管理
@@ -118,6 +111,20 @@ const fetchTableData = async (params: any) => {
   let newParams = JSON.parse(JSON.stringify(params));
   return await SysConfigReportListApi(newParams);
 };
+
+// 表头数据（后端报表配置下发）
+const fetchTableFieldColumn = async () => {
+  const response = await TableFieldColumnApi({xtbb: apiName});
+  if (response.code === 100 && response.data) {
+    columns.value = response.data;
+  } else {
+    ElNotification({ title: '提示', message: '报表未配置表头，请联系平台管理员！', type: 'warning' });
+  }
+};
+
+onMounted(() => {
+  fetchTableFieldColumn();
+});
 
 // 重新获取表格数据 + 清空选择数据
 const reFetchTableData = (isReload: boolean = false) => {

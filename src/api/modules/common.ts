@@ -31,3 +31,9 @@ export const TableFieldColumnApi = (params: { xtbb: string }) => {
 export const DictEnumOptionApi = (params: { name: string }) => {
     return http.get<{ label: string; value: any }[]>('/system/config/dict/de.option', params);
 };
+
+// [GET]EV>通过Key列表获取枚举值
+// names 为数组，需序列化为 names=a&names=b（后端 FastAPI 为 List[str]），不能带 []
+export const DictEnumOptionsApi = (params: any) => {
+    return http.get<any[]>('/system/config/dict/de.options', params, { paramsSerializer: { indexes: null } });
+};

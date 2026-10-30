@@ -120,7 +120,7 @@ import KeyEdit from "./components/editKey.vue";
 import EnumEdit from "./components/editEnum.vue";
 
 const allNode = 'ALL'; // 全部节点
-const apiName = "SystemOpsDict"; // 组件标识名称
+const apiName = "SystemConfigDict"; // 组件标识名称
 const batchDeleteVisible = ref(false);
 const selectKeyMd5 = ref(allNode); //fcTreeFilter-Key选中值Md5，默认全部
 const selectKeyName = ref(""); //fcTreeFilter-Key选中值Md5，默认全部
