@@ -8,6 +8,15 @@
                 </el-icon>
             </div>
         </el-tooltip>
+        <!--黑白模式-->
+        <el-tooltip effect="dark" :content="sysGlobalStore.sysDark ? '日间模式' : '黑夜模式'" placement="bottom">
+            <div class="panel-item hidden-sm-and-down" @click="darkClick">
+                <el-icon>
+                    <Sunny v-if="sysGlobalStore.sysDark" />
+                    <Moon v-else />
+                </el-icon>
+            </div>
+        </el-tooltip>
         <!--全屏-->
         <el-tooltip effect="dark" content="全屏" placement="bottom">
             <div class="screen panel-item hidden-sm-and-down" @click="fullScreenClick">
@@ -25,36 +34,71 @@
             </div>
         </el-tooltip>
         <!--用户-->
-        <el-dropdown class="user panel-item" trigger="click">
-            <div class="user-avatar">
-                <el-avatar :size="30" :src="authStore.userInfo.avatar"
-                           :shape='authStore.userInfo.sex === "M" ? "square" : "circle"'
-                />
-                <label>{{ authStore.userInfo.userName }}</label>
-                <el-icon>
-                    <ArrowDown />
-                </el-icon>
-            </div>
-            <template #dropdown>
-                <el-dropdown-menu>
-                    <el-dropdown-item @click="userInfoClick()">
-                        <el-icon>
-                            <User />
-                        </el-icon>{{ $t("header.personalData") }}
-                    </el-dropdown-item>
-                    <el-dropdown-item @click="clearCache()">
-                        <el-icon>
-                            <Edit />
-                        </el-icon>{{ $t("header.clearCache") }}
-                    </el-dropdown-item>
-                    <el-dropdown-item divided @click="logoutClick()">
-                        <el-icon>
-                            <SwitchButton />
-                        </el-icon>{{ $t("header.logout") }}
-                    </el-dropdown-item>
-                </el-dropdown-menu>
+        <el-popover
+            v-model:visible="userCardVisible"
+            placement="bottom-end"
+            :width="280"
+            :offset="8"
+            trigger="click"
+            popper-class="user-card-popper"
+            :show-arrow="false"
+        >
+            <template #reference>
+                <div class="user panel-item">
+                    <div class="user-avatar">
+                        <el-avatar :size="30" :src="authStore.userInfo.avatar"
+                                   :shape='authStore.userInfo.sex === "M" ? "square" : "circle"'
+                        />
+                        <label>{{ authStore.userInfo.userName }}</label>
+                        <el-icon :class="{ 'is-open': userCardVisible }">
+                            <ArrowDown />
+                        </el-icon>
+                    </div>
+                </div>
             </template>
-        </el-dropdown>
+
+            <div class="user-card">
+                <!--基本信息-->
+                <div class="user-card-head">
+                    <el-avatar :size="48" :src="authStore.userInfo.avatar"
+                               :shape='authStore.userInfo.sex === "M" ? "square" : "circle"'
+                               class="user-card-avatar" />
+                    <div class="user-card-meta">
+                        <div class="user-card-name">
+                            <span class="name">{{ userNameText }}</span>
+                            <!-- <span v-if="roleText" class="role-tag">{{ roleText }}</span> -->
+                        </div>
+                        <div v-if="subText" class="user-card-sub">{{ subText }}</div>
+                    </div>
+                </div>
+
+                <div class="user-card-divider"></div>
+
+                <!--菜单-->
+                <div class="user-card-menu">
+                    <div class="user-card-item" @click="userInfoClick()">
+                        <el-icon><User /></el-icon>
+                        <span class="item-text">{{ $t("header.personalData") }}</span>
+                        <el-icon class="item-arrow"><ArrowRight /></el-icon>
+                    </div>
+                    <div class="user-card-item" @click="clearCache()">
+                        <el-icon><RefreshLeft /></el-icon>
+                        <span class="item-text">{{ $t("header.clearCache") }}</span>
+                        <el-icon class="item-arrow"><ArrowRight /></el-icon>
+                    </div>
+                </div>
+
+                <div class="user-card-divider"></div>
+
+                <!--退出登录-->
+                <div class="user-card-footer">
+                    <div class="user-card-logout" @click="logoutClick()">
+                        <el-icon><SwitchButton /></el-icon>
+                        <span>{{ $t("header.logout") }}</span>
+                    </div>
+                </div>
+            </div>
+        </el-popover>
         <!--主题设置-->
         <el-tooltip effect="dark" content="主题设置" placement="bottom">
             <div class="tasks panel-item" @click="settingClick">
@@ -81,7 +125,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { ElMessageBox } from 'element-plus';
 import search from '../views/search.vue'
 import Task from '../views/task.vue'
@@ -96,6 +140,22 @@ const sysGlobalStore = useSysGlobalStore()
 const searchVisible = ref(false)
 const tasksVisible = ref(false)
 const settingVisible = ref(false)
+const userCardVisible = ref(false)
+
+// 用户卡片信息（登录接口下发的字段）
+const userInfoRaw = computed(() => authStore.userInfo as any);
+const userNameText = computed(() => userInfoRaw.value.userName || userInfoRaw.value.name || '未登录');
+const subText = computed(() => userInfoRaw.value.email || userInfoRaw.value.rtxId || userInfoRaw.value.userId || '');
+const roleText = computed(() => {
+    const role = userInfoRaw.value.role ?? userInfoRaw.value.roles;
+    if (Array.isArray(role)) return role.filter((item: string) => !!item).join(' / ');
+    return role || '';
+});
+
+// 关闭用户卡片
+const closeUserCard = () => {
+    userCardVisible.value = false;
+};
 
 onMounted(() => {})
 
@@ -152,13 +212,20 @@ const settingClick = () => {
   settingVisible.value = true
 };
 
+// 黑夜/日间模式切换
+const darkClick = () => {
+    sysGlobalStore.sysDark = !sysGlobalStore.sysDark;
+};
+
 //进入个人信息页面
 const userInfoClick = () => {
+    closeUserCard();
     router.push({ path: '/setter/profile' });
 };
 
 //清除缓存
 const clearCache = () => {
+    closeUserCard();
     ElMessageBox.confirm('清除缓存会将系统初始化，包括主题、语言设置等，是否继续？', '提示', {
         type: 'info',
     }).then(() => {
@@ -171,6 +238,7 @@ const clearCache = () => {
 
 //退出登录
 const logoutClick = () => {
+    closeUserCard();
     ElMessageBox.confirm('确认是否退出当前用户？', '提示', {
         type: 'warning',
         confirmButtonClass: 'el-button--danger'
@@ -282,5 +350,154 @@ const logoutClick = () => {
 
 .badge {
     margin-top: 4px;
+}
+
+/* 用户卡片（触发器） */
+.user-bar .user-avatar .el-icon {
+    margin-left: 2px;
+    font-size: 12px;
+    color: #909399;
+    transition: transform 0.3s;
+}
+
+.user-bar .user-avatar .el-icon.is-open {
+    transform: rotate(180deg);
+}
+
+/* 用户卡片（内容） */
+.user-card {
+    font-size: 14px;
+    color: #303133;
+}
+
+.user-card-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 16px 12px;
+}
+
+.user-card-avatar {
+    flex: none;
+    background: #f2f3f5;
+    box-shadow: 0 0 0 1px #ebeef5 inset;
+}
+
+.user-card-meta {
+    flex: 1;
+    min-width: 0;
+}
+
+.user-card-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.user-card-name .name {
+    overflow: hidden;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 22px;
+    color: #303133;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.user-card-name .role-tag {
+    flex: none;
+    padding: 0 8px;
+    font-size: 12px;
+    line-height: 20px;
+    color: #18a058;
+    background: #e7f6ec;
+    border-radius: 10px;
+}
+
+.user-card-sub {
+    margin-top: 2px;
+    overflow: hidden;
+    font-size: 13px;
+    line-height: 20px;
+    color: #909399;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.user-card-divider {
+    margin: 4px 0;
+    border-top: 1px dashed #ebeef5;
+}
+
+.user-card-menu {
+    padding: 4px 8px;
+}
+
+.user-card-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 42px;
+    padding: 0 10px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+
+.user-card-item:hover {
+    background: #f5f7fa;
+}
+
+.user-card-item .el-icon {
+    font-size: 16px;
+    color: #606266;
+}
+
+.user-card-item .item-text {
+    flex: 1;
+    font-size: 14px;
+    color: #303133;
+}
+
+.user-card-item .item-arrow {
+    font-size: 12px;
+    color: #c0c4cc;
+}
+
+.user-card-footer {
+    padding: 8px 12px 12px;
+}
+
+.user-card-logout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 36px;
+    font-size: 14px;
+    color: #606266;
+    cursor: pointer;
+    background: #f5f7fa;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+
+.user-card-logout:hover {
+    background: #ebeef5;
+}
+
+.user-card-logout .el-icon {
+    font-size: 15px;
+}
+</style>
+
+<style>
+/* 用户卡片弹层（teleport 到 body，需全局样式） */
+.user-card-popper.el-popover.el-popper {
+    padding: 0;
+    border: 1px solid #ebeef5;
+    border-radius: 10px;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
 }
 </style>
