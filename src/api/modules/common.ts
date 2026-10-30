@@ -24,16 +24,16 @@ export const UploadFilesApi = (data: any) => {
 /* * * * * * * * * * * * * * * * * * * * * * [Table] * * * * * * * * * * * * * * * * * * * * * * * * * */
 // [GET]报表Column
 export const TableFieldColumnApi = (params: { xtbb: string }) => {
-    return http.get<any[]>('/system/config/report.field.column', params);
+    return http.get('/system/config/report.field.column', params);
 };
 
 // [GET]EV>通过Key获取枚举值(option格式)
 export const DictEnumOptionApi = (params: { name: string }) => {
-    return http.get<{ label: string; value: any }[]>('/system/config/dict/de.option', params);
+    return http.get('/system/config/dict/de.option', params);
 };
 
 // [GET]EV>通过Key列表获取枚举值
 // names 为数组，需序列化为 names=a&names=b（后端 FastAPI 为 List[str]），不能带 []
 export const DictEnumOptionsApi = (params: any) => {
-    return http.get<any[]>('/system/config/dict/de.options', params, { paramsSerializer: { indexes: null } });
+    return http.get('/system/config/dict/de.options', params, { paramsSerializer: { indexes: null } });
 };
