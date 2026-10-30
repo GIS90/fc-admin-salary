@@ -8,6 +8,8 @@ export const useAuthStore = defineStore('authStore', {
         userInfo: {
             userId: "",
             userName: "",
+            phone: "",
+            email: "",
             dashboard: "",
             avatar: "",
             sex: "",
@@ -19,6 +21,8 @@ export const useAuthStore = defineStore('authStore', {
         getUserInfo: (state) => state.userInfo,
         getUserInfoId: (state) => state.userInfo.userId,
         getUserInfoName: (state) => state.userInfo.userName,
+        getUserInfoPhone: (state) => state.userInfo.phone,
+        getUserInfoEmail: (state) => state.userInfo.email,
         getUserInfoDashboard: (state) => state.userInfo.dashboard,
         getUserInfoAvatar: (state) => state.userInfo.avatar,
         getUserInfoSex: (state) => state.userInfo.sex,

@@ -145,7 +145,7 @@ const userCardVisible = ref(false)
 // 用户卡片信息（登录接口下发的字段）
 const userInfoRaw = computed(() => authStore.userInfo as any);
 const userNameText = computed(() => userInfoRaw.value.userName || userInfoRaw.value.name || '未登录');
-const subText = computed(() => userInfoRaw.value.email || userInfoRaw.value.rtxId || userInfoRaw.value.userId || '');
+const subText = computed(() => userInfoRaw.value.email || userInfoRaw.value.phone || userInfoRaw.value.userId || '');
 const roleText = computed(() => {
     const role = userInfoRaw.value.role ?? userInfoRaw.value.roles;
     if (Array.isArray(role)) return role.filter((item: string) => !!item).join(' / ');
