@@ -48,8 +48,8 @@
                     :show-word-limit="inputField.showWordLimit"
                     :clearable="inputField.clearable"
                     :prefix-icon="inputField.prefixIcon"
-                    :maxlength="35"
-                    placeholder="请输入报表名称"
+                    :maxlength="ProfileLen.name"
+                    :placeholder="ProfilePlace.name"
                     :disabled="btnDisabled"
           />
           <div class="el-form-item-msg">报表唯一标识，建议采用驼峰式写法，新增后不可用修改字段，示例：SystemMainUser</div>
@@ -60,14 +60,27 @@
                     :show-word-limit="inputField.showWordLimit"
                     :clearable="inputField.clearable"
                     :prefix-icon="inputField.prefixIcon"
-                    :maxlength="35"
-                    placeholder="请输入数据库表名"
+                    :maxlength="ProfileLen.table"
+                    :placeholder="ProfilePlace.table"
                     :disabled="btnDisabled"
           />
         </el-form-item>
-        <el-form-item label="排序ID" prop="orderId">
-          <el-input-number v-model="ruleForm.orderId" :min="1" controls-position="right" :disabled="btnDisabled" style="width: 100%;" />
-          <div class="el-form-item-msg">数值越小排序越靠前，默认 1</div>
+        <el-form-item label="排序编号" prop="orderId">
+          <el-input-number v-model="ruleForm.orderId"
+                            style="width: 100%;"
+                            :min="inputNumberField.min"
+                            :max="inputNumberField.max"
+                            :step="inputNumberField.step"
+                            :step-strictly="inputNumberField.stepStrictly"
+                            :precision="inputNumberField.precision"
+                            :size="inputNumberField.size"
+                            :controls="inputNumberField.controls"
+                            :controls-position="inputNumberField.controlsPosition"
+                            :disabled="btnDisabled"
+                            />
+            <div class="el-form-item-msg">
+              数值越小排序越靠前，默认 1，最大值为{{ inputNumberField.max.toLocaleString() }}
+            </div>
         </el-form-item>
         <el-form-item label="报表说明" prop="remark">
           <el-input v-model="ruleForm.remark"
@@ -76,8 +89,8 @@
                     :show-word-limit="textAreaField.showWordLimit"
                     :clearable="textAreaField.clearable"
                     :autosize="introductionSize"
-                    :maxlength="100"
-                    placeholder="请输入报表说明"
+                    :maxlength="ProfileLen.remark"
+                    :placeholder="ProfilePlace.remark"
                     :disabled="btnDisabled"
           />
         </el-form-item>
@@ -100,8 +113,13 @@ import { ReportModelBase } from "@/models/systemModel";
 import { SysConfigReportAddApi } from "@/api/modules/systemConfig";
 import { FormInstance, FormRules } from "element-plus";
 import { ElNotification } from 'element-plus';
-import { dialogField, inputField, textAreaField, formField } from "@/utils/attrs/field";
+import { dialogField, inputField, textAreaField, formField, inputNumberField } from "@/utils/attrs/field";
+import publicLength from "@/utils/attrs/length";
+import publicPlaceHolder from "@/utils/attrs/place";
 
+// 数据组件属性值
+const ProfileLen = publicLength.systemReportModel;
+const ProfilePlace = publicPlaceHolder.systemReportModel;
 const dgConfigField = reactive({
   title: '新增',
 });

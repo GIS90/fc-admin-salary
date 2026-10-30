@@ -301,7 +301,7 @@ onClickOutside(contextmenuRef, () => { contextMenuVisible.value = false }, {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #afafaf;
+    color: #606266;
     border: none;
     height: 35px;
     font-size: 13px;

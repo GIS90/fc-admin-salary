@@ -49,7 +49,7 @@
           />
           <div class="el-form-item-msg">角色信息唯一标识，不允许修改</div>
         </el-form-item>
-        <el-form-item label="名称" prop="chnname">
+        <el-form-item label="角色名称" prop="chnname">
           <el-input v-model.trim="ruleForm.chnname"
                     :size="inputField.size"
                     :show-word-limit="inputField.showWordLimit"
@@ -73,7 +73,9 @@
                             :controls-position="inputNumberField.controlsPosition"
                             :disabled="btnDisabled"
                             />
-            <div class="el-form-item-msg">数值越小排序越靠前，默认 1，最大值为{{inputNumberField.max}}</div>
+            <div class="el-form-item-msg">
+              数值越小排序越靠前，默认 1，最大值为{{ inputNumberField.max.toLocaleString() }}
+            </div>
         </el-form-item>
         <el-form-item label="描述" prop="introduction">
           <el-input v-model="ruleForm.introduction"

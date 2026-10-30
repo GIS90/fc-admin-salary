@@ -54,7 +54,7 @@
           />
           <div class="el-form-item-msg">只允许包含大小写英文字母、数字、连字符(-)和点(.)（不能包含空格、标点等特殊字符），示例：tool-ALL</div>
         </el-form-item>
-        <el-form-item label="名称" prop="chnname">
+        <el-form-item label="角色名称" prop="chnname">
           <el-input v-model.trim="ruleForm.chnname"
                     :size="inputField.size"
                     :show-word-limit="inputField.showWordLimit"
@@ -78,7 +78,9 @@
                             :controls-position="inputNumberField.controlsPosition"
                             :disabled="btnDisabled"
                             />
-            <div class="el-form-item-msg">数值越小排序越靠前，默认 1，最大值为{{inputNumberField.max}}</div>
+            <div class="el-form-item-msg">
+              数值越小排序越靠前，默认 1，最大值为{{ inputNumberField.max.toLocaleString() }}
+            </div>
         </el-form-item>
         <el-form-item label="描述" prop="introduction">
           <el-input v-model="ruleForm.introduction"

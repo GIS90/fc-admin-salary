@@ -57,6 +57,12 @@ let systemXtcsModel = {
     value: 255
 }
 
+let systemReportModel = {
+    name: 35,
+    table: 35,
+    remark: 200
+}
+
 export default {
     setterProfileModel,
     setterProfilePassword,
@@ -67,4 +73,5 @@ export default {
     systemDictEnumModel,
     systemDepartModel,
     systemXtcsModel,
+    systemReportModel,
 }

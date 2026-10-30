@@ -69,6 +69,12 @@ let systemXtcsModel = {
     value: "请输入系统参数值"
 }
 
+let systemReportModel = {
+    name: "请输入报表名称",
+    table:  "请输入报表数据表名",
+    remark: "请输入报表描述"
+}
+
 export default {
     setterProfileModel,
     setterProfilePassword,
@@ -79,4 +85,5 @@ export default {
     systemDictEnumModel,
     systemDepartModel,
     systemXtcsModel,
+    systemReportModel,
 }
