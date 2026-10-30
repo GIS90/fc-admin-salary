@@ -67,7 +67,7 @@
               <span style="color: red;">* </span>数据库字段
             </template>
             <template #default="scope">
-              <el-input v-if="isEditing(scope.row)" v-model="scope.row.field" placeholder="字段名" :disabled="isExistingRow(scope.row)" size="small" />
+              <el-input v-if="isEditing(scope.row)" v-model="scope.row.field" placeholder="字段名" size="small" />
               <span v-else>{{ scope.row.field }}</span>
             </template>
           </el-table-column>
@@ -280,7 +280,6 @@ const widthSum = computed(() => {
 });
 const widthSumText = computed(() => widthSum.value.toFixed(2));
 
-const isExistingRow = (row: FieldRow) => !row._isNew;
 const isEditing = (row: FieldRow) => editingSet.has(row._rowKey);
 const takeSnapshot = (row: FieldRow) => { snapshotMap.set(row._rowKey, JSON.parse(JSON.stringify(row))); };
 const popSnapshot = (row: FieldRow): FieldRow | undefined => {
