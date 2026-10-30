@@ -84,7 +84,7 @@ import ViewD from "./components/view.vue";
 
 // fc-table属性
 const fcTableConfig = reactive({
-  rowKey: "md5",
+  rowKey: "md5"
 });
 const ftField = {...fcTableField, ...fcTableConfig};
 const pcField = {...PopConfirmField, ...{}};
