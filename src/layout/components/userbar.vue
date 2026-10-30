@@ -110,8 +110,8 @@
     </div>
 
     <!--搜索工具-->
-    <el-dialog v-model="searchVisible" width="55%" top="5vh" center :show-close="false" destroy-on-close>
-        <search @selectMenu="searchVisible = false" />
+    <el-dialog v-model="searchVisible" class="search-dialog" width="680px" top="15vh" :show-close="false" destroy-on-close>
+        <search @selectMenu="searchVisible = false" @close="searchVisible = false" />
     </el-dialog>
 
     <!--任务中心-->
@@ -517,5 +517,21 @@ const logoutClick = () => {
     border: 1px solid #ebeef5;
     border-radius: 10px;
     box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* 搜索弹窗 */
+.search-dialog {
+    padding: 0;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.search-dialog .el-dialog__header {
+    padding: 0;
+    margin: 0;
+}
+
+.search-dialog .el-dialog__body {
+    padding: 0;
 }
 </style>
