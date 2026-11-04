@@ -616,7 +616,7 @@ defineExpose({
     width: 100%;
 
     .filter-icon {
-        font-size: 16px;
+        font-size: 15px;
         color: #909399;
         cursor: pointer;
         transition: all 0.2s;
