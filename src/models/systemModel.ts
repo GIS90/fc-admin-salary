@@ -318,6 +318,7 @@ export interface ReportFieldModelBase {
     null?: boolean;
     idAuto?: boolean;
     extend?: boolean;
+    sortable?: boolean;
     filter?: string;
     orderId?: number;
 }

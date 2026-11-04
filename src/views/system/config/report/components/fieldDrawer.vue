@@ -151,6 +151,12 @@
               <el-tag v-else :type="scope.row.extend ? 'warning' : 'info'" size="small">{{ scope.row.extend ? '是' : '否' }}</el-tag>
             </template>
           </el-table-column>
+          <el-table-column label="排序" min-width="100" align="center">
+            <template #default="scope">
+              <el-switch v-if="isEditing(scope.row)" v-model="scope.row.sortable" size="small" />
+              <el-tag v-else :type="scope.row.sortable ? 'success' : 'info'" size="small">{{ scope.row.sortable ? '支持' : '不支持' }}</el-tag>
+            </template>
+          </el-table-column>
           <el-table-column label="允许空值" min-width="100" align="center">
             <template #default="scope">
               <el-switch v-if="isEditing(scope.row)" v-model="scope.row.null" size="small" />
@@ -169,7 +175,7 @@
               <span v-else>{{ scope.row.filter || '-' }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="orderId" label="排序" min-width="100" align="center">
+          <el-table-column prop="orderId" label="排序编号" min-width="100" align="center">
             <template #default="scope">
               <el-input-number v-if="isEditing(scope.row)" v-model="scope.row.orderId" :min="0" controls-position="right" size="small" style="width:80px;" />
               <span v-else>{{ scope.row.orderId ?? '-' }}</span>
@@ -325,16 +331,17 @@ interface FieldTemplate {
   orderId: number;
   extend: boolean;
   filter: string;
+  sortable: boolean;
 }
 
 // 常用字段模板（与后端 field_column_by_xtbb 的内置列保持一致）
 const fieldTemplates: FieldTemplate[] = [
-  { field: 'id', nameCh: '序号', nameZh: 'id', width: 100, mode: false, align: 'center', fixed: '', list: true, listType: 'integer', export: true, exportType: 'integer', null: false, idAuto: true, remark: '主键自增ID', orderId: 1, extend: false, filter: '' },
-  { field: 'create_time', nameCh: '创建时间', nameZh: 'createTime', width: 0, mode: true, align: 'center', fixed: '', list: true, listType: 'datetime', export: true, exportType: 'datetime', null: true, idAuto: false, remark: '数据创建时间', orderId: 2, extend: false, filter: '{"type":"dateRange","placeholder":"请选择创建时间范围"}' },
-  { field: 'create_rtx', nameCh: '创建人', nameZh: 'createRtx', width: 0, mode: true, align: 'center', fixed: '', list: true, listType: 'string', export: true, exportType: 'string', null: true, idAuto: false, remark: '数据创建人RTX-ID', orderId: 3, extend: false, filter: '{"type":"input","placeholder":"请输入创建人RTX-ID"}' },
-  { field: 'order_id', nameCh: '排序编号', nameZh: 'orderId', width: 0, mode: true, align: 'center', fixed: '', list: true, listType: 'integer', export: true, exportType: 'integer', null: true, idAuto: false, remark: '排序字段，数值越小越靠前', orderId: 4, extend: false, filter: '{"type":"input","placeholder":"请输入排序编号"}' },
-  { field: 'options', nameCh: '操作', nameZh: 'options', width: 200, mode: false, align: 'center', fixed: 'right', list: true, listType: '', export: false, exportType: '', null: true, idAuto: false, remark: '表格操作列', orderId: 5, extend: true, filter: '' },
-  { field: 'status', nameCh: '状态管理', nameZh: 'status', width: 200, mode: false, align: 'center', fixed: 'right', list: true, listType: 'boolean', export: true, exportType: 'lock_text', null: true, idAuto: false, remark: '状态管理', orderId: 6, extend: false, filter: '{"type":"select","placeholder":"请选择状态","options":[{"label":"启用","value":false}, {"label": "禁用","value":true}]}' },
+  { field: 'id', nameCh: '序号', nameZh: 'id', width: 100, mode: false, align: 'center', fixed: '', list: true, listType: 'integer', export: true, exportType: 'integer', null: false, idAuto: true, remark: '主键自增ID', orderId: 1, extend: false, filter: '', sortable: true },
+  { field: 'create_time', nameCh: '创建时间', nameZh: 'createTime', width: 0, mode: true, align: 'center', fixed: '', list: true, listType: 'datetime', export: true, exportType: 'datetime', null: true, idAuto: false, remark: '数据创建时间', orderId: 2, extend: false, filter: '{"type":"dateRange","placeholder":"请选择创建时间范围"}', sortable: false },
+  { field: 'create_rtx', nameCh: '创建人', nameZh: 'createRtx', width: 0, mode: true, align: 'center', fixed: '', list: true, listType: 'string', export: true, exportType: 'string', null: true, idAuto: false, remark: '数据创建人RTX-ID', orderId: 3, extend: false, filter: '{"type":"input","placeholder":"请输入创建人RTX-ID"}', sortable: false },
+  { field: 'order_id', nameCh: '排序编号', nameZh: 'orderId', width: 0, mode: true, align: 'center', fixed: '', list: true, listType: 'integer', export: true, exportType: 'integer', null: true, idAuto: false, remark: '排序字段，数值越小越靠前', orderId: 4, extend: false, filter: '{"type":"input","placeholder":"请输入排序编号"}', sortable: false },
+  { field: 'options', nameCh: '操作', nameZh: 'options', width: 200, mode: false, align: 'center', fixed: 'right', list: true, listType: '', export: false, exportType: '', null: true, idAuto: false, remark: '表格操作列', orderId: 5, extend: true, filter: '', sortable: false },
+  { field: 'status', nameCh: '状态管理', nameZh: 'status', width: 200, mode: false, align: 'center', fixed: 'right', list: true, listType: 'boolean', export: true, exportType: 'lock_text', null: true, idAuto: false, remark: '状态管理', orderId: 6, extend: false, filter: '{"type":"select","placeholder":"请选择状态","options":[{"label":"启用","value":false}, {"label": "禁用","value":true}]}', sortable: false },
 ];
 
 const isFieldExists = (field: string) => fieldList.value.some((r) => r.field === field);
@@ -360,6 +367,7 @@ const buildNewRow = (preset?: Partial<FieldRow>): FieldRow => {
     null: true,
     idAuto: false,
     extend: false,
+    sortable: false,
     filter: '',
     orderId: 0,
     _rowKey: `__new_${now}`,
@@ -433,6 +441,7 @@ const saveHandle = async (row: FieldRow) => {
     null: row.null,
     idAuto: row.idAuto,
     extend: row.extend,
+    sortable: row.sortable,
     filter: row.filter,
     orderId: row.orderId
   };
