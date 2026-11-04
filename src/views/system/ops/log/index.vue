@@ -28,7 +28,7 @@
                 :showColumnBtn="ftField.showColumnBtn" :showDownloadBtn="ftField.showDownloadBtn">
         <!-- 表格操作 -->
         <template #method="scope">
-          <el-tag :type="scope.row.method" effect="dark">{{ scope.row.method }}</el-tag>
+          <el-tag :type="methodTagType(scope.row.method)" effect="dark">{{ scope.row.method }}</el-tag>
         </template>
         <template #options="scope">
           <el-tooltip effect="dark" content="详情" placement="top">
@@ -67,6 +67,7 @@ import { ElMessage, ElNotification } from 'element-plus';
 import { fcTableField, PopConfirmField, buttonField } from "@/utils/attrs/field";
 import { OptionEnumModelList } from "@/models/X";
 import { TableFieldColumnApi } from "@/api/modules/common";
+import { methodTagType } from "@/utils/utils";
 import Detail from "./components/view.vue";
 import Filter from "./components/filter.vue";
 
