@@ -22,13 +22,13 @@
       </transition>
 
       <!--Table区-->
-      <fc-table ref="fcTableRef" :tableName="apiName" :requestApi="fetchTableData" :initParam="requestParam" :columns="columns"
+      <fc-filter-table ref="fcTableRef" :tableName="apiName" :requestApi="fetchTableData" :initParam="requestParam" :columns="columns"
                 :rowKey="ftField.rowKey" :stripe="ftField.stripe" :border="ftField.border" :pagination="ftField.pagination"
                 :showBottomView="ftField.showBottomView" :showRefreshBtn="ftField.showRefreshBtn"
                 :showColumnBtn="ftField.showColumnBtn" :showDownloadBtn="ftField.showDownloadBtn">
         <!-- 表格操作 -->
         <template #method="scope">
-          <el-tag :type="scope.row.tag" effect="dark">{{ scope.row.method }}</el-tag>
+          <el-tag :type="scope.row.method" effect="dark">{{ scope.row.method }}</el-tag>
         </template>
         <template #options="scope">
           <el-tooltip effect="dark" content="详情" placement="top">
@@ -47,7 +47,7 @@
             </template>
           </el-popconfirm>
         </template>
-      </fc-table>
+      </fc-filter-table>
     </el-main>
 
     <!--详情-->
@@ -61,12 +61,12 @@
 <script setup lang='ts'>
 import { ref, reactive, watch, onMounted } from 'vue';
 import {SysOpsLogListApi, SysOpsLogDeleteApi, SysOpsLogFilterApi} from '@/api/modules/systemOps';
-import { ColumnProps, FcTableInstance } from "@/components/fcTable/model";
+import { ColumnProps, FcFilterTableInstance } from "@/components/fcFilterTable/model";
 import { LogModelList } from "@/models/systemModel";
 import { ElMessage, ElNotification } from 'element-plus';
 import { fcTableField, PopConfirmField, buttonField } from "@/utils/attrs/field";
 import { OptionEnumModelList } from "@/models/X";
-import { tableWidth } from "@/utils/attrs/table";
+import { TableFieldColumnApi } from "@/api/modules/common";
 import Detail from "./components/view.vue";
 import Filter from "./components/filter.vue";
 
@@ -79,20 +79,11 @@ const fcTableConfig = reactive({
 const ftField = {...fcTableField, ...fcTableConfig};
 const pcField = {...PopConfirmField, ...{}};
 
-// fc-Table 实例
-const fcTableRef = ref<FcTableInstance>();
+// fc-filter-table 实例
+const fcTableRef = ref<FcFilterTableInstance>();
 
-const columns = reactive<ColumnProps<LogModelList>[]>([
-  { prop: "", width: tableWidth.selection, type: "selection" },
-  { prop: "id", label: "序号", width: tableWidth.id },
-  { prop: "createTime", label: "请求时间" },
-  { prop: "rtxId", label: "系统用户"},
-  { prop: "ip", label: "IP来源" },
-  { prop: "url", label: "请求路径" },
-  { prop: "method", label: "请求方式" },
-  { prop: "cost", label: "耗时（单位：s）" },
-  { prop: "options", label: "操作", width: tableWidth.option2, fixed: "right" }
-]);
+// 表格列（后端报表配置下发）
+const columns = ref<ColumnProps<LogModelList>[]>([]);
 
 // Dialog状态管理
 const viewVisible = ref(false);
@@ -110,6 +101,7 @@ const userOption = ref<OptionEnumModelList>([]);
 
 
 onMounted(async () => {
+  fetchTableFieldColumn(); // 表头数据
   const response = await SysOpsLogFilterApi();
   if (response.code ===100) {
     const res = response.data as { api: OptionEnumModelList, user: OptionEnumModelList };
@@ -117,6 +109,16 @@ onMounted(async () => {
     userOption.value = res.user;
   }
 });
+
+// 获取后端报表配置的表头
+const fetchTableFieldColumn = async () => {
+  const response = await TableFieldColumnApi({ xtbb: apiName });
+  if (response.code === 100 && response.data) {
+    columns.value = response.data as any;
+  } else {
+    ElNotification({ title: '提示', message: '报表未配置表头，请联系平台管理员！', type: 'warning' });
+  }
+};
 
 // 表格数据
 const fetchTableData = async (params: any) => {
