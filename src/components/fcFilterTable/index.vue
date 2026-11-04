@@ -22,7 +22,7 @@
                             </el-tag>
                         </template>
                     </el-table-column>
-                    <el-table-column v-bind="item" :align="item.align ?? 'center'"
+                    <el-table-column v-bind="excludeSortable(item)" :align="item.align ?? 'center'"
                         :show-overflow-tooltip="tableField.sot"
                         v-if="!item.type && item.prop && !item.isHide">
                         <template #header="scope">
@@ -30,6 +30,7 @@
                             <template v-else>
                                 <div class="filter-header-cell">
                                     <span>{{ scope.column.label }}</span>
+                                    <!-- 筛选图标 -->
                                     <el-popover v-if="item.filter" placement="bottom" :width="filterPopoverWidth(item.filter)"
                                         trigger="click" :hide-after="0">
                                         <template #reference>
@@ -117,6 +118,21 @@
                                             </div>
                                         </div>
                                     </el-popover>
+                                    <!-- 排序图标（上三角+下三角，上下叠放一列） -->
+                                    <div v-if="item.sortable" class="sort-icons">
+                                        <el-icon
+                                            class="sort-icon"
+                                            :class="{ 'is-active': sortState.prop === item.prop && sortState.order === 'ascending' }"
+                                            @click="handleSort(item.prop!, 'ascending')">
+                                            <CaretTop />
+                                        </el-icon>
+                                        <el-icon
+                                            class="sort-icon"
+                                            :class="{ 'is-active': sortState.prop === item.prop && sortState.order === 'descending' }"
+                                            @click="handleSort(item.prop!, 'descending')">
+                                            <CaretBottom />
+                                        </el-icon>
+                                    </div>
                                 </div>
                             </template>
                         </template>
@@ -193,7 +209,7 @@ import { ColumnProps, TypeProps, ColumnFilterProps } from "./model";
 import Sortable from "sortablejs";
 import { tablePageSizes, tablePageSize, tableEmptyText } from '@/utils/variable';
 import { tableField } from "@/utils/attrs/field";
-import { Filter } from '@element-plus/icons-vue';
+import { Filter, CaretTop, CaretBottom } from '@element-plus/icons-vue';
 import { SelfStorage } from '@/store/securels';
 
 export interface FcFilterTableProps {
@@ -384,7 +400,7 @@ const localTotal = computed(() => {
 });
 
 const processTableData = computed(() => {
-    return filteredData.value;
+    return sortedData.value;
 });
 const _height = computed(() => props.height ? props.height + 'px' : '100%');
 const _table_height = computed(() =>
@@ -400,10 +416,53 @@ const clearSelection = () => {
     tableRef.value?.clearSelection();
 };
 
+// 排除 sortable，避免触发 Element Plus 原生排序 UI
+const excludeSortable = (item: ColumnProps) => {
+    const { sortable, ...rest } = item as any;
+    return rest;
+};
+
 const filterPopoverWidth = (filter: ColumnFilterProps) => {
     if (filter.type === 'daterange') return 300;
     return 200;
 };
+
+// 排序状态
+const sortState = reactive<{ prop: string; order: 'ascending' | 'descending' }>({
+    prop: '',
+    order: 'ascending'
+});
+
+// 点击排序图标
+const handleSort = (prop: string, order: 'ascending' | 'descending') => {
+    if (sortState.prop === prop && sortState.order === order) {
+        // 点击同一方向的箭头：取消排序
+        sortState.prop = '';
+    } else {
+        sortState.prop = prop;
+        sortState.order = order;
+    }
+};
+
+// 排序后的数据
+const sortedData = computed<any[]>(() => {
+    const list = filteredData.value;
+    if (!sortState.prop) return list;
+    const { prop, order } = sortState;
+    const sorted = [...list].sort((a, b) => {
+        const va = a[prop];
+        const vb = b[prop];
+        // 数字类型
+        if (typeof va === 'number' && typeof vb === 'number') {
+            return order === 'ascending' ? va - vb : vb - va;
+        }
+        // 字符串类型
+        const sa = String(va ?? '');
+        const sb = String(vb ?? '');
+        return order === 'ascending' ? sa.localeCompare(sb) : sb.localeCompare(sa);
+    });
+    return sorted;
+});
 
 const hasFilterValue = (filter: ColumnFilterProps, prop?: string) => {
     const key = filter.field || prop || '';
@@ -557,16 +616,16 @@ defineExpose({
     width: 100%;
 
     .filter-icon {
-        font-size: 12px;
+        font-size: 16px;
         color: #909399;
         cursor: pointer;
         transition: all 0.2s;
-        width: 18px;
-        height: 18px;
+        width: 24px;
+        height: 24px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        border-radius: 3px;
+        border-radius: 4px;
         background: #f0f2f5;
 
         &:hover {
@@ -577,6 +636,38 @@ defineExpose({
         &.is-active {
             color: #fff;
             background: var(--el-color-primary);
+        }
+    }
+
+    // 排序图标容器（上下叠放一列）
+    .sort-icons {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 0;
+        height: auto;
+        margin-left: 2px;
+    }
+
+    // 单个排序箭头（三角）
+    .sort-icon {
+        font-size: 16px;
+        color: #c0c4cc;
+        cursor: pointer;
+        transition: color 0.2s;
+        line-height: 1;
+        padding: 0;
+        border-radius: 2px;
+
+        &:hover {
+            color: var(--el-color-primary);
+            background: #f0f2f5;
+        }
+
+        &.is-active {
+            color: var(--el-color-primary);
+            background: #f0f2f5;
         }
     }
 }
