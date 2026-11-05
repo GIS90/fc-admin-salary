@@ -2,7 +2,7 @@
   <div class="slider-check-box">
     <div class="slider-check" :class="sliderStatus ? 'success' : ''">
       <el-icon @mousedown.stop="rangeMove">
-        <component :is="sliderIcon" @mousedown.stop/>
+        <component :is="sliderIcon" />
       </el-icon>
       {{ sliderStatus ? $t('login.sliderSuccess') : $t('login.sliderText') }}
     </div>
@@ -27,7 +27,7 @@ const props = defineProps({
 
 let disX = ref(0);
 const sliderStatus = ref(false);
-const sliderIcon = ref('Right222');
+const sliderIcon = ref('Right');
 const sliderText = ref('请拖住滑块，拖动到最右边');
 
 // 监听状态
@@ -36,13 +36,13 @@ watch(sliderStatus, (value) => {
     sliderIcon.value = "SuccessFilled";
     sliderText.value = "验证通过";
   } else {
-    sliderIcon.value = "Right222";
+    sliderIcon.value = "Right";
     sliderText.value = "请拖住滑块，拖动到最右边";
   }
 }, { immediate: true });
 
 const rangeMove = (e: any) => {
-  const ele = e.target;
+  const ele = e.currentTarget;
   const startX = e.clientX;
   const eleWidth = ele.offsetWidth;
   const parentWidth = ele.parentElement.offsetWidth;
