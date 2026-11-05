@@ -4,7 +4,8 @@ import {
     DictEnumBaseModel, DictEnumDetailModel, DictEnumListModel,
     DictKeyBaseModel, DictKeyDetailModel, DictKeyListModel,
     XtcsModelBase, XtcsModelList,
-    ReportModelBase, ReportModelList
+    ReportModelBase, ReportModelList,
+    ApiModelList, ApiModelDetail
 } from "@/models/systemModel";
 import {RequestKeyModel, RequestMd5Model, RequestMd5Models, RequestStatusModel} from "@/models/X";
 
@@ -196,4 +197,35 @@ export const SysConfigReportFieldBatchDeleteApi = (params: RequestMd5Models) => 
 // [POST]Field>字段校验
 export const SysConfigReportFieldCheckApi = (params: { table: string; fields: string[] }) => {
     return http.post('/system/config/report.field.check', params);
+};
+
+/* * * * * * * * * * * * * * * * * * * * * * [系统配置>API管理] * * * * * * * * * * * * * * * * * * * * * * * * * */
+// [GET]列表
+export const SysConfigApiListApi = (params: any) => {
+    return http.get<ResultPage<ApiModelList>>('/system/config/api.list', params);
+};
+
+// [POST]新增
+export const SysConfigApiAddApi = (params: ApiModelDetail) => {
+    return http.post('/system/config/api', params);
+};
+
+// [GET]详情
+export const SysConfigApiApi = (params: RequestMd5Model) => {
+    return http.get('/system/config/api', params);
+};
+
+// [PUT]更新
+export const SysConfigApiUpdateApi = (params: ApiModelDetail) => {
+    return http.put('/system/config/api', params);
+};
+
+// [DELETE]单条删除
+export const SysConfigApiDeleteApi = (params: RequestMd5Model) => {
+    return http.delete('/system/config/api.soft', params);
+};
+
+// [PUT]批量删除
+export const SysConfigApiBatchDeleteApi = (params: RequestMd5Models) => {
+    return http.put('/system/config/api.batch.soft', params);
 };

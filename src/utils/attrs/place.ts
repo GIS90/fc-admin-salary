@@ -75,6 +75,16 @@ let systemReportModel = {
     remark: "请输入报表描述"
 }
 
+let systemApiModel = {
+    blueprint: "请输入API接口Blueprint",
+    apiname: "请输入API接口View方法名称",
+    endpoint: "请输入API接口Endpoint",
+    path: "请输入API接口Path，与request表关联",
+    method: "请选择接口请求方式",
+    short: "请输入API接口简述",
+    long: "请输入API接口详细描述"
+}
+
 export default {
     setterProfileModel,
     setterProfilePassword,
@@ -86,4 +96,5 @@ export default {
     systemDepartModel,
     systemXtcsModel,
     systemReportModel,
+    systemApiModel,
 }

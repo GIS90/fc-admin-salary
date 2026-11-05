@@ -338,4 +338,34 @@ export interface ReportFieldModelDetail extends ReportFieldModelBase {
     md5: string;
 }
 
+// - - - - - - - - - - - - - - - - - - - - - [系统配置>API管理] - - - - - - - - - - - - - - - - - - - - - -
+/**
+ * API管理>基础模型
+ */
+export interface __ApiModelBase {
+    md5: string;
+    blueprint: string;
+    apiname: string;
+    endpoint: string;
+    path: string;
+    method: string;
+    short?: string;
+    long?: string;
+    orderId?: number;
+}
+
+/**
+ * API管理>列表
+ */
+export interface ApiModelList extends __ApiModelBase {
+    id: number;
+    createRtx: string;
+    createTime: string;
+}
+
+/**
+ * API管理>编辑
+ */
+export interface ApiModelDetail extends __ApiModelBase {}
+
 

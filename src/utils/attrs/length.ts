@@ -63,6 +63,15 @@ let systemReportModel = {
     remark: 200
 }
 
+let systemApiModel = {
+    blueprint: 25,
+    apiname: 35,
+    endpoint: 65,
+    path: 65,
+    short: 35,
+    long: 255
+}
+
 export default {
     setterProfileModel,
     setterProfilePassword,
@@ -74,4 +83,5 @@ export default {
     systemDepartModel,
     systemXtcsModel,
     systemReportModel,
+    systemApiModel,
 }
