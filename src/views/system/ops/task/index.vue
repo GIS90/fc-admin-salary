@@ -22,7 +22,7 @@
       </transition>
 
       <!--Table区-->
-      <fc-table ref="fcTableRef" :tableName="apiName" :requestApi="fetchTableData" :initParam="requestParam" :columns="columns"
+      <fc-filter-table ref="fcTableRef" :tableName="apiName" :requestApi="fetchTableData" :initParam="requestParam" :columns="columns"
                 :rowKey="ftField.rowKey" :stripe="ftField.stripe" :border="ftField.border" :pagination="ftField.pagination"
                 :showBottomView="ftField.showBottomView" :showRefreshBtn="ftField.showRefreshBtn"
                 :showColumnBtn="ftField.showColumnBtn" :showDownloadBtn="ftField.showDownloadBtn">
@@ -48,7 +48,7 @@
             </template>
           </el-popconfirm>
         </template>
-      </fc-table>
+      </fc-filter-table>
     </el-main>
 
     <!--详情-->
@@ -62,12 +62,12 @@
 <script setup lang='ts'>
 import { ref, reactive, watch, onMounted } from 'vue';
 import {SysOpsTaskListApi, SysOpsTaskDeleteApi, SysOpsTaskFilterApi} from '@/api/modules/systemOps';
-import { ColumnProps, FcTableInstance } from "@/components/fcTable/model";
+import { ColumnProps, FcFilterTableInstance } from "@/components/fcFilterTable/model";
 import { TaskModelList} from "@/models/systemModel";
 import { ElMessage, ElNotification } from 'element-plus';
 import { fcTableField, PopConfirmField, buttonField } from "@/utils/attrs/field";
 import { OptionEnumModelList } from "@/models/X";
-import { tableWidth } from "@/utils/attrs/table";
+import { TableFieldColumnApi } from "@/api/modules/common";
 import Detail from "./components/view.vue";
 import Filter from "./components/filter.vue";
 
@@ -80,21 +80,11 @@ const fcTableConfig = reactive({
 const ftField = {...fcTableField, ...fcTableConfig};
 const pcField = {...PopConfirmField, ...{}};
 
-// fc-Table 实例
-const fcTableRef = ref<FcTableInstance>();
+// fc-filter-table 实例
+const fcTableRef = ref<FcFilterTableInstance>();
 
-const columns = reactive<ColumnProps<TaskModelList>[]>([
-  { prop: "", width: tableWidth.selection, type: "selection" },
-  { prop: "id", label: "序号", width: tableWidth.id },
-  { prop: "createTime", label: "创建时间" },
-  { prop: "rtxId", label: "系统用户"},
-  { prop: "name", label: "文件名称" },
-  { prop: "api", label: "接口名称" },
-  { prop: "dataText", label: "下载类型" },
-  { prop: "taskText", label: "任务状态" },
-  { prop: "cost", label: "耗时（单位：s）" },
-  { prop: "options", label: "操作", width: tableWidth.option2, fixed: "right" }
-]);
+// 表格列（后端报表配置下发）
+const columns = ref<ColumnProps<TaskModelList>[]>([]);
 
 // Dialog状态管理
 const viewVisible = ref(false);
@@ -114,6 +104,7 @@ const userOption = ref<OptionEnumModelList>([]);
 
 
 onMounted(async () => {
+  fetchTableFieldColumn(); // 表头数据
   const response = await SysOpsTaskFilterApi();
   if (response.code ===100) {
     const res = response.data as { ds: OptionEnumModelList, status: OptionEnumModelList, user: OptionEnumModelList };
@@ -122,6 +113,16 @@ onMounted(async () => {
     userOption.value = res.user;
   }
 });
+
+// 获取后端报表配置的表头
+const fetchTableFieldColumn = async () => {
+  const response = await TableFieldColumnApi({ xtbb: apiName });
+  if (response.code === 100 && response.data) {
+    columns.value = response.data as any;
+  } else {
+    ElNotification({ title: '提示', message: '报表未配置表头，请联系平台管理员！', type: 'warning' });
+  }
+};
 
 // 表格数据
 const fetchTableData = async (params: any) => {
