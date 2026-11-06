@@ -261,6 +261,45 @@ export interface DepartmentDragNode {
     pid: number;
 }
 
+
+/**
+ * 头像管理>基础模型
+ */
+export interface __AvatarModelBase {
+    name: string;
+    type: string;
+    summary: string;
+    tag: string;
+    url: string;
+    orUrl: string;
+    format: string;
+    width: number;
+    height: number;
+    size: number;
+    status: boolean;
+}
+
+/**
+ * 头像管理>列表
+ */
+export interface AvatarModelList extends __AvatarModelBase {
+    id: number;
+    md5: string;
+    count: number;
+    createRtx: string;
+    createTime: string;
+}
+
+/**
+ * 头像管理>查看/编辑
+ */
+export interface AvatarModelDetail extends __AvatarModelBase {
+    md5: string;
+    count: number;
+    createRtx: string;
+    createTime: string;
+}
+
 // - - - - - - - - - - - - - - - - - - - - - [系统配置>报表配置] - - - - - - - - - - - - - - - - - - - - - -
 /**
  * 系统报表>基础模型

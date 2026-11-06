@@ -52,7 +52,7 @@
 import { ref, reactive, defineProps, defineEmits } from 'vue';
 import { dialogField } from "@/utils/attrs/field";
 import { SysMainUsersStatusApi, SysMainRolesDeleteApi, SysMainUsersDeleteApi } from "@/api/modules/systemMain";
-import { SysOpsTasksDeleteApi, SysOpsLogsDeleteApi, SysOpsDepartsDeleteApi } from "@/api/modules/systemOps";
+import { SysOpsTasksDeleteApi, SysOpsLogsDeleteApi, SysOpsDepartsDeleteApi, SysOpsAvatarsDeleteApi } from "@/api/modules/systemOps";
 import { SysConfigXtcsDeleteApis, SysOpsDictEnumsDeleteApi, SysConfigApiBatchDeleteApi } from "@/api/modules/systemConfig";
 import { ElNotification, ElMessage } from 'element-plus';
 
@@ -201,6 +201,19 @@ const confirm = () => {
   } else if (props.api === 'SystemOpsDepart') {
     // 系统>系统维护>部门架构
     SysOpsDepartsDeleteApi({ md5: props.md5List as string[] }).then(() => {
+      ElNotification.success({
+        title: '提示',
+        message: '删除成功'
+      });
+      closeDialog();
+      emit('reFetchTableData', true);
+    }).finally(() => {
+      btnDisabled.value = false;
+      btnLoading.value = false;
+    });
+  } else if (props.api === 'SystemOpsAvatar') {
+    // 系统>系统维护>头像管理
+    SysOpsAvatarsDeleteApi({ md5: props.md5List as string[] }).then(() => {
       ElNotification.success({
         title: '提示',
         message: '删除成功'

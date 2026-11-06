@@ -29,7 +29,7 @@
           <el-popover placement="bottom" width="650" trigger="hover">
             <template #default>
               <div style="line-height: 2.5; color: black;">
-                （1）<span style="color: #f56c6c;">新增、编辑、删除</span>只支持单条数据操作，请勿新增/编辑多个报表字段，点击保存时，只会保存当前操作数据。
+                <span style="text-decoration: underline;">（1）<span style="color: #f56c6c;">新增、编辑、删除</span>只支持单条数据操作，请勿新增/编辑多个报表字段，点击保存时，只会保存当前操作数据。</span>
                 <br />
                 （2）必填字段：带<span style="color: red;"> * </span>字段（数据库字段、中文名称、英文名称）为必填。
                 <br />
@@ -39,11 +39,27 @@
                 <br />
                 （5）ID自增字段默认只对id字段生效，其他字段不生效。
                 <br />
-                （6）字段筛选支持类型：input、select、radio、daterange、boolean、number，其他字段不支持筛选，格式为：{"type":"input","placeholder":"请输入查询条件"}。
+                （6）字段筛选支持类型：input、select、radio、daterange、boolean、number，其他字段不支持筛选，具体格式参考筛选配置示例。
               </div>
             </template>
             <template #reference>
               <el-button id="btn-popover" type="info" icon="Reading">操作说明</el-button>
+            </template>
+          </el-popover>
+          <el-popover placement="bottom" width="1000" trigger="hover">
+            <template #default>
+              <div style="line-height: 2.5; color: black;">
+                <div v-for="(item, index) in filterConfigTips" :key="item.label">
+                  （{{ index + 1 }}）<span style="color: #f56c6c;font-weight: bold;">{{ item.label }}</span>：
+                  <span class="copy-json" title="点击复制" @click="copyContent(item.json)">{{ item.json }}</span>
+                  <el-icon class="copy-icon" title="复制" @click="copyContent(item.json)">
+                    <CopyDocument />
+                  </el-icon>
+                </div>
+              </div>
+            </template>
+            <template #reference>
+              <el-button id="btn-popover" type="info" icon="CopyDocument">筛选配置</el-button>
             </template>
           </el-popover>
           <el-divider direction="vertical" />
@@ -246,6 +262,37 @@ const handleClose = () => {
   emit('update:visible', false);
 };
 
+// 筛选配置示例（点击即可复制）
+const filterConfigTips = [
+  { label: 'input', json: '{"type":"input","placeholder":"请输入查询条件"}' },
+  { label: 'select通用', json: '{"type":"select","placeholder":"请选择查询条件","options":[{"label":"数据A","value":"数据A"}, {"label": "数据B","value":"数据B"}]}' },
+  { label: 'select状态', json: '{"type":"select","placeholder":"请选择查询条件","options":[{"label":"启用","value":false}, {"label": "禁用","value":true}]}' },
+  { label: 'daterange', json: '{"type":"daterange"}' },
+  { label: 'radio', json: '{"type":"radio","placeholder":"请选择查询条件","options":[{"label":"启用","value":"启用"}, {"label": "禁用","value":"禁用"}]}' },
+  { label: 'boolean', json: '{"type":"boolean"}' },
+  { label: 'number', json: '{"type":"number"}' },
+];
+
+const copyContent = async (content: string) => {
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(content);
+    } else {
+      const textarea = document.createElement('textarea');
+      textarea.value = content;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+    }
+    ElMessage.success('复制成功');
+  } catch (e) {
+    ElMessage.error('复制失败，请手动复制');
+  }
+};
+
 interface DictOption { label: string; value: any }
 const fieldFixedOptions = ref<DictOption[]>([]);
 const fieldTypeOptions = ref<DictOption[]>([]);
@@ -337,11 +384,11 @@ interface FieldTemplate {
 // 常用字段模板（与后端 field_column_by_xtbb 的内置列保持一致）
 const fieldTemplates: FieldTemplate[] = [
   { field: 'id', nameCh: '序号', nameZh: 'id', width: 100, mode: false, align: 'center', fixed: '', list: true, listType: 'integer', export: true, exportType: 'integer', null: false, idAuto: true, remark: '主键自增ID', orderId: 1, extend: false, filter: '', sortable: true },
-  { field: 'create_time', nameCh: '创建时间', nameZh: 'createTime', width: 0, mode: true, align: 'center', fixed: '', list: true, listType: 'datetime', export: true, exportType: 'datetime', null: true, idAuto: false, remark: '数据创建时间', orderId: 2, extend: false, filter: '{"type":"dateRange","placeholder":"请选择创建时间范围"}', sortable: false },
+  { field: 'create_time', nameCh: '创建时间', nameZh: 'createTime', width: 0, mode: true, align: 'center', fixed: '', list: true, listType: 'datetime', export: true, exportType: 'datetime', null: true, idAuto: false, remark: '数据创建时间', orderId: 2, extend: false, filter: '{"type":"daterange","placeholder":"请选择创建时间范围"}', sortable: false },
   { field: 'create_rtx', nameCh: '创建人', nameZh: 'createRtx', width: 0, mode: true, align: 'center', fixed: '', list: true, listType: 'string', export: true, exportType: 'string', null: true, idAuto: false, remark: '数据创建人RTX-ID', orderId: 3, extend: false, filter: '{"type":"input","placeholder":"请输入创建人RTX-ID"}', sortable: false },
-  { field: 'order_id', nameCh: '排序编号', nameZh: 'orderId', width: 0, mode: true, align: 'center', fixed: '', list: true, listType: 'integer', export: true, exportType: 'integer', null: true, idAuto: false, remark: '排序字段，数值越小越靠前', orderId: 4, extend: false, filter: '{"type":"input","placeholder":"请输入排序编号"}', sortable: false },
+  { field: 'order_id', nameCh: '排序编号', nameZh: 'orderId', width: 0, mode: true, align: 'center', fixed: '', list: true, listType: 'integer', export: true, exportType: 'integer', null: true, idAuto: false, remark: '排序字段，数值越小越靠前', orderId: 4, extend: false, filter: '{"type":"number","placeholder":"请输入排序编号"}', sortable: false },
   { field: 'options', nameCh: '操作', nameZh: 'options', width: 200, mode: false, align: 'center', fixed: 'right', list: true, listType: '', export: false, exportType: '', null: true, idAuto: false, remark: '表格操作列', orderId: 5, extend: true, filter: '', sortable: false },
-  { field: 'status', nameCh: '状态管理', nameZh: 'status', width: 200, mode: false, align: 'center', fixed: 'right', list: true, listType: 'boolean', export: true, exportType: 'lock_text', null: true, idAuto: false, remark: '状态管理', orderId: 6, extend: false, filter: '{"type":"select","placeholder":"请选择状态","options":[{"label":"启用","value":false}, {"label": "禁用","value":true}]}', sortable: false },
+  { field: 'status', nameCh: '状态管理', nameZh: 'status', width: 200, mode: false, align: 'center', fixed: 'right', list: true, listType: 'boolean', export: true, exportType: 'lock_text', null: true, idAuto: false, remark: '状态管理', orderId: 6, extend: false, filter: '{"type":"radio","placeholder":"请选择状态","options":[{"label":"启用","value":false}, {"label": "禁用","value":true}]}', sortable: false },
 ];
 
 const isFieldExists = (field: string) => fieldList.value.some((r) => r.field === field);
@@ -543,6 +590,23 @@ const checkHandle = () => {
   color: #4e4f52;
   font-size: 15px;
   margin-right: 5px;
+}
+.copy-json {
+  cursor: pointer;
+  padding: 1px 4px;
+  border-radius: 3px;
+  transition: background-color 0.2s, color 0.2s;
+  &:hover {
+    background-color: #ecf5ff;
+    color: #409eff;
+  }
+}
+.copy-icon {
+  cursor: pointer;
+  margin-left: 4px;
+  color: #409eff;
+  vertical-align: middle;
+  &:hover { color: #66b1ff; }
 }
 :deep(.el-table th.el-table__cell) {
   background-color: #ebeef5 !important;

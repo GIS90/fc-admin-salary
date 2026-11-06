@@ -51,6 +51,14 @@ let systemDepartModel = {
     description: 255
 }
 
+let systemAvatarModel = {
+    name: 35,
+    type: 35,
+    tag: 55,
+    summary: 255,
+    url: 120
+}
+
 let systemXtcsModel = {
     key: 35,
     remark: 35,
@@ -81,6 +89,7 @@ export default {
     systemDictKeyModel,
     systemDictEnumModel,
     systemDepartModel,
+    systemAvatarModel,
     systemXtcsModel,
     systemReportModel,
     systemApiModel,

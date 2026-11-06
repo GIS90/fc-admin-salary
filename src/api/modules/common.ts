@@ -21,6 +21,11 @@ export const DownloadTableApi = (params: RequestDownloadModel) => {
 export const UploadFilesApi = (data: any) => {
     return http.post('/api/uploads', data);
 };
+
+// [POST]单文件上传
+export const UploadFileApi = (data: any) => {
+    return http.post('/api/upload', data);
+};
 /* * * * * * * * * * * * * * * * * * * * * * [Table] * * * * * * * * * * * * * * * * * * * * * * * * * */
 // [GET]报表Column
 export const TableFieldColumnApi = (params: { xtbb: string }) => {

@@ -1,6 +1,13 @@
 import http from "@/api";
 import {ResultPage} from "@/api/utils/models";
-import {DepartmentDragNode, DepartmentNode, TaskModelList, LogModelList} from "@/models/systemModel";
+import {
+    DepartmentDragNode,
+    DepartmentNode,
+    TaskModelList,
+    LogModelList,
+    AvatarModelList,
+    AvatarModelDetail
+} from "@/models/systemModel";
 import {RequestMd5Model, RequestMd5Models} from "@/models/X";
 
 /* * * * * * * * * * * * * * * * * * * * * * [系统维护>任务中心] * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -94,4 +101,35 @@ export const SysOpsDepartsDeleteApi = (params: RequestMd5Models) => {
 // [PUT]拖拽
 export const SysOpsDepartDragApi = (params: DepartmentDragNode) => {
     return http.put('/system/ops/depart.drag', params);
+};
+
+/* * * * * * * * * * * * * * * * * * * * * * [系统维护>头像管理] * * * * * * * * * * * * * * * * * * * * * * * * * */
+// [GET]列表
+export const SysOpsAvatarListApi = (params: any) => {
+    return http.get<ResultPage<AvatarModelList>>('/system/ops/avatar.list', params);
+};
+
+// [GET]详情
+export const SysOpsAvatarApi = (params: RequestMd5Model) => {
+    return http.get('/system/ops/avatar', params);
+};
+
+// [POST]新增
+export const SysOpsAvatarAddApi = (params: AvatarModelDetail) => {
+    return http.post('/system/ops/avatar', params);
+};
+
+// [PUT]更新
+export const SysOpsAvatarUpdateApi = (params: AvatarModelDetail) => {
+    return http.put('/system/ops/avatar', params);
+};
+
+// [DELETE]单条删除
+export const SysOpsAvatarDeleteApi = (params: RequestMd5Model) => {
+    return http.delete('/system/ops/avatar.soft', params);
+};
+
+// [PUT]批量删除
+export const SysOpsAvatarsDeleteApi = (params: RequestMd5Models) => {
+    return http.put('/system/ops/avatar.batch.soft', params);
 };

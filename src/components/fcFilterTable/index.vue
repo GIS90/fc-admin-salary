@@ -42,7 +42,7 @@
                                             <template v-if="item.filter.type === 'input'">
                                                 <el-input
                                                     v-model="tempFilterParam[item.filter.field || item.prop]"
-                                                    :placeholder="item.filter.placeholder || '请输入'"
+                                                    :placeholder="item.filter.placeholder || '请输入查询条件'"
                                                     clearable
                                                     size="small"
                                                     @clear="handleFilterClear(item.filter!, item.prop)" />
@@ -50,7 +50,7 @@
                                             <template v-else-if="item.filter.type === 'select'">
                                                 <el-select
                                                     v-model="tempFilterParam[item.filter.field || item.prop]"
-                                                    :placeholder="item.filter.placeholder || '请选择'"
+                                                    :placeholder="item.filter.placeholder || '请选择查询条件'"
                                                     :multiple="item.filter.multiple"
                                                     clearable
                                                     size="small"
@@ -92,7 +92,7 @@
                                             <template v-else-if="item.filter.type === 'boolean'">
                                                 <el-select
                                                     v-model="tempFilterParam[item.filter.field || item.prop]"
-                                                    :placeholder="item.filter.placeholder || '请选择'"
+                                                    :placeholder="item.filter.placeholder || '请选择查询条件'"
                                                     clearable
                                                     :teleported="false"
                                                     size="small"
@@ -104,12 +104,19 @@
                                             </template>
                                             <template v-else-if="item.filter.type === 'number'">
                                                 <div class="filter-number-range">
-                                                    <el-input-number
-                                                        v-model="tempFilterParam[item.filter!.field || item.prop]"
-                                                        :placeholder="item.filter.placeholder || '请输入'"
-                                                        :controls="false"
+                                                    <el-input
+                                                        v-model.number="getNumberRange(item.filter!.field || item.prop).min"
+                                                        :placeholder="'最小值'"
                                                         size="small"
-                                                        style="width: 100%;" />
+                                                        clearable
+                                                        type="number" />
+                                                    <span class="filter-range-sep">至</span>
+                                                    <el-input
+                                                        v-model.number="getNumberRange(item.filter!.field || item.prop).max"
+                                                        :placeholder="'最大值'"
+                                                        size="small"
+                                                        clearable
+                                                        type="number" />
                                                 </div>
                                             </template>
                                             <div class="filter-popover-actions">
@@ -277,6 +284,15 @@ const columnTypes: TypeProps[] = ["selection", "radio", "index", "expand", "sort
 const tempFilterParam = reactive<Record<string, any>>({});
 const activeFilterParam = reactive<Record<string, any>>({});
 
+// number 类型筛选的临时对象访问器（保证 key 存在时返回响应式 {min, max}）
+const getNumberRange = (key: string) => {
+    if (tempFilterParam[key] === undefined || tempFilterParam[key] === null
+        || typeof tempFilterParam[key] !== 'object' || Array.isArray(tempFilterParam[key])) {
+        tempFilterParam[key] = { min: null as number | null, max: null as number | null };
+    }
+    return tempFilterParam[key] as { min: number | null; max: number | null };
+};
+
 const handleSizeChange = (val: number) => {
     pageable.value.page = 1;
     currentPageSize.value = val;
@@ -372,8 +388,17 @@ const applyLocalFilter = (list: any[]) => {
                     return rowVal === value;
                 case 'boolean':
                     return Boolean(rowVal) === Boolean(value);
-                case 'number':
-                    return Number(rowVal) === Number(value);
+                case 'number': {
+                    const range = value as { min?: any; max?: any };
+                    const rowNum = Number(rowVal);
+                    if (isNaN(rowNum)) return false;
+                    const hasMin = range?.min !== undefined && range?.min !== null && String(range?.min) !== '';
+                    const hasMax = range?.max !== undefined && range?.max !== null && String(range?.max) !== '';
+                    if (!hasMin && !hasMax) return true;
+                    if (hasMin && rowNum < Number(range.min)) return false;
+                    if (hasMax && rowNum > Number(range.max)) return false;
+                    return true;
+                }
                 case 'daterange': {
                     const [start, end] = value as string[];
                     if (!start) return true;
@@ -424,6 +449,7 @@ const excludeSortable = (item: ColumnProps) => {
 
 const filterPopoverWidth = (filter: ColumnFilterProps) => {
     if (filter.type === 'daterange') return 300;
+    if (filter.type === 'number') return 240;
     return 200;
 };
 
@@ -469,13 +495,23 @@ const hasFilterValue = (filter: ColumnFilterProps, prop?: string) => {
     const val = activeFilterParam[key];
     if (val === undefined || val === null || val === '') return false;
     if (Array.isArray(val) && val.length === 0) return false;
+    if (filter.type === 'number' && val && typeof val === 'object' && !Array.isArray(val)) {
+        const hasMin = val.min !== undefined && val.min !== null && String(val.min) !== '';
+        const hasMax = val.max !== undefined && val.max !== null && String(val.max) !== '';
+        return hasMin || hasMax;
+    }
     return true;
 };
 
 const handleFilterChange = () => {
     Object.keys(activeFilterParam).forEach(k => delete activeFilterParam[k]);
     Object.entries(tempFilterParam).forEach(([k, v]) => {
-        activeFilterParam[k] = v;
+        // number 类型为对象，需深拷贝避免 temp 与 active 共享引用
+        if (v && typeof v === 'object' && !Array.isArray(v)) {
+            activeFilterParam[k] = { ...v };
+        } else {
+            activeFilterParam[k] = v;
+        }
     });
     pageable.value.page = 1;
 };
@@ -485,6 +521,9 @@ const handleFilterClear = (filter: ColumnFilterProps, prop?: string) => {
     if (filter.type === 'daterange') {
         tempFilterParam[key] = [];
         activeFilterParam[key] = [];
+    } else if (filter.type === 'number') {
+        tempFilterParam[key] = { min: null, max: null };
+        activeFilterParam[key] = { min: null, max: null };
     } else {
         tempFilterParam[key] = null;
         activeFilterParam[key] = null;
@@ -680,8 +719,17 @@ defineExpose({
 
     .filter-number-range {
         display: flex;
-        flex-direction: column;
-        gap: 8px;
+        flex-direction: row;
+        align-items: center;
+        gap: 6px;
+
+        .el-input { flex: 1; }
+    }
+
+    .filter-range-sep {
+        flex-shrink: 0;
+        color: #909399;
+        font-size: 13px;
     }
 
     .filter-popover-actions {

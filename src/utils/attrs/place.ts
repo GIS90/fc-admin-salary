@@ -63,6 +63,14 @@ let systemDepartModel = {
     pnode: "请选择上级部门节点"
 }
 
+let systemAvatarModel = {
+    name: "请输入头像名称",
+    type: "请选择头像类型",
+    tag: "请输入头像标签，多个标签用英文逗号分隔",
+    summary: "请输入头像备注说明",
+    url: "点击或拖拽上传头像图片"
+}
+
 let systemXtcsModel = {
     key: "请输入系统参数名称",
     remark: "请输入系统参数说明",
@@ -94,6 +102,7 @@ export default {
     systemDictKeyModel,
     systemDictEnumModel,
     systemDepartModel,
+    systemAvatarModel,
     systemXtcsModel,
     systemReportModel,
     systemApiModel,

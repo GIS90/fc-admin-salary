@@ -76,8 +76,8 @@
             </el-popconfirm>
           </template>
           <!-- 状态管理 -->
-          <template #status="scope">
-            <el-switch v-model="scope.row.status" active-text="禁用" inactive-text="启用" style="--el-switch-on-color: #ff4949; --el-switch-off-color: #13ce66;" @change="statusDictEnumHandle(scope.row.md5, $event)" />
+          <template #lock="scope">
+            <el-switch v-model="scope.row.lock" active-text="禁用" inactive-text="启用" style="--el-switch-on-color: #ff4949; --el-switch-off-color: #13ce66;" @change="statusDictEnumHandle(scope.row.md5, $event)" />
           </template>
         </fc-filter-table>
       </el-main>
