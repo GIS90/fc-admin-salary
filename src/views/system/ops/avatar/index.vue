@@ -88,6 +88,10 @@
           <div v-for="row in gridList" :key="row.md5" class="avatar-card">
             <div class="avatar-card-image">
               <el-image :src="row.url" :preview-src-list="[row.url]" preview-teleported fit="cover" />
+              <div class="avatar-card-mask">
+                <el-icon><ZoomIn /></el-icon>
+              </div>
+              <div v-if="row.lock" class="avatar-card-lock">已禁用</div>
             </div>
             <div class="avatar-card-name" :title="row.name">{{ row.name }}</div>
             <div class="avatar-card-actions">
@@ -398,13 +402,13 @@ const batchDeleteHandle = () => {
 .avatar-grid-box {
   height: 100%;
   box-sizing: border-box;
-  padding: 16px;
+  padding: 20px;
   overflow-y: auto;
 }
 
 .avatar-grid {
   display: grid;
-  gap: 16px;
+  gap: 18px;
 }
 
 .avatar-card {
@@ -412,14 +416,16 @@ const batchDeleteHandle = () => {
   flex-direction: column;
   overflow: hidden;
   border: 1px solid var(--el-border-color-lighter);
-  border-radius: 8px;
+  border-radius: 10px;
   background-color: var(--el-bg-color);
-  transition: box-shadow 0.2s, transform 0.2s;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.25s, transform 0.25s, border-color 0.25s;
 }
 
 .avatar-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-4px);
+  border-color: var(--el-color-primary);
+  box-shadow: 0 0 0 2px var(--el-color-primary-light-5), 0 12px 24px rgba(0, 0, 0, 0.12);
 }
 
 .avatar-card-image {
@@ -427,23 +433,70 @@ const batchDeleteHandle = () => {
   width: 100%;
   aspect-ratio: 1 / 1;
   overflow: hidden;
-  background-color: var(--el-fill-color-lighter);
+  background: linear-gradient(135deg, var(--el-fill-color), var(--el-fill-color-dark));
   cursor: zoom-in;
 }
 
 .avatar-card-image :deep(.el-image) {
   width: 100%;
   height: 100%;
-  transition: transform 0.3s;
+  transition: transform 0.35s ease;
 }
 
 .avatar-card:hover .avatar-card-image :deep(.el-image) {
-  transform: scale(1.06);
+  transform: scale(1.08);
+}
+
+/* 悬浮遮罩：图片蒙上一层浅灰，突出查看预览 */
+.avatar-card-mask {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s;
+}
+
+.avatar-card:hover .avatar-card-mask {
+  opacity: 1;
+}
+
+.avatar-card-mask .el-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
+  color: var(--el-text-color-regular);
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--el-border-color-lighter);
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+/* 禁用标识 */
+.avatar-card-lock {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  height: 20px;
+  padding: 0 8px;
+  font-size: 12px;
+  line-height: 20px;
+  color: #fff;
+  background-color: var(--el-color-danger);
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 .avatar-card-name {
-  padding: 8px 10px 0;
+  padding: 10px 12px 0;
   font-size: 13px;
+  font-weight: 500;
   color: var(--el-text-color-primary);
   white-space: nowrap;
   overflow: hidden;
@@ -454,22 +507,39 @@ const batchDeleteHandle = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 24px;
-  padding: 8px 0 10px;
-  color: var(--el-text-color-regular);
+  gap: 12px;
+  margin-top: 8px;
+  padding: 8px 0;
+  border-top: 1px solid var(--el-border-color-extra-light);
+  background-color: var(--el-fill-color-blank);
+  transition: background-color 0.2s;
+}
+
+.avatar-card:hover .avatar-card-actions {
+  background-color: var(--el-fill-color-lighter);
 }
 
 .avatar-card-actions .el-icon {
-  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  font-size: 15px;
+  color: var(--el-text-color-regular);
+  border-radius: 50%;
   cursor: pointer;
+  transition: color 0.2s, background-color 0.2s;
 }
 
 .avatar-card-actions .el-icon:hover {
   color: var(--el-color-primary);
+  background-color: var(--el-color-primary-light-9);
 }
 
 .avatar-card-actions .avatar-card-delete:hover {
   color: var(--el-color-danger);
+  background-color: var(--el-color-danger-light-9);
 }
 
 .avatar-grid-pagination {
