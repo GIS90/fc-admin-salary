@@ -124,6 +124,11 @@ export const SysOpsAvatarUpdateApi = (params: AvatarModelDetail) => {
     return http.put('/system/ops/avatar', params);
 };
 
+// [PUT]锁定（启用/停用）
+export const SysOpsAvatarLockApi = (params: any) => {
+    return http.put('/system/ops/avatar.lock', params);
+};
+
 // [DELETE]单条删除
 export const SysOpsAvatarDeleteApi = (params: RequestMd5Model) => {
     return http.delete('/system/ops/avatar.soft', params);

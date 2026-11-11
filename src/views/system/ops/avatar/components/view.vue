@@ -2,6 +2,7 @@
   <el-dialog
       :model-value="props.visible"
       :width="dgField.width"
+      :fullscreen="fullView"
       :top="dgField.top"
       :modal="dgField.modal"
       :lock-scroll="dgField.lockScroll"
@@ -21,8 +22,13 @@
       <div class="my-dialog-header">
         <div class="my-dialog-header-title">{{ dgField.title }}</div>
         <div class="my-dialog-header-icon">
+          <el-tooltip effect="dark" :content="fullViewText" placement="top">
+            <el-icon @click="fullScreen">
+              <FullScreen />
+            </el-icon>
+          </el-tooltip>
           <el-tooltip effect="dark" content="关闭" placement="top">
-            <el-icon @click="closeDialog">
+            <el-icon class="margin-left-10px" @click="closeDialog">
               <Close />
             </el-icon>
           </el-tooltip>
@@ -33,14 +39,17 @@
     <!--body-->
     <div class="my-dialog-body">
       <div class="avatar-view">
-        <div class="avatar-view-image">
-          <el-image v-if="detail.url" :src="detail.url" :preview-src-list="[detail.url]" preview-teleported fit="contain" />
+        <div class="avatar-view-image-wrap">
+          <div class="avatar-view-image">
+            <el-image v-if="detail.url" :src="detail.url" :preview-src-list="[detail.url]" preview-teleported fit="contain" />
+          </div>
+          <div v-if="detail.url" class="avatar-view-image-tip">点击图片可放大查看</div>
         </div>
         <el-descriptions :column="1" border class="avatar-view-desc">
-          <el-descriptions-item label="头像名称">{{ detail.name || '-' }}</el-descriptions-item>
-          <el-descriptions-item label="头像类型">{{ typeLabel(detail.type) }}</el-descriptions-item>
-          <el-descriptions-item label="头像标签">
-            <el-tag v-for="item in tagList(detail.tag)" :key="item" size="small" class="avatar-tag">{{ item }}</el-tag>
+          <el-descriptions-item label="图片名称">{{ detail.name || '-' }}</el-descriptions-item>
+          <el-descriptions-item label="图片类型">{{ typeLabel(detail.type) }}</el-descriptions-item>
+          <el-descriptions-item label="图片标签">
+            <el-tag v-for="item in tagList(detail.tag)" :key="item" :type="avatarTagColor(item)" size="small" class="avatar-tag">{{ item }}</el-tag>
             <span v-if="!detail.tag">-</span>
           </el-descriptions-item>
           <el-descriptions-item label="尺寸 / 格式">{{ dimensionText }}</el-descriptions-item>
@@ -48,8 +57,8 @@
           <el-descriptions-item label="映射数量">{{ detail.count || 0 }}</el-descriptions-item>
           <el-descriptions-item label="备注说明">{{ detail.summary || '-' }}</el-descriptions-item>
           <el-descriptions-item label="状态">
-            <el-tag :type="detail.status ? 'info' : 'success'" size="small">
-              {{ detail.status ? '已停用' : '已启用' }}
+            <el-tag :type="detail.lock ? 'info' : 'success'" size="small">
+              {{ detail.lock ? '已禁用' : '已启用' }}
             </el-tag>
           </el-descriptions-item>
           <el-descriptions-item label="上传时间">{{ detail.createTime || '-' }}</el-descriptions-item>
@@ -67,17 +76,20 @@
 </template>
 
 <script setup lang='ts'>
-import { ref, reactive, computed, defineProps, defineEmits, onMounted } from 'vue';
+import { ref, reactive, computed, defineProps, defineEmits, watch } from 'vue';
 import { AvatarModelDetail } from "@/models/systemModel";
 import { SysOpsAvatarApi } from "@/api/modules/systemOps";
 import { DictEnumOptionApi } from "@/api/modules/common";
 import { dialogField } from "@/utils/attrs/field";
+import { avatarTagColor } from "@/utils/utils";
 
 const dgConfigField = reactive({
-  title: '查看头像',
-  width: '42%'
+  title: '查看',
+  width: '45%'
 });
 const dgField = {...dialogField, ...dgConfigField}; // DIALOG属性
+const fullView = ref(dgField.fullScreen); // 全屏控制
+const fullViewText = ref('全屏');
 const emit = defineEmits(['update:visible']);
 const props = defineProps({
   visible: {
@@ -92,13 +104,24 @@ const props = defineProps({
   }
 });
 
+// 全屏Text侦听器
+watch(fullView, (value) => {
+  fullViewText.value = value ? '取消全屏' : '全屏';
+}, { immediate: true });
+
 // 关闭
 function closeDialog() {
   emit('update:visible', false);
 };
 
+// 全屏
+function fullScreen() {
+  fullView.value = !fullView.value;
+};
+
 // 打开
 function openDialog() {
+  fetchTypeOptions();
   detail.value = {} as AvatarModelDetail;
   fetchApiData(props.md5);
 };
@@ -107,14 +130,22 @@ function openDialog() {
 //              ↑Dialog通用配置         ↓定制化方法
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-// 头像类型选项
+// 图片类型选项（打开弹窗时才加载，避免多个弹窗同时发起相同请求被 axios 取消）
 const typeOptions = ref<Array<{ label: string; value: string }>>([]);
-onMounted(async () => {
-  const response = await DictEnumOptionApi({ name: 'avatar-type' });
-  if (response.data) {
-    typeOptions.value = response.data as Array<{ label: string; value: string }>;
+const typeOptionsLoaded = ref(false);
+const fetchTypeOptions = async () => {
+  if (typeOptionsLoaded.value) return;
+  typeOptionsLoaded.value = true;
+  try {
+    const response = await DictEnumOptionApi({ name: 'avatar-type' });
+    if (response.data) {
+      typeOptions.value = response.data as Array<{ label: string; value: string }>;
+    }
+  } catch (e: any) {
+    // 请求被取消或失败时允许下次打开重试
+    typeOptionsLoaded.value = false;
   }
-});
+};
 
 // 详情数据
 const detail = ref<AvatarModelDetail>({} as AvatarModelDetail);
@@ -161,8 +192,12 @@ const formatFileSize = (bytes: number) => {
   align-items: flex-start;
 }
 
-.avatar-view-image {
+.avatar-view-image-wrap {
   flex: 0 0 200px;
+  width: 200px;
+}
+
+.avatar-view-image {
   width: 200px;
   height: 200px;
   border: 1px solid var(--el-border-color-lighter);
@@ -171,14 +206,29 @@ const formatFileSize = (bytes: number) => {
   background-color: var(--el-fill-color-lighter);
 }
 
+.avatar-view-image-tip {
+  margin-top: 8px;
+  font-size: 15px;
+  text-align: center;
+  color: var(--el-text-color-secondary);
+}
+
 .avatar-view-image .el-image {
   width: 100%;
   height: 100%;
+  cursor: zoom-in;
 }
 
 .avatar-view-desc {
   flex: 1;
   min-width: 0;
+}
+
+/* 固定标签列宽度，避免标签长度不一时布局错位 */
+.avatar-view-desc :deep(.el-descriptions__label) {
+  width: 96px;
+  min-width: 96px;
+  max-width: 96px;
 }
 
 .avatar-tag {

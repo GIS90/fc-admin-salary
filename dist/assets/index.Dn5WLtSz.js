@@ -1,0 +1,1 @@
+import{_ as e,o as s,j as a}from"./index.CLY2cBkW.js";const n={name:"message"};function o(t,r,c,_,p,f){return s(),a("h1",null,"salary>notify>message")}const m=e(n,[["render",o]]);export{m as default};

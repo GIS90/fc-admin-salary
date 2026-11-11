@@ -4,7 +4,10 @@
     <el-header>
       <div class="left-panel">
         <el-button id="btn-add" class="table-handle-button" :type="buttonField.type" :plain="buttonField.plain" :size="buttonField.size" icon="Plus" @click="addHandle">
-          新增
+          单张新增
+        </el-button>
+        <el-button id="btn-batch-upload" class="table-handle-button" :type="buttonField.type" :plain="buttonField.plain" :size="buttonField.size" icon="Upload" @click="batchUploadHandle">
+          批量上传
         </el-button>
         <el-button id="btn-batch-delete" type="danger" icon="Delete" :plain="buttonField.plain" :size="buttonField.size" @click="batchDeleteHandle" :disabled="!fcTableRef?.isSelected">
           批量删除
@@ -28,8 +31,8 @@
         </template>
         <!-- 标签 -->
         <template #tag="scope">
-          <el-tag v-for="item in tagList(scope.row.tag)" :key="item" size="small" class="avatar-tag">{{ item }}</el-tag>
-          <span v-if="!scope.row.tag">-</span>
+          <el-tag v-for="item in scope.row.tag" :key="item" :type="avatarTagColor(item)" size="small" class="avatar-tag">{{ item }}</el-tag>
+          <span v-if="!scope.row.tag || !scope.row.tag.length">-</span>
         </template>
         <!-- 尺寸 / 格式 -->
         <template #dimension="scope">
@@ -38,12 +41,6 @@
         <!-- 文件大小 -->
         <template #size="scope">
           {{ formatFileSize(scope.row.size) }}
-        </template>
-        <!-- 状态 -->
-        <template #status="scope">
-          <el-tag :type="scope.row.status ? 'info' : 'success'" size="small">
-            {{ scope.row.status ? '已停用' : '已启用' }}
-          </el-tag>
         </template>
         <!-- 表格操作 -->
         <template #options="scope">
@@ -68,6 +65,14 @@
             </template>
           </el-popconfirm>
         </template>
+        <!-- 状态管理（lock：启用/禁用） -->
+        <template #lock="scope">
+          <el-switch v-model="scope.row.lock"
+                     active-text="禁用"
+                     inactive-text="启用"
+                     style="--el-switch-on-color: #ff4949; --el-switch-off-color: #13ce66;"
+                     @change="lockHandle(scope.row.md5, $event)" />
+        </template>
       </fc-filter-table>
     </el-main>
 
@@ -82,24 +87,29 @@
 
     <!--批量删除-->
     <fc-batch-delete v-model:visible="batchDeleteVisible" :api="apiName" :md5List="tableSelectList" @reFetchTableData="reFetchTableData"/>
+
+    <!--批量新增（多张上传）-->
+    <BatchAdd v-model:visible="batchUploadVisible" @reFetchTableData="reFetchTableData" />
   </el-container>
 </template>
 
 <script setup lang='ts'>
-import { ref, reactive } from 'vue';
-import { SysOpsAvatarListApi, SysOpsAvatarDeleteApi } from '@/api/modules/systemOps';
+import { ref, reactive, onMounted } from 'vue';
+import { SysOpsAvatarListApi, SysOpsAvatarDeleteApi, SysOpsAvatarLockApi } from '@/api/modules/systemOps';
 import { ColumnProps, FcFilterTableInstance } from "@/components/fcFilterTable/model";
 import { AvatarModelList } from "@/models/systemModel";
 import { ElMessage, ElNotification } from 'element-plus';
 import { fcTableField, PopConfirmField, buttonField } from "@/utils/attrs/field";
+import { TableFieldColumnApi } from "@/api/modules/common";
+import { avatarTagColor } from "@/utils/utils";
 import Add from "./components/add.vue";
+import BatchAdd from "./components/batchAdd.vue";
 import Edit from "./components/edit.vue";
 import AvatarView from "./components/view.vue";
 
 // fc-table属性
 const fcTableConfig = reactive({
   rowKey: "md5",
-  showDownloadBtn: false
 });
 const ftField = {...fcTableField, ...fcTableConfig};
 const pcField = {...PopConfirmField, ...{}};
@@ -107,31 +117,45 @@ const pcField = {...PopConfirmField, ...{}};
 // fc-Table 实例
 const fcTableRef = ref<FcFilterTableInstance>();
 
-// 静态表头（头像管理不依赖报表配置）
-const columns = ref<ColumnProps<AvatarModelList>[]>([
-  { type: "selection", width: 50 },
-  { type: "index", label: "序号", width: 60, align: "center" },
-  { prop: "url", label: "头像", width: 72, align: "center" },
-  { prop: "name", label: "名称", minWidth: 160, showOverflowTooltip: true },
-  { prop: "tag", label: "标签", minWidth: 170 },
-  { prop: "dimension", label: "尺寸 / 格式", width: 130 },
-  { prop: "size", label: "文件大小", width: 110 },
-  { prop: "count", label: "映射数量", width: 90, align: "center" },
-  { prop: "createTime", label: "上传时间", width: 165 },
-  { prop: "status", label: "状态", width: 90, align: "center" },
-  { prop: "options", label: "操作", width: 140, fixed: "right", align: "center" },
-]);
+// 表头从后端报表配置获取
+const columns = ref<ColumnProps<AvatarModelList>[]>([]);
 
 // Dialog状态管理
 const addVisible = ref(false);
 const editVisible = ref(false);
 const viewVisible = ref(false);
 const batchDeleteVisible = ref(false);
+const batchUploadVisible = ref(false);
 
 const tableRowMd5 = ref(""); // 默认当前选择的数据MD5
 const apiName = "SystemOpsAvatar"; // 组件标识名称
 let tableSelectList = reactive([] as string[]); // 当前选择数据Keys列表
 const requestParam = reactive({"content": "" });  // 查询内容
+
+onMounted(() => {
+  fetchTableFieldColumn();
+});
+
+const fetchTableFieldColumn = async () => {
+  try {
+    const response = await TableFieldColumnApi({ xtbb: apiName });
+    if (response.code === 100 && response.data) {
+      columns.value = response.data as any;
+    } else {
+      ElNotification({
+        title: '提示',
+        message: '报表未配置表头，请联系平台管理员！',
+        type: 'warning'
+      });
+    }
+  } catch (e) {
+    ElNotification({
+      title: '提示',
+      message: '获取表头配置失败',
+      type: 'warning'
+    });
+  }
+};
 
 // 表格数据
 const fetchTableData = async (params: any) => {
@@ -147,10 +171,7 @@ const reFetchTableData = (isReload: boolean = false) => {
   }
 };
 
-// 标签
-const tagList = (tag: string) => {
-  return tag ? tag.split(',').map(item => item.trim()).filter(Boolean) : [];
-};
+// 标签颜色使用公共方法 avatarTagColor（utils/utils.ts）
 
 // 尺寸 / 格式
 const dimensionText = (row: AvatarModelList) => {
@@ -169,6 +190,11 @@ const formatFileSize = (bytes: number) => {
 // 新增
 const addHandle = () => {
   addVisible.value = true;
+};
+
+// 批量上传（多张）
+const batchUploadHandle = () => {
+  batchUploadVisible.value = true;
 };
 
 // 查看
@@ -195,6 +221,19 @@ const deleteHandle = (md5: string) => {
   })
 };
 
+// 锁定管理（value=true禁用 false启用）
+const lockHandle = (md5: string, value: boolean) => {
+  SysOpsAvatarLockApi({ md5, value }).then(() => {
+    const message = value ? '<strong>状态修改成功</strong><br /><div style="color: red;">禁用状态的头像将无法被使用，请谨慎禁用</div>' : '<strong>状态修改成功</strong>';
+    ElNotification({
+      title: '提示',
+      dangerouslyUseHTMLString: true,
+      message,
+      type: 'success'
+    });
+  })
+};
+
 // 批量删除
 const batchDeleteHandle = () => {
   // 无选择数据
@@ -210,8 +249,8 @@ const batchDeleteHandle = () => {
 
 <style scoped>
 .avatar-thumb {
-  width: 42px;
-  height: 42px;
+  width: 45px;
+  height: 45px;
   border-radius: 6px;
 }
 

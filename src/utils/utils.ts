@@ -23,3 +23,18 @@ const METHOD_TAG_TYPE: Record<string, "primary" | "success" | "info" | "warning"
 export function methodTagType(method?: string) {
     return METHOD_TAG_TYPE[(method || "").toUpperCase()] ?? "info";
 }
+
+// 图片标签颜色（按标签文本哈希取色，同一标签颜色固定）
+const TAG_COLORS = ["primary", "success", "warning", "danger", "info"] as const;
+
+/**
+ * 图片标签 el-tag 颜色（按标签文本哈希取色，同一标签颜色固定）
+ * @param tag 标签文本
+ */
+export function avatarTagColor(tag: string): typeof TAG_COLORS[number] {
+    let hash = 0;
+    for (let i = 0; i < tag.length; i++) {
+        hash = (hash * 31 + tag.charCodeAt(i)) >>> 0;
+    }
+    return TAG_COLORS[hash % TAG_COLORS.length];
+}

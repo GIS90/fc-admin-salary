@@ -276,15 +276,17 @@ export interface __AvatarModelBase {
     width: number;
     height: number;
     size: number;
+    lock: boolean;
     status: boolean;
 }
 
 /**
- * 头像管理>列表
+ * 头像管理>列表（tag为后台返回的标签列表）
  */
-export interface AvatarModelList extends __AvatarModelBase {
+export interface AvatarModelList extends Omit<__AvatarModelBase, 'tag'> {
     id: number;
     md5: string;
+    tag: string[];
     count: number;
     createRtx: string;
     createTime: string;

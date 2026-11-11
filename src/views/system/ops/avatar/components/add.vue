@@ -39,26 +39,17 @@
 
     <!--body-->
     <div class="my-dialog-body">
-      <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" v-bind="formField">
-        <el-form-item label="头像文件" prop="url">
-          <el-upload
-              class="avatar-uploader"
-              drag
-              :show-file-list="false"
-              :before-upload="beforeUpload"
-              :http-request="handleUpload"
-              accept=".png,.jpg,.jpeg,.webp,.gif"
-          >
-            <div v-if="ruleForm.url" class="avatar-preview">
-              <img :src="ruleForm.url" alt="头像预览" />
-              <div class="avatar-preview-mask">{{ uploading ? '上传中...' : '点击重新上传' }}</div>
-            </div>
-            <div v-else class="avatar-upload-empty">
-              <el-icon class="avatar-upload-icon"><UploadFilled /></el-icon>
-              <div class="avatar-upload-text">{{ uploading ? '上传中...' : ProfilePlace.url }}</div>
-              <div class="avatar-upload-tip">支持 PNG / JPG / WebP / GIF，大小不超过 5MB</div>
-            </div>
-          </el-upload>
+      <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" v-bind="formField" style="width: 100%;">
+        <el-form-item label="图片文件" prop="url" style="padding: 20px 0;">
+          <fc-upload-img
+              v-model:imageUrl="ruleForm.url"
+              :requestApi="uploadAvatarImg"
+              :width="uploadAttr.width"
+              :height="uploadAttr.height"
+              :fileSize="uploadAttr.fileSize"
+              :fileType="uploadAttr.fileType">
+            <template #tip>支持 PNG / JPG / WebP / GIF，大小不超过 {{ uploadAttr.fileSize }}MB</template>
+          </fc-upload-img>
           <div v-if="ruleForm.url" class="avatar-meta">
             尺寸：{{ ruleForm.width }} × {{ ruleForm.height }}
             <span class="avatar-meta-split">|</span>
@@ -67,24 +58,44 @@
             大小：{{ formatFileSize(ruleForm.size) }}
           </div>
         </el-form-item>
-        <el-form-item label="头像名称" prop="name">
-          <el-input v-model.trim="ruleForm.name" v-bind="inputField" :maxlength="ProfileLen.name" :placeholder="ProfilePlace.name" />
+        <el-form-item label="图片名称" prop="name">
+           <el-input v-model.trim="ruleForm.name"
+                    :size="inputField.size"
+                    :show-word-limit="inputField.showWordLimit"
+                    :clearable="inputField.clearable"
+                    :prefix-icon="inputField.prefixIcon"
+                    :maxlength="ProfileLen.name"
+                    :placeholder="ProfilePlace.name"
+                    :disabled="btnDisabled"
+          />
         </el-form-item>
-        <el-form-item label="头像类型" prop="type">
+        <el-form-item label="图片类型" prop="type">
           <el-select v-model="ruleForm.type" v-bind="selectSingleField" :placeholder="ProfilePlace.type" style="width: 100%;">
-            <el-option v-for="item in typeOptions" :key="item.value" :label="item.label" :value="item.value" />
+            <el-option v-for="item in typeOptions" :key="item.value" :label="item.label" :value="item.value">
+              <span class="el-select-key">{{ item.label }}</span>
+              <span class="el-select-value">{{ item.value }}</span>
+            </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="头像标签" prop="tag">
+        <el-form-item label="图片标签" prop="tag">
           <el-input v-model.trim="ruleForm.tag" v-bind="inputField" :maxlength="ProfileLen.tag" :placeholder="ProfilePlace.tag" />
         </el-form-item>
         <el-form-item label="备注说明" prop="summary">
-          <el-input v-model="ruleForm.summary" v-bind="textAreaField" :maxlength="ProfileLen.summary" :autosize="summarySize" :placeholder="ProfilePlace.summary" />
+          <el-input v-model="ruleForm.summary"
+                    :type="textAreaField.type"
+                    :size="textAreaField.size"
+                    :show-word-limit="textAreaField.showWordLimit"
+                    :clearable="textAreaField.clearable"
+                    :autosize="summarySize"
+                    :maxlength="ProfileLen.summary"
+                    :placeholder="ProfilePlace.summary"
+                    :disabled="btnDisabled"
+          />
         </el-form-item>
-        <el-form-item label="状态" prop="status">
-          <el-radio-group v-model="ruleForm.status">
+        <el-form-item label="状态" prop="lock">
+          <el-radio-group v-model="ruleForm.lock">
             <el-radio :value="false">启用</el-radio>
-            <el-radio :value="true">停用</el-radio>
+            <el-radio :value="true">禁用</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
@@ -94,14 +105,14 @@
     <template #footer>
       <div class="my-dialog-footer">
         <el-button :disabled="btnDisabled" @click="closeDialog">取 消</el-button>
-        <el-button :disabled="btnDisabled || uploading" :loading="btnLoading" type="primary" @click="confirm(ruleFormRef)">确 定</el-button>
+        <el-button :disabled="btnDisabled" :loading="btnLoading" type="primary" @click="confirm(ruleFormRef)">确 定</el-button>
       </div>
     </template>
   </el-dialog>
 </template>
 
 <script setup lang='ts'>
-import { ref, reactive, defineProps, defineEmits, watch, onMounted } from 'vue';
+import { ref, reactive, defineProps, defineEmits, watch } from 'vue';
 import { AvatarModelDetail } from "@/models/systemModel";
 import { SysOpsAvatarAddApi } from "@/api/modules/systemOps";
 import { UploadFileApi, DictEnumOptionApi } from "@/api/modules/common";
@@ -117,15 +128,22 @@ const ProfilePlace = publicPlaceHolder.systemAvatarModel;
 
 const dgConfigField = reactive({
   title: '新增',
-  width: '45%'
+  width: '45%',
+  closeOnPressEscape: false
 });
+const uploadAttr = reactive({
+  width: '200px',
+  height: '150px',
+  fileSize: 5,
+  fileType: ['image/png','image/jpeg','image/webp','image/gif']
+});
+const summarySize = ref({minRows: 3, maxRows: 4});
 const dgField = {...dialogField, ...dgConfigField}; // DIALOG属性
 const fullView = ref(dgField.fullScreen); // 全屏控制
 const fullViewText = ref('全屏');
 const emit = defineEmits(['update:visible', 'reFetchTableData']);
 const btnDisabled = ref(false); // 禁用
 const btnLoading = ref(false); // 加载中
-const uploading = ref(false); // 图片上传中
 const props = defineProps({
   visible: {
     type: Boolean,
@@ -152,6 +170,7 @@ function fullScreen() {
 
 // 打开
 function openDialog() {
+  fetchTypeOptions();
   // 重置验证
   ruleFormRef.value?.clearValidate();
 };
@@ -160,18 +179,28 @@ function openDialog() {
 //              ↑Dialog通用配置         ↓定制化方法
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-// 头像类型选项
+// 图片类型选项（打开弹窗时才加载，避免多个弹窗同时发起相同请求被 axios 取消）
 const typeOptions = ref<Array<{ label: string; value: string }>>([]);
-onMounted(async () => {
-  const response = await DictEnumOptionApi({ name: 'avatar-type' });
-  if (response.data) {
-    typeOptions.value = response.data as Array<{ label: string; value: string }>;
+const typeOptionsLoaded = ref(false);
+const fetchTypeOptions = async () => {
+  if (typeOptionsLoaded.value) return;
+  typeOptionsLoaded.value = true;
+  try {
+    const response = await DictEnumOptionApi({ name: 'avatar-type' });
+    if (response.data) {
+      typeOptions.value = response.data as Array<{ label: string; value: string }>;
+    }
+  } catch (e: any) {
+    // 请求被取消或失败时允许下次打开重试
+    typeOptionsLoaded.value = false;
+    if (e?.code !== 'ERR_CANCELED') {
+      ElMessage.warning('图片类型加载失败，请重新打开弹窗');
+    }
   }
-});
+};
 
 // 响应式数据
 const ruleFormRef = ref<FormInstance>();
-const summarySize = ref({minRows: 3, maxRows: 5});
 const ruleForm = reactive({
   name: "",
   type: "",
@@ -183,19 +212,20 @@ const ruleForm = reactive({
   width: 0,
   height: 0,
   size: 0,
+  lock: false,
   status: false
 }) as AvatarModelDetail;
 // from rule
 const rules = reactive<FormRules<AvatarModelDetail>>({
   url: [
-    { required: true, message: "请上传头像图片", trigger: 'change' },
+    { required: true, message: "请上传图片", trigger: 'change' },
   ],
   name: [
-    { required: true, message: "头像名称不允许为空", trigger: 'blur' },
+    { required: true, message: "图片名称不允许为空", trigger: 'blur' },
     { min: 1, max: ProfileLen.name, message: '最大长度支持' + ProfileLen.name + '位', trigger: 'blur' },
   ],
   type: [
-    { required: true, message: "请选择头像类型", trigger: 'change' },
+    { required: true, message: "请选择图片类型", trigger: 'change' },
     { max: ProfileLen.type, message: '最大长度支持' + ProfileLen.type + '位', trigger: 'change' },
   ],
   tag: [
@@ -217,43 +247,23 @@ const resetForm = () => {
   ruleForm.width = 0;
   ruleForm.height = 0;
   ruleForm.size = 0;
+  ruleForm.lock = false;
   ruleForm.status = false;
 };
 
-// 上传前校验
-const beforeUpload = (file: File) => {
-  const allowTypes = ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];
-  if (!allowTypes.includes(file.type)) {
-    ElMessage.error('仅支持 PNG / JPG / WebP / GIF 格式的图片');
-    return false;
-  }
-  if (file.size > 5 * 1024 * 1024) {
-    ElMessage.error('图片大小不能超过 5MB');
-    return false;
-  }
-  return true;
-};
-
-// 读取图片尺寸
-const getImageSize = (file: File): Promise<{ width: number; height: number }> => {
+// 读取图片尺寸（按URL）
+const getImageSizeByUrl = (url: string): Promise<{ width: number; height: number }> => {
   return new Promise((resolve, reject) => {
-    const objectUrl = URL.createObjectURL(file);
     const image = new Image();
-    image.onload = () => {
-      resolve({ width: image.naturalWidth, height: image.naturalHeight });
-      URL.revokeObjectURL(objectUrl);
-    };
-    image.onerror = () => {
-      URL.revokeObjectURL(objectUrl);
-      reject(new Error('图片读取失败'));
-    };
-    image.src = objectUrl;
+    image.onload = () => resolve({ width: image.naturalWidth, height: image.naturalHeight });
+    image.onerror = () => reject(new Error('图片读取失败'));
+    image.src = url;
   });
 };
 
 // 文件格式
 const getFileFormat = (fileName: string) => {
-  const ext = fileName.split('.').pop();
+  const ext = fileName.split('?')[0].split('.').pop();
   return ext ? ext.toUpperCase() : 'PNG';
 };
 
@@ -265,44 +275,42 @@ const formatFileSize = (bytes: number) => {
   return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
 };
 
-// 自定义上传
-const handleUpload = async (options: any) => {
-  const file: File = options.file;
-  uploading.value = true;
-  const sizePromise = getImageSize(file).catch(() => ({ width: 0, height: 0 }));
-  try {
-    const formData = new FormData();
-    formData.append('upload_type', '100');
-    formData.append('file', file);
-    const response = await UploadFileApi(formData);
-    const res = response as { data: { name: string; url: string } };
-    const meta = await sizePromise;
-
-    ruleForm.url = res.data.url;
-    ruleForm.orUrl = res.data.url;
-    ruleForm.format = getFileFormat(file.name);
-    ruleForm.size = file.size;
-    ruleForm.width = meta.width;
-    ruleForm.height = meta.height;
-    if (!ruleForm.name) {
-      ruleForm.name = file.name.replace(/\.[^.]+$/, '').slice(0, ProfileLen.name);
-    }
-    ruleFormRef.value?.validateField('url');
-    ElNotification({
-      title: '提示',
-      message: '图片上传成功',
-      type: 'success'
-    });
-  } catch (e) {
-    ElNotification({
-      title: '提示',
-      message: '图片上传失败',
-      type: 'error'
-    });
-  } finally {
-    uploading.value = false;
+// 单张图片上传（fc-upload-img 要求 requestApi 返回 { data: url } 结构）
+const uploadAvatarImg = async (formData: FormData) => {
+  formData.append('upload_type', '100');
+  const response = await UploadFileApi(formData);
+  const res = response as { data: { name: string; url: string } };
+  const url = res.data?.url || '';
+  // 更换图片时，名称始终跟随最新文件名（去扩展名）
+  if (res.data?.name) {
+    ruleForm.name = res.data.name.replace(/\.[^.]+$/, '').slice(0, ProfileLen.name);
   }
+  return { data: url };
 };
+
+// 图片地址变化后回填图片元数据；删除图片时同步清空名称与元数据
+watch(() => ruleForm.url, async (url) => {
+  if (!url) {
+    ruleForm.name = "";
+    ruleForm.orUrl = "";
+    ruleForm.format = "PNG";
+    ruleForm.width = 0;
+    ruleForm.height = 0;
+    ruleForm.size = 0;
+    return;
+  }
+  ruleForm.orUrl = url;
+  ruleForm.format = getFileFormat(url);
+  const meta = await getImageSizeByUrl(url).catch(() => ({ width: 0, height: 0 }));
+  ruleForm.width = meta.width;
+  ruleForm.height = meta.height;
+  try {
+    const blob = await fetch(url).then(r => r.blob());
+    ruleForm.size = blob.size;
+  } catch {
+    ruleForm.size = 0;
+  }
+});
 
 // 确认
 const confirm = async (formEl: FormInstance | undefined) => {
@@ -330,74 +338,6 @@ const confirm = async (formEl: FormInstance | undefined) => {
 </script>
 
 <style scoped>
-.avatar-uploader {
-  width: 100%;
-}
-
-.avatar-uploader :deep(.el-upload) {
-  width: 100%;
-}
-
-.avatar-uploader :deep(.el-upload-dragger) {
-  width: 100%;
-  padding: 16px;
-  border-radius: 8px;
-}
-
-.avatar-upload-empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 110px;
-  color: var(--el-text-color-secondary);
-}
-
-.avatar-upload-icon {
-  font-size: 34px;
-  color: var(--el-color-primary);
-  margin-bottom: 8px;
-}
-
-.avatar-upload-text {
-  font-size: 14px;
-  color: var(--el-text-color-regular);
-}
-
-.avatar-upload-tip {
-  margin-top: 6px;
-  font-size: 12px;
-  color: var(--el-text-color-placeholder);
-}
-
-.avatar-preview {
-  position: relative;
-  display: inline-block;
-  width: 110px;
-  height: 110px;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.avatar-preview img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.avatar-preview-mask {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 6px 0;
-  font-size: 12px;
-  color: #fff;
-  text-align: center;
-  background-color: rgba(0, 0, 0, 0.55);
-}
-
 .avatar-meta {
   margin-top: 8px;
   font-size: 12px;
@@ -407,5 +347,20 @@ const confirm = async (formEl: FormInstance | undefined) => {
 .avatar-meta-split {
   margin: 0 8px;
   color: var(--el-border-color);
+}
+
+/* 修复 fc-upload-img 鼠标悬停时边框消失问题 */
+:deep(.el-upload) {
+  &:hover {
+    border: 1px dashed var(--el-color-primary) !important;
+  }
+  &:hover .el-upload-dragger {
+    border: 1px dashed var(--el-color-primary) !important;
+  }
+}
+:deep(.el-upload-dragger) {
+  &:hover {
+    border: 1px dashed var(--el-color-primary) !important;
+  }
 }
 </style>

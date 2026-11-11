@@ -64,11 +64,11 @@ let systemDepartModel = {
 }
 
 let systemAvatarModel = {
-    name: "请输入头像名称",
-    type: "请选择头像类型",
-    tag: "请输入头像标签，多个标签用英文逗号分隔",
-    summary: "请输入头像备注说明",
-    url: "点击或拖拽上传头像图片"
+    name: "请输入图片名称",
+    type: "请选择图片类型",
+    tag: "请输入图片标签，多个标签用英文逗号分隔",
+    summary: "请输入图片备注说明",
+    url: "点击或拖拽上传图片"
 }
 
 let systemXtcsModel = {
