@@ -41,15 +41,11 @@
     <div class="my-dialog-body">
       <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" v-bind="formField">
         <el-form-item label="图片文件" prop="url">
-          <fc-upload-img
-              v-model:imageUrl="ruleForm.url"
-              :requestApi="uploadAvatarImg"
-              width="110px"
-              height="110px"
-              :fileSize="5"
-              :fileType="['image/png','image/jpeg','image/webp','image/gif']">
-            <template #tip>支持 PNG / JPG / WebP / GIF，大小不超过 5MB</template>
-          </fc-upload-img>
+          <div class="avatar-preview">
+            <el-image v-if="ruleForm.url" class="avatar-preview-image" :src="ruleForm.url"
+                      :preview-src-list="[ruleForm.url]" preview-teleported fit="contain" />
+            <div v-if="ruleForm.url" class="avatar-preview-tip">点击图片可查看大图</div>
+          </div>
           <div v-if="ruleForm.url" class="avatar-meta">
             尺寸：{{ ruleForm.width }} × {{ ruleForm.height }}
             <span class="avatar-meta-split">|</span>
@@ -98,7 +94,7 @@
 import { ref, reactive, defineProps, defineEmits, watch } from 'vue';
 import { AvatarModelDetail } from "@/models/systemModel";
 import { SysOpsAvatarApi, SysOpsAvatarUpdateApi } from "@/api/modules/systemOps";
-import { UploadFileApi, DictEnumOptionApi } from "@/api/modules/common";
+import { DictEnumOptionApi } from "@/api/modules/common";
 import { FormInstance, FormRules } from "element-plus";
 import { ElNotification, ElMessage } from 'element-plus';
 import { dialogField, inputField, textAreaField, formField, selectSingleField } from "@/utils/attrs/field";
@@ -238,14 +234,6 @@ const formatFileSize = (bytes: number) => {
   return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
 };
 
-// 单张图片上传（fc-upload-img 要求 requestApi 返回 { data: url } 结构）
-const uploadAvatarImg = async (formData: FormData) => {
-  formData.append('upload_type', '100');
-  const response = await UploadFileApi(formData);
-  const res = response as { data: { name: string; url: string } };
-  return { data: res.data?.url || '' };
-};
-
 // 图片地址变化后回填图片元数据
 watch(() => ruleForm.url, async (url) => {
   if (!url) return;
@@ -288,6 +276,30 @@ const confirm = async (formEl: FormInstance | undefined) => {
 </script>
 
 <style scoped>
+.avatar-preview {
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+}
+
+.avatar-preview-image {
+  width: 200px;
+  height: 150px;
+  overflow: hidden;
+  border: 1px dashed var(--el-border-color-darker);
+  border-radius: 8px;
+  background-color: var(--el-fill-color-lighter);
+  cursor: zoom-in;
+}
+
+.avatar-preview-tip {
+  margin-top: 4px;
+  line-height: 18px;
+  font-size: 12px;
+  text-align: center;
+  color: var(--el-text-color-secondary);
+}
+
 .avatar-meta {
   margin-top: 8px;
   font-size: 12px;
@@ -297,20 +309,5 @@ const confirm = async (formEl: FormInstance | undefined) => {
 .avatar-meta-split {
   margin: 0 8px;
   color: var(--el-border-color);
-}
-
-/* 修复 fc-upload-img 鼠标悬停时边框消失问题 */
-:deep(.el-upload) {
-  &:hover {
-    border: 1px dashed var(--el-color-primary) !important;
-  }
-  &:hover .el-upload-dragger {
-    border: 1px dashed var(--el-color-primary) !important;
-  }
-}
-:deep(.el-upload-dragger) {
-  &:hover {
-    border: 1px dashed var(--el-color-primary) !important;
-  }
 }
 </style>

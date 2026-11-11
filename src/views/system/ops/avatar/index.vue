@@ -14,13 +14,19 @@
         </el-button>
       </div>
       <div class="right-panel">
+        <el-tooltip effect="dark" :content="viewMode === 'table' ? '切换到图片浏览' : '切换到数据列表'" placement="top">
+          <el-button id="btn-view-mode" :type="buttonField.type" :plain="buttonField.plain" :size="buttonField.size"
+                     :icon="viewMode === 'table' ? 'Grid' : 'List'" @click="toggleViewMode" />
+        </el-tooltip>
         <el-input v-model.trim="requestParam.content" placeholder="支持按名称/标签/类型模糊查询，输入后点击查询" clearable style="width: 280px;" />
-        <el-button id="btn-search" :type="buttonField.type" :plain="buttonField.plain" :size="buttonField.size" icon="Search" @click="reFetchTableData" />
+        <el-button id="btn-search" :type="buttonField.type" :plain="buttonField.plain" :size="buttonField.size" icon="Search" @click="searchHandle" />
       </div>
     </el-header>
 
     <!--数据区-->
     <el-main class="nopadding">
+      <!--数据模式：表格列表-->
+      <div v-show="viewMode === 'table'" class="avatar-table-box">
       <fc-filter-table ref="fcTableRef" :tableName="apiName" :requestApi="fetchTableData" :initParam="requestParam" :columns="columns"
                 :rowKey="ftField.rowKey" :stripe="ftField.stripe" :border="ftField.border" :pagination="ftField.pagination"
                 :showBottomView="ftField.showBottomView" :showRefreshBtn="ftField.showRefreshBtn"
@@ -74,6 +80,47 @@
                      @change="lockHandle(scope.row.md5, $event)" />
         </template>
       </fc-filter-table>
+      </div>
+
+      <!--图片浏览模式：卡片网格-->
+      <div v-show="viewMode === 'grid'" v-loading="gridLoading" class="avatar-grid-box">
+        <div class="avatar-grid" :style="{ gridTemplateColumns: `repeat(${gridColumns}, minmax(0, 1fr))` }">
+          <div v-for="row in gridList" :key="row.md5" class="avatar-card">
+            <div class="avatar-card-image">
+              <el-image :src="row.url" :preview-src-list="[row.url]" preview-teleported fit="cover" />
+            </div>
+            <div class="avatar-card-name" :title="row.name">{{ row.name }}</div>
+            <div class="avatar-card-actions">
+              <el-tooltip effect="dark" content="查看" placement="top">
+                <el-icon @click="viewHandle(row)">
+                  <View />
+                </el-icon>
+              </el-tooltip>
+              <el-tooltip effect="dark" content="编辑" placement="top">
+                <el-icon @click="editHandle(row)">
+                  <EditPen />
+                </el-icon>
+              </el-tooltip>
+              <el-popconfirm :title="pcField.title" :confirm-button-text="pcField.confirmText" :cancel-button-text="pcField.cancelText"
+                             :confirm-button-type="pcField.confirmType" :cancel-button-type="pcField.cancelType"
+                             :icon="pcField.icon" :icon-color="pcField.iconColor" :width="pcField.width"
+                             @confirm="deleteHandle(row.md5)">
+                <template #reference>
+                  <el-icon class="avatar-card-delete">
+                    <Delete />
+                  </el-icon>
+                </template>
+              </el-popconfirm>
+            </div>
+          </div>
+        </div>
+        <el-empty v-if="!gridLoading && gridList.length === 0" description="暂无数据" />
+        <div v-if="gridTotal > 0" class="avatar-grid-pagination">
+          <el-pagination background layout="total, sizes, prev, pager, next, jumper"
+                         :page-sizes="pageSizes" :current-page="gridPage" :page-size="gridPageSize" :total="gridTotal"
+                         @current-change="gridPageChange" @size-change="gridSizeChange" />
+        </div>
+      </div>
     </el-main>
 
     <!--新增-->
@@ -101,6 +148,8 @@ import { AvatarModelList } from "@/models/systemModel";
 import { ElMessage, ElNotification } from 'element-plus';
 import { fcTableField, PopConfirmField, buttonField } from "@/utils/attrs/field";
 import { TableFieldColumnApi } from "@/api/modules/common";
+import { SysConfigXtcsKeyApi } from "@/api/modules/systemConfig";
+import { tablePageSize, tablePageSizes } from "@/utils/variable";
 import { avatarTagColor } from "@/utils/utils";
 import Add from "./components/add.vue";
 import BatchAdd from "./components/batchAdd.vue";
@@ -132,8 +181,21 @@ const apiName = "SystemOpsAvatar"; // 组件标识名称
 let tableSelectList = reactive([] as string[]); // 当前选择数据Keys列表
 const requestParam = reactive({"content": "" });  // 查询内容
 
+// 视图模式：table数据列表 / grid图片浏览
+const viewMode = ref<'table' | 'grid'>('table');
+
+// 图片浏览模式
+const gridLoading = ref(false);
+const gridList = ref<AvatarModelList[]>([]);
+const gridPage = ref(1);
+const gridPageSize = ref(tablePageSize);
+const gridTotal = ref(0);
+const gridColumns = ref(6); // 每行图片数量，来自系统参数 AVATAR-ROW-COUNT
+const pageSizes = tablePageSizes;
+
 onMounted(() => {
   fetchTableFieldColumn();
+  fetchGridColumns();
 });
 
 const fetchTableFieldColumn = async () => {
@@ -168,7 +230,76 @@ const reFetchTableData = (isReload: boolean = false) => {
   if (isReload) {
     fcTableRef.value?.clearSelection(); // 清除表格选择数据
     fcTableRef.value?.getTableList(); // 重新获取表格数据
+    if (viewMode.value === 'grid') fetchGridData(); // 图片浏览模式同步刷新
   }
+};
+
+// 查询（图片浏览模式回到第一页）
+const searchHandle = () => {
+  if (viewMode.value === 'grid') {
+    gridPage.value = 1;
+    fetchGridData();
+    return;
+  }
+  fcTableRef.value?.getTableList();
+};
+
+// 每行图片数量（系统参数 AVATAR-ROW-COUNT，未配置时使用默认值）
+const fetchGridColumns = async () => {
+  try {
+    const response = await SysConfigXtcsKeyApi({ key: 'AVATAR-ROW-COUNT' });
+    const value = Number((response as { data: { value: string } })?.data?.value);
+    if (value > 0) gridColumns.value = value;
+  } catch (e) {
+    // 参数未配置时保持默认列数
+  }
+};
+
+// 图片浏览模式数据
+const fetchGridData = async () => {
+  gridLoading.value = true;
+  try {
+    const response = await SysOpsAvatarListApi({
+      content: requestParam.content,
+      page: gridPage.value,
+      pageSize: gridPageSize.value
+    });
+    const res = response as { data: { list: AvatarModelList[]; total: number } };
+    gridList.value = res.data?.list || [];
+    gridTotal.value = res.data?.total || 0;
+  } finally {
+    gridLoading.value = false;
+  }
+};
+
+// 视图切换（保留当前搜索条件与分页状态）
+const toggleViewMode = () => {
+  if (viewMode.value === 'table') {
+    viewMode.value = 'grid';
+    gridPage.value = fcTableRef.value?.pageable?.page ?? 1;
+    gridPageSize.value = fcTableRef.value?.pageable?.pageSize ?? tablePageSize;
+    fetchGridData();
+    return;
+  }
+
+  viewMode.value = 'table';
+  if (fcTableRef.value) {
+    fcTableRef.value.pageable.page = gridPage.value;
+    fcTableRef.value.pageable.pageSize = gridPageSize.value;
+    fcTableRef.value.getTableList();
+  }
+};
+
+// 图片浏览模式分页
+const gridPageChange = (val: number) => {
+  gridPage.value = val;
+  fetchGridData();
+};
+
+const gridSizeChange = (val: number) => {
+  gridPageSize.value = val;
+  gridPage.value = 1;
+  fetchGridData();
 };
 
 // 标签颜色使用公共方法 avatarTagColor（utils/utils.ts）
@@ -256,5 +387,94 @@ const batchDeleteHandle = () => {
 
 .avatar-tag {
   margin-right: 4px;
+}
+
+/* 表格模式容器（fc-filter-table 多根节点，v-show 需包一层普通元素） */
+.avatar-table-box {
+  height: 100%;
+}
+
+/* 图片浏览模式 */
+.avatar-grid-box {
+  height: 100%;
+  box-sizing: border-box;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.avatar-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.avatar-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--el-border-color-lighter);
+  border-radius: 8px;
+  background-color: var(--el-bg-color);
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.avatar-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.avatar-card-image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background-color: var(--el-fill-color-lighter);
+  cursor: zoom-in;
+}
+
+.avatar-card-image :deep(.el-image) {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.3s;
+}
+
+.avatar-card:hover .avatar-card-image :deep(.el-image) {
+  transform: scale(1.06);
+}
+
+.avatar-card-name {
+  padding: 8px 10px 0;
+  font-size: 13px;
+  color: var(--el-text-color-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.avatar-card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 8px 0 10px;
+  color: var(--el-text-color-regular);
+}
+
+.avatar-card-actions .el-icon {
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.avatar-card-actions .el-icon:hover {
+  color: var(--el-color-primary);
+}
+
+.avatar-card-actions .avatar-card-delete:hover {
+  color: var(--el-color-danger);
+}
+
+.avatar-grid-pagination {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 0 4px;
 }
 </style>
