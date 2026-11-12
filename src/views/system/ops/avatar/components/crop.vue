@@ -66,15 +66,23 @@
               <el-button size="small" :type="flipX ? 'primary' : 'default'" @click="flipX = !flipX">水平翻转</el-button>
               <el-button size="small" :type="flipY ? 'primary' : 'default'" @click="flipY = !flipY">垂直翻转</el-button>
             </el-button-group>
-  
+
+            <el-button size="small" icon="Sort" @click="swapOrientation">横竖互换</el-button>
+            <el-button size="small" @click="showGrid = !showGrid">{{ showGrid ? '隐藏网格' : '显示网格' }}</el-button>
+            <el-button size="small" icon="Upload" @click="triggerReplace">替换图片</el-button>
+            <input ref="replaceInputRef" type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="avatar-crop-file" @change="onReplaceFile" />
+
             <el-button size="small" @click="resetEditor">重置</el-button>
           </div>
 
           <!--画布-->
           <div class="avatar-crop-stage">
-            <canvas ref="canvasRef" class="avatar-crop-canvas" :class="{ 'is-dragging': dragging, 'is-marking': tool !== 'none' }"
-                    :style="{ height: frameH + 'px' }"
+            <canvas ref="canvasRef" class="avatar-crop-canvas" :class="{ 'is-dragging': dragging, 'is-marking': tool !== 'none' || eyedropper }"
+                    :style="{ width: canvasCssWidth + 'px', aspectRatio: `${FRAME_W} / ${frameH}` }"
                     @mousedown.prevent="onMouseDown" @wheel.prevent="onWheel"></canvas>
+            <div class="avatar-crop-compare" @mousedown.prevent="comparing = true" @mouseup="comparing = false" @mouseleave="comparing = false">
+              按住对比原图
+            </div>
             <div v-if="loading" v-loading="true" class="avatar-crop-loading"></div>
           </div>
 
@@ -94,28 +102,35 @@
             <el-tab-pane label="调节" name="adjust">
               <div class="avatar-crop-adjust-row">
                 <span>亮度</span>
-                <el-slider v-model="brightness" :min="0.5" :max="1.5" :step="0.01" :show-tooltip="false" />
+                <el-slider v-model="brightness" :min="0.5" :max="1.5" :step="0.01" :show-tooltip="false" @dblclick="brightness = 1" />
                 <em>{{ brightness.toFixed(2) }}</em>
               </div>
               <div class="avatar-crop-adjust-row">
                 <span>对比度</span>
-                <el-slider v-model="contrast" :min="0.5" :max="2" :step="0.01" :show-tooltip="false" />
+                <el-slider v-model="contrast" :min="0.5" :max="2" :step="0.01" :show-tooltip="false" @dblclick="contrast = 1" />
                 <em>{{ contrast.toFixed(2) }}</em>
               </div>
               <div class="avatar-crop-adjust-row">
                 <span>饱和度</span>
-                <el-slider v-model="saturation" :min="0" :max="2" :step="0.01" :show-tooltip="false" />
+                <el-slider v-model="saturation" :min="0" :max="2" :step="0.01" :show-tooltip="false" @dblclick="saturation = 1" />
                 <em>{{ saturation.toFixed(2) }}</em>
               </div>
               <div class="avatar-crop-adjust-row">
                 <span>旋转微调</span>
-                <el-slider v-model="fineAngle" :min="-45" :max="45" :step="1" :show-tooltip="false" />
+                <el-slider v-model="fineAngle" :min="-45" :max="45" :step="1" :show-tooltip="false" @dblclick="fineAngle = 0" />
                 <em>{{ fineAngle }}°</em>
               </div>
               <div class="avatar-crop-adjust-actions">
-                <el-checkbox v-model="sharpen">锐化（提升文字清晰度）</el-checkbox>
+                <span class="avatar-crop-switch-label">锐化</span>
+                <el-switch v-model="sharpen" size="small" />
                 <el-button size="small" @click="documentEnhance">文档增强</el-button>
                 <el-button size="small" text @click="resetAdjust">恢复默认</el-button>
+              </div>
+              <div class="avatar-crop-adjust-actions">
+                <span class="avatar-crop-switch-label">文档处理</span>
+                <el-button size="small" @click="backgroundWhite">背景漂白</el-button>
+                <el-button size="small" @click="binarize">二值化增强</el-button>
+                <el-button size="small" @click="autoCrop">智能裁边</el-button>
               </div>
             </el-tab-pane>
 
@@ -135,9 +150,14 @@
               <div class="avatar-crop-mark">
                 <el-radio-group v-model="tool" size="small">
                   <el-radio-button value="none">无</el-radio-button>
-                  <el-radio-button value="mosaic">马赛克</el-radio-button>
-                  <el-radio-button value="rect">画框</el-radio-button>
+                  <el-radio-button value="brush">画笔</el-radio-button>
+                  <el-radio-button value="line">直线</el-radio-button>
+                  <el-radio-button value="arrow">箭头</el-radio-button>
+                  <el-radio-button value="rect">矩形</el-radio-button>
+                  <el-radio-button value="circle">圆形</el-radio-button>
                   <el-radio-button value="text">文字</el-radio-button>
+                  <el-radio-button value="mosaic">马赛克</el-radio-button>
+                  <el-radio-button value="blur">模糊</el-radio-button>
                 </el-radio-group>
 
                 <div v-if="tool === 'text'" class="avatar-crop-mark-text">
@@ -145,8 +165,18 @@
                   <el-input-number v-model="markFontSize" :min="12" :max="48" size="small" controls-position="right" style="width: 90px;" />
                 </div>
 
+                <div v-if="tool !== 'none'" class="avatar-crop-mark-actions">
+                  <el-color-picker v-model="markColor" size="small" />
+                  <el-tooltip effect="dark" content="从图片中吸取颜色" placement="top">
+                    <el-button size="small" :type="eyedropper ? 'primary' : 'default'" icon="Aim" @click="eyedropper = !eyedropper">吸管</el-button>
+                  </el-tooltip>
+                  <span class="avatar-crop-mark-label">粗细</span>
+                  <el-input-number v-model="markLineWidth" :min="1" :max="20" size="small" controls-position="right" style="width: 86px;" />
+                  <span class="avatar-crop-mark-label">透明度</span>
+                  <el-slider v-model="markOpacity" :min="0.1" :max="1" :step="0.05" :show-tooltip="false" style="width: 110px;" />
+                </div>
+
                 <div class="avatar-crop-mark-actions">
-                  <el-color-picker v-if="tool !== 'none'" v-model="markColor" size="small" />
                   <el-button size="small" :disabled="annotations.length === 0" @click="clearAnnotations">清除标注</el-button>
                 </div>
                 <div class="avatar-crop-hint">
@@ -216,6 +246,16 @@
                 <span class="avatar-crop-size-unit">px</span>
               </div>
             </el-form-item>
+            <el-form-item label="导出格式">
+              <el-select v-model="exportFormat" size="small" style="width: 110px;">
+                <el-option v-for="item in EXPORT_FORMATS" :key="item.value" :label="item.label" :value="item.value" />
+              </el-select>
+              <div v-if="exportFormat !== 'png'" class="avatar-crop-quality">
+                <span>质量</span>
+                <el-slider v-model="exportQuality" :min="0.4" :max="1" :step="0.01" :show-tooltip="false" />
+                <em>{{ Math.round(exportQuality * 100) }}%</em>
+              </div>
+            </el-form-item>
           </el-form>
         </div>
       </div>
@@ -232,7 +272,7 @@
 </template>
 
 <script setup lang='ts'>
-import { ref, reactive, shallowRef, computed, watch, nextTick, onUnmounted, defineProps, defineEmits } from 'vue';
+import { ref, reactive, shallowRef, computed, watch, nextTick, onMounted, onUnmounted, defineProps, defineEmits } from 'vue';
 import { AvatarModelDetail } from "@/models/systemModel";
 import { SysOpsAvatarApi, SysOpsAvatarAddApi, SysOpsAvatarUpdateApi } from "@/api/modules/systemOps";
 import { UploadFileApi, DictEnumOptionApi } from "@/api/modules/common";
@@ -252,10 +292,21 @@ const DEFAULT_OUTPUT_WIDTH = 800;
 // 裁剪比例
 const RATIOS = [
   { key: 'free', label: '自由', value: 4 / 3 },
+  { key: 'free-p', label: '自由(竖)', value: 3 / 4 },
   { key: '1:1', label: '1:1', value: 1 },
   { key: '4:3', label: '4:3', value: 4 / 3 },
+  { key: '3:4', label: '3:4', value: 3 / 4 },
   { key: '16:9', label: '16:9', value: 16 / 9 },
+  { key: '9:16', label: '9:16', value: 9 / 16 },
   { key: 'a4', label: 'A4', value: 210 / 297 },
+  { key: 'a4-r', label: 'A4横', value: 297 / 210 },
+];
+
+// 导出格式
+const EXPORT_FORMATS = [
+  { value: 'png', label: 'PNG' },
+  { value: 'jpeg', label: 'JPG' },
+  { value: 'webp', label: 'WEBP' },
 ];
 
 // 滤镜预设
@@ -313,9 +364,11 @@ const FILTERS = [
 ];
 
 // 标注
+type MarkType = 'mosaic' | 'blur' | 'rect' | 'circle' | 'line' | 'arrow' | 'brush' | 'text';
+
 interface Annotation {
   id: number;
-  type: 'mosaic' | 'rect' | 'text';
+  type: MarkType;
   x: number;
   y: number;
   w: number;
@@ -323,6 +376,9 @@ interface Annotation {
   color: string;
   text: string;
   fontSize: number;
+  lineWidth?: number;
+  opacity?: number;
+  points?: Array<{ x: number; y: number }>;
 }
 
 const dgConfigField = reactive({
@@ -483,20 +539,35 @@ const contrast = ref(1);
 const saturation = ref(1);
 const sharpen = ref(false);
 const dragging = ref(false);
+const showGrid = ref(true); // 网格辅助线开关
+const comparing = ref(false); // 按住对比原图
+const eyedropper = ref(false); // 吸管取色
+const exportFormat = ref('png');
+const exportQuality = ref(0.92);
+const replaceInputRef = ref<HTMLInputElement>();
 
 // 标注
-const tool = ref<'none' | 'mosaic' | 'rect' | 'text'>('none');
+const tool = ref<'none' | MarkType>('none');
 const markColor = ref('#ff4949');
 const markText = ref('');
 const markFontSize = ref(20);
+const markLineWidth = ref(3);
+const markOpacity = ref(1);
 const annotations = ref<Annotation[]>([]);
 const draft = ref<{ x: number; y: number; w: number; h: number } | null>(null);
+const draftEnd = ref<{ x: number; y: number } | null>(null);
+const brushPoints = ref<Array<{ x: number; y: number }>>([]);
 let annotationSeed = 0;
 
 // 导出尺寸
 const outputWidth = ref(DEFAULT_OUTPUT_WIDTH);
 const frameRatio = computed(() => RATIOS.find(item => item.key === ratioKey.value)?.value || 4 / 3);
 const frameH = computed(() => Math.round(FRAME_W / frameRatio.value));
+// 预览画布显示宽度（竖版比例时自动收窄，避免超出弹窗高度）
+const canvasCssWidth = computed(() => {
+  const maxHeight = 420;
+  return frameH.value > maxHeight ? Math.round(FRAME_W * maxHeight / frameH.value) : FRAME_W;
+});
 const outputHeight = computed({
   get: () => Math.max(1, Math.round(frameH.value * outputWidth.value / FRAME_W)),
   set: (value: number) => {
@@ -541,73 +612,151 @@ const applyMosaic = (ctx: CanvasRenderingContext2D, item: Annotation, scale: num
   ctx.restore();
 };
 
+// 模糊：对目标区域做高斯模糊
+const applyBlur = (ctx: CanvasRenderingContext2D, item: Annotation, scale: number) => {
+  const sx = item.x * scale;
+  const sy = item.y * scale;
+  const sw = item.w * scale;
+  const sh = item.h * scale;
+  if (sw < 4 || sh < 4) return;
+  ctx.save();
+  ctx.filter = `blur(${Math.max(2, 6 * scale)}px)`;
+  ctx.drawImage(ctx.canvas, sx, sy, sw, sh, sx, sy, sw, sh);
+  ctx.restore();
+  ctx.filter = 'none';
+};
+
+// 绘制单个矢量标注
+const drawVectorMark = (ctx: CanvasRenderingContext2D, item: Annotation) => {
+  ctx.save();
+  ctx.globalAlpha = item.opacity ?? 1;
+  ctx.strokeStyle = item.color;
+  ctx.fillStyle = item.color;
+  ctx.lineWidth = item.lineWidth ?? 3;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  if (item.type === 'rect') {
+    ctx.strokeRect(item.x, item.y, item.w, item.h);
+  } else if (item.type === 'circle') {
+    ctx.beginPath();
+    ctx.ellipse(item.x + item.w / 2, item.y + item.h / 2, Math.abs(item.w / 2), Math.abs(item.h / 2), 0, 0, Math.PI * 2);
+    ctx.stroke();
+  } else if (item.type === 'line') {
+    ctx.beginPath();
+    ctx.moveTo(item.x, item.y);
+    ctx.lineTo(item.x + item.w, item.y + item.h);
+    ctx.stroke();
+  } else if (item.type === 'arrow') {
+    const endX = item.x + item.w;
+    const endY = item.y + item.h;
+    ctx.beginPath();
+    ctx.moveTo(item.x, item.y);
+    ctx.lineTo(endX, endY);
+    ctx.stroke();
+    const angle = Math.atan2(item.h, item.w);
+    const head = Math.max(10, (item.lineWidth ?? 3) * 4);
+    ctx.beginPath();
+    ctx.moveTo(endX, endY);
+    ctx.lineTo(endX - head * Math.cos(angle - Math.PI / 7), endY - head * Math.sin(angle - Math.PI / 7));
+    ctx.lineTo(endX - head * Math.cos(angle + Math.PI / 7), endY - head * Math.sin(angle + Math.PI / 7));
+    ctx.closePath();
+    ctx.fill();
+  } else if (item.type === 'brush' && item.points && item.points.length > 1) {
+    ctx.beginPath();
+    ctx.moveTo(item.points[0].x, item.points[0].y);
+    for (let i = 1; i < item.points.length; i++) {
+      ctx.lineTo(item.points[i].x, item.points[i].y);
+    }
+    ctx.stroke();
+  } else if (item.type === 'text') {
+    ctx.globalAlpha = item.opacity ?? 1;
+    ctx.font = `600 ${item.fontSize}px "PingFang SC", "Microsoft YaHei", sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.lineWidth = Math.max(2, item.fontSize / 6);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.strokeText(item.text, item.x, item.y);
+    ctx.fillStyle = item.color;
+    ctx.fillText(item.text, item.x, item.y);
+  }
+  ctx.restore();
+};
+
 // 按当前状态绘制到指定画布
-const render = (ctx: CanvasRenderingContext2D, scale: number, preview: boolean) => {
+const render = (ctx: CanvasRenderingContext2D, scale: number, preview: boolean, compare: boolean = false) => {
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, FRAME_W * scale, frameH.value * scale);
-  if (sourceRef.value) {
+  const source = compare ? imageEl.value : sourceRef.value;
+  if (source) {
     ctx.save();
     ctx.scale(scale, scale);
     ctx.translate(FRAME_W / 2 + offsetX.value, frameH.value / 2 + offsetY.value);
     ctx.rotate(((rotation.value + fineAngle.value) * Math.PI) / 180);
     ctx.scale(flipX.value ? -1 : 1, flipY.value ? -1 : 1);
-    ctx.filter = filterValue.value;
+    ctx.filter = compare ? 'none' : filterValue.value;
     const imageScale = fitScale.value * zoom.value;
     const width = srcWidth.value * imageScale;
     const height = srcHeight.value * imageScale;
-    ctx.drawImage(sourceRef.value, -width / 2, -height / 2, width, height);
+    ctx.drawImage(source, -width / 2, -height / 2, width, height);
     ctx.restore();
     ctx.filter = 'none';
   }
 
-  // 马赛克（设备像素坐标）
+  // 马赛克 / 模糊（设备像素坐标）
   ctx.setTransform(1, 0, 0, 1, 0, 0);
-  annotations.value.filter(item => item.type === 'mosaic').forEach(item => applyMosaic(ctx, item, scale));
+  if (!compare) {
+    annotations.value.filter(item => item.type === 'mosaic').forEach(item => applyMosaic(ctx, item, scale));
+    annotations.value.filter(item => item.type === 'blur').forEach(item => applyBlur(ctx, item, scale));
+  }
 
-  // 画框 / 文字
+  // 矢量标注 / 文字
   ctx.save();
   ctx.scale(scale, scale);
-  annotations.value.forEach(item => {
-    if (item.type === 'rect') {
-      ctx.strokeStyle = item.color;
-      ctx.lineWidth = 3;
-      ctx.strokeRect(item.x, item.y, item.w, item.h);
-    } else if (item.type === 'text') {
-      ctx.font = `600 ${item.fontSize}px "PingFang SC", "Microsoft YaHei", sans-serif`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.lineWidth = Math.max(2, item.fontSize / 6);
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
-      ctx.strokeText(item.text, item.x, item.y);
-      ctx.fillStyle = item.color;
-      ctx.fillText(item.text, item.x, item.y);
+  if (!compare) {
+    annotations.value.filter(item => !['mosaic', 'blur'].includes(item.type)).forEach(item => drawVectorMark(ctx, item));
+  }
+
+  // 拖动中的标注预览
+  if (preview && draft.value && tool.value !== 'text') {
+    ctx.setLineDash([6, 4]);
+    ctx.strokeStyle = '#409eff';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(draft.value.x, draft.value.y, draft.value.w, draft.value.h);
+    ctx.setLineDash([]);
+  }
+  if (preview && brushPoints.value.length > 1) {
+    ctx.strokeStyle = markColor.value;
+    ctx.lineWidth = markLineWidth.value;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(brushPoints.value[0].x, brushPoints.value[0].y);
+    for (let i = 1; i < brushPoints.value.length; i++) {
+      ctx.lineTo(brushPoints.value[i].x, brushPoints.value[i].y);
     }
-  });
+    ctx.stroke();
+  }
   ctx.restore();
 
   // 预览辅助线（不进入导出结果）
-  if (preview) {
+  if (preview && !compare) {
     ctx.save();
     ctx.scale(scale, scale);
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.55)';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    for (let i = 1; i <= 2; i++) {
-      ctx.moveTo((FRAME_W / 3) * i, 0);
-      ctx.lineTo((FRAME_W / 3) * i, frameH.value);
-      ctx.moveTo(0, (frameH.value / 3) * i);
-      ctx.lineTo(FRAME_W, (frameH.value / 3) * i);
+    if (showGrid.value) {
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.55)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (let i = 1; i <= 2; i++) {
+        ctx.moveTo((FRAME_W / 3) * i, 0);
+        ctx.lineTo((FRAME_W / 3) * i, frameH.value);
+        ctx.moveTo(0, (frameH.value / 3) * i);
+        ctx.lineTo(FRAME_W, (frameH.value / 3) * i);
+      }
+      ctx.stroke();
     }
-    ctx.stroke();
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
     ctx.lineWidth = 1;
     ctx.strokeRect(0, 0, FRAME_W, frameH.value);
-    if (draft.value) {
-      ctx.setLineDash([6, 4]);
-      ctx.strokeStyle = '#409eff';
-      ctx.lineWidth = 2;
-      ctx.strokeRect(draft.value.x, draft.value.y, draft.value.w, draft.value.h);
-    }
     ctx.restore();
   }
 };
@@ -623,7 +772,7 @@ const draw = () => {
   }
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
-  render(ctx, 2, true);
+  render(ctx, 2, true, comparing.value);
 };
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -813,6 +962,36 @@ watch(annotations, () => {
   scheduleHistory();
 }, { deep: true });
 
+watch([comparing, showGrid], () => draw());
+
+// 快捷键：Ctrl+Z 撤销、Ctrl+Y/Ctrl+Shift+Z 重做、Enter 保存、Esc 关闭
+const onKeydown = (e: KeyboardEvent) => {
+  if (!props.visible) return;
+  const target = e.target as HTMLElement;
+  const editing = ['INPUT', 'TEXTAREA'].includes(target?.tagName) || target?.isContentEditable;
+  const ctrl = e.ctrlKey || e.metaKey;
+  if (ctrl && e.key.toLowerCase() === 'z') {
+    e.preventDefault();
+    e.shiftKey ? redo() : undo();
+    return;
+  }
+  if (ctrl && e.key.toLowerCase() === 'y') {
+    e.preventDefault();
+    redo();
+    return;
+  }
+  if (editing) return;
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    confirm();
+  } else if (e.key === 'Escape') {
+    e.preventDefault();
+    closeDialog();
+  }
+};
+
+onMounted(() => window.addEventListener('keydown', onKeydown));
+
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //                        交互
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -848,6 +1027,130 @@ const documentEnhance = () => {
   filterKey.value = 'none';
 };
 
+// 背景漂白：去灰底、提亮背景
+const backgroundWhite = () => {
+  brightness.value = 1.22;
+  contrast.value = 1.32;
+  saturation.value = 0;
+  sharpen.value = true;
+  filterKey.value = 'none';
+};
+
+// 二值化增强：让文字边缘更锐利
+const binarize = () => {
+  brightness.value = 1.15;
+  contrast.value = 2.6;
+  saturation.value = 0;
+  sharpen.value = true;
+  filterKey.value = 'none';
+};
+
+// 裁剪框横竖互换
+const swapOrientation = () => {
+  const map: Record<string, string> = {
+    'free': 'free-p', 'free-p': 'free', '1:1': '1:1',
+    '4:3': '3:4', '3:4': '4:3',
+    '16:9': '9:16', '9:16': '16:9',
+    'a4': 'a4-r', 'a4-r': 'a4'
+  };
+  ratioKey.value = map[ratioKey.value] || ratioKey.value;
+  offsetX.value = 0;
+  offsetY.value = 0;
+  nextTick(draw);
+};
+
+// 智能裁边：识别非背景内容边界并贴合裁剪框
+const autoCrop = () => {
+  const img = imageEl.value;
+  if (!img) return;
+  if (rotation.value % 360 !== 0 || fineAngle.value !== 0 || flipX.value || flipY.value) {
+    ElMessage.warning('请先重置旋转与翻转后再智能裁边');
+    return;
+  }
+  const maxSide = 260;
+  const ratio = Math.min(1, maxSide / Math.max(img.naturalWidth, img.naturalHeight));
+  const width = Math.max(1, Math.round(img.naturalWidth * ratio));
+  const height = Math.max(1, Math.round(img.naturalHeight * ratio));
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+  ctx.drawImage(img, 0, 0, width, height);
+  const data = ctx.getImageData(0, 0, width, height).data;
+  const corners = [0, (width - 1) * 4, (height - 1) * width * 4, ((height - 1) * width + width - 1) * 4];
+  let bgR = 0, bgG = 0, bgB = 0;
+  corners.forEach(index => {
+    bgR += data[index];
+    bgG += data[index + 1];
+    bgB += data[index + 2];
+  });
+  bgR /= corners.length;
+  bgG /= corners.length;
+  bgB /= corners.length;
+
+  let minX = width, minY = height, maxX = -1, maxY = -1;
+  const threshold = 38;
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const index = (y * width + x) * 4;
+      const diff = Math.abs(data[index] - bgR) + Math.abs(data[index + 1] - bgG) + Math.abs(data[index + 2] - bgB);
+      if (diff > threshold) {
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+      }
+    }
+  }
+  if (maxX < 0) {
+    ElMessage.warning('未识别到有效内容');
+    return;
+  }
+  const contentW = (maxX - minX + 1) / ratio;
+  const contentH = (maxY - minY + 1) / ratio;
+  const targetScale = Math.min(FRAME_W / contentW, frameH.value / contentH) * 0.98;
+  zoom.value = Math.min(4, Math.max(0.2, targetScale / fitScale.value));
+  const finalScale = fitScale.value * zoom.value;
+  const centerX = (minX + maxX) / 2 / ratio;
+  const centerY = (minY + maxY) / 2 / ratio;
+  offsetX.value = -(centerX - srcWidth.value / 2) * finalScale;
+  offsetY.value = -(centerY - srcHeight.value / 2) * finalScale;
+};
+
+// 替换编辑中的图片
+const triggerReplace = () => {
+  replaceInputRef.value?.click();
+};
+
+const onReplaceFile = async (e: Event) => {
+  const input = e.target as HTMLInputElement;
+  const file = input.files?.[0];
+  input.value = '';
+  if (!file) return;
+  loading.value = true;
+  try {
+    const objectUrl = URL.createObjectURL(file);
+    await loadImage(objectUrl);
+    URL.revokeObjectURL(objectUrl);
+    rotation.value = 0;
+    fineAngle.value = 0;
+    flipX.value = false;
+    flipY.value = false;
+    zoom.value = 1;
+    offsetX.value = 0;
+    offsetY.value = 0;
+    annotations.value = [];
+    await buildSource();
+    draw();
+    pushHistory();
+  } catch (err) {
+    ElMessage.error('图片加载失败');
+  } finally {
+    loading.value = false;
+  }
+};
+
 const clearAnnotations = () => {
   annotations.value = [];
 };
@@ -872,9 +1175,15 @@ const resetAll = () => {
   sharpen.value = false;
   ratioKey.value = 'free';
   outputWidth.value = DEFAULT_OUTPUT_WIDTH;
+  exportFormat.value = 'png';
+  exportQuality.value = 0.92;
   annotations.value = [];
   draft.value = null;
+  draftEnd.value = null;
+  brushPoints.value = [];
   tool.value = 'none';
+  eyedropper.value = false;
+  comparing.value = false;
   markText.value = '';
   activeTab.value = 'adjust';
   isNew.value = true;
@@ -897,6 +1206,10 @@ const resetEditor = () => {
   sharpen.value = false;
   ratioKey.value = 'free';
   annotations.value = [];
+  draft.value = null;
+  draftEnd.value = null;
+  brushPoints.value = [];
+  eyedropper.value = false;
 };
 
 const onRatioChange = () => {
@@ -928,6 +1241,10 @@ const onMove = (e: MouseEvent) => {
   }
   if (!draft.value) return;
   const point = getCanvasPoint(e);
+  draftEnd.value = point;
+  if (tool.value === 'brush') {
+    brushPoints.value.push(point);
+  }
   draft.value = {
     x: Math.min(markStart.x, point.x),
     y: Math.min(markStart.y, point.y),
@@ -944,11 +1261,23 @@ const onUp = (e: MouseEvent) => {
     return;
   }
   const current = draft.value;
+  const end = draftEnd.value || getCanvasPoint(e);
+  const start = { ...markStart };
+  const points = [...brushPoints.value];
   draft.value = null;
+  draftEnd.value = null;
+  brushPoints.value = [];
   endDrag();
   if (!current) return;
 
   const point = getCanvasPoint(e);
+
+  // 吸管取色
+  if (eyedropper.value) {
+    pickColor(point);
+    return;
+  }
+
   if (tool.value === 'text') {
     if (!markText.value) {
       ElMessage.warning('请先输入标注文字');
@@ -964,33 +1293,93 @@ const onUp = (e: MouseEvent) => {
       h: 0,
       color: markColor.value,
       text: markText.value,
-      fontSize: markFontSize.value
+      fontSize: markFontSize.value,
+      opacity: markOpacity.value
     });
     return;
   }
 
-  if (current.w < 6 || current.h < 6) {
+  if (tool.value === 'brush') {
+    if (points.length < 2) {
+      draw();
+      return;
+    }
+    const xs = points.map(item => item.x);
+    const ys = points.map(item => item.y);
+    const minX = Math.min(...xs);
+    const minY = Math.min(...ys);
+    annotations.value.push({
+      id: ++annotationSeed,
+      type: 'brush',
+      x: minX,
+      y: minY,
+      w: Math.max(...xs) - minX,
+      h: Math.max(...ys) - minY,
+      color: markColor.value,
+      text: '',
+      fontSize: markFontSize.value,
+      lineWidth: markLineWidth.value,
+      opacity: markOpacity.value,
+      points
+    });
+    return;
+  }
+
+  const isLineType = tool.value === 'line' || tool.value === 'arrow';
+  const markW = isLineType ? end.x - start.x : current.w;
+  const markH = isLineType ? end.y - start.y : current.h;
+  if (!isLineType && (current.w < 6 || current.h < 6)) {
     draw();
     return;
   }
+  if (isLineType && Math.abs(markW) < 4 && Math.abs(markH) < 4) {
+    draw();
+    return;
+  }
+
   annotations.value.push({
     id: ++annotationSeed,
-    type: tool.value === 'mosaic' ? 'mosaic' : 'rect',
-    x: current.x,
-    y: current.y,
-    w: current.w,
-    h: current.h,
+    type: tool.value as MarkType,
+    x: isLineType ? start.x : current.x,
+    y: isLineType ? start.y : current.y,
+    w: markW,
+    h: markH,
     color: markColor.value,
     text: '',
-    fontSize: markFontSize.value
+    fontSize: markFontSize.value,
+    lineWidth: markLineWidth.value,
+    opacity: markOpacity.value
   });
+};
+
+// 画布取色（吸管）
+const pickColor = (point: { x: number; y: number }) => {
+  const canvas = canvasRef.value;
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+  const scale = canvas.width / FRAME_W;
+  const px = Math.min(canvas.width - 1, Math.max(0, Math.round(point.x * scale)));
+  const py = Math.min(canvas.height - 1, Math.max(0, Math.round(point.y * scale)));
+  const data = ctx.getImageData(px, py, 1, 1).data;
+  const hex = `#${[data[0], data[1], data[2]].map(value => value.toString(16).padStart(2, '0')).join('')}`;
+  markColor.value = hex;
+  eyedropper.value = false;
+  ElMessage.success(`已取色 ${hex.toUpperCase()}`);
+  draw();
 };
 
 const onMouseDown = (e: MouseEvent) => {
   if (!imageEl.value) return;
+  if (eyedropper.value) {
+    pickColor(getCanvasPoint(e));
+    return;
+  }
   if (tool.value !== 'none') {
     markStart = getCanvasPoint(e);
+    draftEnd.value = { ...markStart };
     draft.value = { x: markStart.x, y: markStart.y, w: 0, h: 0 };
+    if (tool.value === 'brush') brushPoints.value = [{ ...markStart }];
   } else {
     dragging.value = true;
     dragStart = { x: e.clientX, y: e.clientY, offsetX: offsetX.value, offsetY: offsetY.value };
@@ -1004,7 +1393,10 @@ const endDrag = () => {
   window.removeEventListener('mousemove', onMove);
   window.removeEventListener('mouseup', onUp);
 };
-onUnmounted(endDrag);
+onUnmounted(() => {
+  endDrag();
+  window.removeEventListener('keydown', onKeydown);
+});
 
 // 滚轮缩放
 const onWheel = (e: WheelEvent) => {
@@ -1028,14 +1420,19 @@ const getEditedBlob = (): Promise<Blob> => {
       return;
     }
     render(ctx, scale, false);
-    canvas.toBlob(blob => (blob ? resolve(blob) : reject(new Error('图片生成失败'))), 'image/png');
+    const mime = `image/${exportFormat.value}`;
+    canvas.toBlob(
+      blob => (blob ? resolve(blob) : reject(new Error('图片生成失败'))),
+      mime,
+      exportFormat.value === 'png' ? undefined : exportQuality.value
+    );
   });
 };
 
 // 上传裁剪后的图片
-const uploadEdited = async (blob: Blob, name: string) => {
+const uploadEdited = async (blob: Blob, name: string, ext: string) => {
   const formData = new FormData();
-  formData.append('file', blob, `${name}.png`);
+  formData.append('file', blob, `${name}.${ext}`);
   formData.append('upload_type', '100');
   const response = await UploadFileApi(formData);
   const res = response as { data: { name: string; url: string } };
@@ -1058,7 +1455,9 @@ const confirm = async () => {
   try {
     const blob = await getEditedBlob();
     const fileName = (isNew.value ? form.name : detail.value.name) || 'avatar';
-    const uploaded = await uploadEdited(blob, fileName);
+    const ext = exportFormat.value === 'jpeg' ? 'jpg' : exportFormat.value;
+    const uploaded = await uploadEdited(blob, fileName, ext);
+    const fileFormat = exportFormat.value.toUpperCase();
     const width = outputWidth.value;
     const height = Math.max(1, Math.round(frameH.value * outputWidth.value / FRAME_W));
 
@@ -1070,7 +1469,7 @@ const confirm = async () => {
         tag: form.tag || '',
         url: uploaded.url,
         orUrl: detail.value.url,
-        format: 'PNG',
+        format: fileFormat,
         width,
         height,
         size: blob.size,
@@ -1087,7 +1486,7 @@ const confirm = async () => {
         tag: detail.value.tag || '',
         url: uploaded.url,
         orUrl: detail.value.orUrl || detail.value.url,
-        format: 'PNG',
+        format: fileFormat,
         width,
         height,
         size: blob.size,
@@ -1133,12 +1532,58 @@ const confirm = async () => {
 }
 
 .avatar-crop-canvas {
-  width: 500px;
   max-width: 100%;
   background-color: var(--el-fill-color-lighter);
   border-radius: 6px;
-  box-shadow: inset 0 0 0 1px var(--el-border-color);
+  box-shadow: inset 0 0 0 1px var(--el-border-color), 0 4px 16px rgba(0, 0, 0, 0.12);
   cursor: grab;
+}
+
+/* 按住对比原图 */
+.avatar-crop-compare {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  padding: 4px 10px;
+  font-size: 12px;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.45);
+  border-radius: 12px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s;
+}
+
+.avatar-crop-compare:hover {
+  background-color: rgba(0, 0, 0, 0.65);
+}
+
+.avatar-crop-file {
+  display: none;
+}
+
+.avatar-crop-switch-label,
+.avatar-crop-mark-label {
+  font-size: 13px;
+  color: var(--el-text-color-regular);
+}
+
+.avatar-crop-quality {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--el-text-color-secondary);
+}
+
+.avatar-crop-quality .el-slider {
+  flex: 1;
+}
+
+.avatar-crop-quality em {
+  font-style: normal;
 }
 
 .avatar-crop-canvas.is-dragging {
