@@ -1,9 +1,10 @@
 <template>
-  <el-dialog
+  <el-drawer
       :model-value="props.visible"
-      :width="dgField.width"
-      :fullscreen="fullView"
-      :top="dgField.top"
+      :size="fullView ? '100%' : dgField.width"
+      direction="rtl"
+      class="avatar-crop-drawer"
+      append-to-body
       :modal="dgField.modal"
       :lock-scroll="dgField.lockScroll"
       :open-delay="dgField.openDelay"
@@ -11,25 +12,25 @@
       :close-on-click-modal="dgField.closeOnClickModal"
       :close-on-press-escape="dgField.closeOnPressEscape"
       :show-close="dgField.showClose"
-      :draggable="dgField.draggable"
-      :overflow="dgField.overflow"
-      :center="dgField.center"
-      :align-center="dgField.alignCenter"
       @open="openDialog"
       @close="closeDialog"
   >
     <!--header-->
     <template #header>
-      <div class="my-dialog-header">
-        <div class="my-dialog-header-title">{{ dgField.title }}</div>
-        <div class="my-dialog-header-icon">
+      <div class="drawer-header">
+        <div class="drawer-header-left">
+          <span class="drawer-title">{{ dgField.title }}</span>
+          <el-tag v-if="detail.name" type="primary" size="large" effect="plain">图片名称：{{ detail.name }}</el-tag>
+          <el-tag v-if="detail.width && detail.height" type="danger" size="large" effect="plain">原始尺寸：{{ detail.width }} × {{ detail.height }}</el-tag>
+        </div>
+        <div class="drawer-header-right">
           <el-tooltip effect="dark" :content="fullViewText" placement="top">
-            <el-icon @click="fullScreen">
+            <el-icon class="drawer-header-icon" @click="fullScreen">
               <FullScreen />
             </el-icon>
           </el-tooltip>
           <el-tooltip effect="dark" content="关闭" placement="top">
-            <el-icon class="margin-left-10px" @click="closeDialog">
+            <el-icon class="drawer-header-icon margin-left-10px" @click="closeDialog">
               <Close />
             </el-icon>
           </el-tooltip>
@@ -268,7 +269,7 @@
         <el-button :disabled="saving" :loading="saving" type="primary" @click="confirm">保 存</el-button>
       </div>
     </template>
-  </el-dialog>
+  </el-drawer>
 </template>
 
 <script setup lang='ts'>
@@ -383,7 +384,7 @@ interface Annotation {
 
 const dgConfigField = reactive({
   title: '裁剪',
-  width: '82%',
+  width: '85%',
   top: '1%'
 });
 const dgField = {...dialogField, ...dgConfigField}; // DIALOG属性
@@ -1756,5 +1757,58 @@ const confirm = async () => {
 .avatar-crop-size-unit {
   font-size: 12px;
   color: var(--el-text-color-secondary);
+}
+
+/* 抽屉头部（对齐报表字段抽屉样式） */
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 12px;
+}
+
+.drawer-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.drawer-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-right: 12px;
+}
+
+.drawer-header-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.drawer-header-icon {
+  font-size: 18px;
+  color: var(--el-text-color-regular);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.drawer-header-icon:hover {
+  color: var(--el-color-primary);
+}
+
+.margin-left-10px {
+  margin-left: 10px;
+}
+
+/* 抽屉外观对齐原弹窗样式 */
+:global(.avatar-crop-drawer .el-drawer__header) {
+  margin-bottom: 0;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--el-border-color-lighter);
+}
+
+:global(.avatar-crop-drawer .el-drawer__body) {
+  padding: 20px 20px 16px;
+  overflow-y: auto;
 }
 </style>
