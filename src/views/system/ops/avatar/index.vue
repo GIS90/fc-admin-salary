@@ -185,8 +185,16 @@ const apiName = "SystemOpsAvatar"; // 组件标识名称
 let tableSelectList = reactive([] as string[]); // 当前选择数据Keys列表
 const requestParam = reactive({"content": "" });  // 查询内容
 
-// 视图模式：table数据列表 / grid图片浏览
-const viewMode = ref<'table' | 'grid'>('table');
+// 视图模式：table数据列表 / grid图片浏览（记录在Cookie中，默认数据模式）
+const VIEW_MODE_COOKIE = 'avatar_view_mode';
+const getViewModeCookie = (): 'table' | 'grid' => {
+  const match = document.cookie.match(new RegExp(`(?:^|;\\s*)${VIEW_MODE_COOKIE}=([^;]*)`));
+  return match && decodeURIComponent(match[1]) === 'grid' ? 'grid' : 'table';
+};
+const setViewModeCookie = (mode: 'table' | 'grid') => {
+  document.cookie = `${VIEW_MODE_COOKIE}=${mode}; path=/; max-age=${60 * 60 * 24 * 365}`;
+};
+const viewMode = ref<'table' | 'grid'>(getViewModeCookie());
 
 // 图片浏览模式
 const gridLoading = ref(false);
@@ -200,6 +208,8 @@ const pageSizes = tablePageSizes;
 onMounted(() => {
   fetchTableFieldColumn();
   fetchGridColumns();
+  // Cookie中记录为图片浏览模式时，进入页面直接加载网格数据
+  if (viewMode.value === 'grid') fetchGridData();
 });
 
 const fetchTableFieldColumn = async () => {
@@ -280,6 +290,7 @@ const fetchGridData = async () => {
 const toggleViewMode = () => {
   if (viewMode.value === 'table') {
     viewMode.value = 'grid';
+    setViewModeCookie('grid');
     gridPage.value = fcTableRef.value?.pageable?.page ?? 1;
     gridPageSize.value = fcTableRef.value?.pageable?.pageSize ?? tablePageSize;
     fetchGridData();
@@ -287,6 +298,7 @@ const toggleViewMode = () => {
   }
 
   viewMode.value = 'table';
+  setViewModeCookie('table');
   if (fcTableRef.value) {
     fcTableRef.value.pageable.page = gridPage.value;
     fcTableRef.value.pageable.pageSize = gridPageSize.value;
