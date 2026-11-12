@@ -26,14 +26,14 @@
                 :rowKey="ftField.rowKey" :stripe="ftField.stripe" :border="ftField.border" :pagination="ftField.pagination"
                 :showBottomView="ftField.showBottomView" :showRefreshBtn="ftField.showRefreshBtn"
                 :showColumnBtn="ftField.showColumnBtn" :showDownloadBtn="ftField.showDownloadBtn">
-        <template #data="scope">
-          <el-tag v-if="scope.row.data === '全部数据'" type="success">{{ scope.row.data }}</el-tag>
-          <el-tag v-else type="primary">{{ scope.row.data }}</el-tag>
+        <template #data__text="scope">
+          <el-tag v-if="scope.row.data__text === '全部数据'" type="success">{{ scope.row.data__text }}</el-tag>
+          <el-tag v-else type="primary">{{ scope.row.data__text }}</el-tag>
         </template>
-        <template #task="scope">
-          <el-tag v-if="scope.row.task === '成功'" type="success" effect="dark">{{ scope.row.task }}</el-tag>
-          <el-tag v-else-if="scope.row.task === '失败'" type="danger" effect="dark">{{ scope.row.task }}</el-tag>
-          <el-tag v-else type="warning" effect="dark">{{ scope.row.task }}</el-tag>
+        <template #task__text="scope">
+          <el-tag v-if="scope.row.task__text === '成功'" type="success" effect="dark">{{ scope.row.task__text }}</el-tag>
+          <el-tag v-else-if="scope.row.task__text === '失败'" type="danger" effect="dark">{{ scope.row.task__text }}</el-tag>
+          <el-tag v-else type="warning" effect="dark">{{ scope.row.task__text }}</el-tag>
         </template>
         <!-- 表格操作 -->
         <template #options="scope">

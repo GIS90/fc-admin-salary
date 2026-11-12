@@ -40,6 +40,8 @@
                 （5）ID自增字段默认只对id字段生效，其他字段不生效。
                 <br />
                 （6）字段筛选支持类型：input、select、radio、daterange、boolean、number，其他字段不支持筛选，具体格式参考筛选配置示例。
+                <br />
+                （7）如果是枚举值字段，配置报表的【英文名称】格式为：【数据库字段】+__text，是2个下划线，例如：type__text。
               </div>
             </template>
             <template #reference>
