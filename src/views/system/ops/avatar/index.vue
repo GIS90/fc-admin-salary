@@ -60,6 +60,11 @@
               <EditPen />
             </el-icon>
           </el-tooltip>
+          <el-tooltip effect="dark" content="裁剪" placement="top">
+            <el-icon class="table-handle-icon margin-left-30px" @click="cropHandle(scope.row)">
+              <Crop />
+            </el-icon>
+          </el-tooltip>
           <el-popconfirm :title="pcField.title" :confirm-button-text="pcField.confirmText" :cancel-button-text="pcField.cancelText"
                          :confirm-button-type="pcField.confirmType" :cancel-button-type="pcField.cancelType"
                          :icon="pcField.icon" :icon-color="pcField.iconColor" :width="pcField.width"
@@ -105,6 +110,11 @@
                   <EditPen />
                 </el-icon>
               </el-tooltip>
+              <el-tooltip effect="dark" content="裁剪" placement="top">
+                <el-icon @click="cropHandle(row)">
+                  <Crop />
+                </el-icon>
+              </el-tooltip>
               <el-popconfirm :title="pcField.title" :confirm-button-text="pcField.confirmText" :cancel-button-text="pcField.cancelText"
                              :confirm-button-type="pcField.confirmType" :cancel-button-type="pcField.cancelType"
                              :icon="pcField.icon" :icon-color="pcField.iconColor" :width="pcField.width"
@@ -136,6 +146,9 @@
     <!--查看-->
     <AvatarView v-model:visible="viewVisible" :md5="tableRowMd5" />
 
+    <!--裁剪-->
+    <AvatarCrop v-model:visible="cropVisible" :md5="tableRowMd5" @reFetchTableData="reFetchTableData" />
+
     <!--批量删除-->
     <fc-batch-delete v-model:visible="batchDeleteVisible" :api="apiName" :md5List="tableSelectList" @reFetchTableData="reFetchTableData"/>
 
@@ -159,6 +172,7 @@ import Add from "./components/add.vue";
 import BatchAdd from "./components/batchAdd.vue";
 import Edit from "./components/edit.vue";
 import AvatarView from "./components/view.vue";
+import AvatarCrop from "./components/crop.vue";
 
 // fc-table属性
 const fcTableConfig = reactive({
@@ -177,6 +191,7 @@ const columns = ref<ColumnProps<AvatarModelList>[]>([]);
 const addVisible = ref(false);
 const editVisible = ref(false);
 const viewVisible = ref(false);
+const cropVisible = ref(false);
 const batchDeleteVisible = ref(false);
 const batchUploadVisible = ref(false);
 
@@ -354,6 +369,12 @@ const viewHandle = (row: AvatarModelList) => {
 const editHandle = (row: AvatarModelList) => {
   tableRowMd5.value = row.md5;
   editVisible.value = true;
+};
+
+// 裁剪
+const cropHandle = (row: AvatarModelList) => {
+  tableRowMd5.value = row.md5;
+  cropVisible.value = true;
 };
 
 // 单条删除
