@@ -14,17 +14,86 @@
         </el-button>
       </div>
       <div class="right-panel">
+        <el-button
+          text
+          :icon="queryExpanded ? 'ArrowUp' : 'ArrowDown'"
+          @click="queryExpanded = !queryExpanded"
+        >
+          {{ queryExpanded ? '收起查询' : '展开查询' }}
+        </el-button>
         <el-tooltip effect="dark" :content="viewMode === 'table' ? '切换到图片浏览' : '切换到数据列表'" placement="top">
           <el-button id="btn-view-mode" :type="buttonField.type" :plain="buttonField.plain" :size="buttonField.size"
                      :icon="viewMode === 'table' ? 'Grid' : 'List'" @click="toggleViewMode" />
         </el-tooltip>
-        <el-input v-model.trim="requestParam.content" placeholder="支持按名称/标签/类型模糊查询，输入后点击查询" clearable style="width: 280px;" />
-        <el-button id="btn-search" :type="buttonField.type" :plain="buttonField.plain" :size="buttonField.size" icon="Search" @click="searchHandle" />
       </div>
     </el-header>
 
     <!--数据区-->
-    <el-main class="nopadding">
+    <el-main class="nopadding avatar-main">
+      <!--查询条件（头像超市同款筛选）-->
+      <div class="avatar-filter">
+        <div class="filter-row">
+          <div class="filter-main">
+            <span class="filter-label">查询类别</span>
+            <div class="category-list">
+              <el-radio-group v-model="requestParam.type" class="category-group" @change="filterChange">
+                <el-radio-button value="">全部</el-radio-button>
+                <el-radio-button
+                  v-for="item in typeOptions"
+                  :key="item.value"
+                  :value="item.value"
+                  :disabled="item.disabled"
+                >
+                  {{ item.label }}
+                </el-radio-button>
+              </el-radio-group>
+            </div>
+          </div>
+        </div>
+        <div v-show="queryExpanded" class="query-body">
+          <div class="filter-row">
+            <div class="filter-main">
+              <span class="filter-label">是否收藏</span>
+              <el-radio-group v-model="requestParam.favorite" @change="filterChange">
+                <el-radio-button value="">全部</el-radio-button>
+                <el-radio-button value="1">已收藏</el-radio-button>
+                <el-radio-button value="0">未收藏</el-radio-button>
+              </el-radio-group>
+            </div>
+          </div>
+          <div class="filter-row">
+            <div class="filter-main">
+              <span class="filter-label">排序方式</span>
+              <el-radio-group v-model="requestParam.sort" @change="filterChange">
+                <el-radio-button value="">默认</el-radio-button>
+                <el-radio-button value="count">使用最多</el-radio-button>
+                <el-radio-button value="favorite">收藏最多</el-radio-button>
+              </el-radio-group>
+            </div>
+          </div>
+          <div class="search-row">
+            <span class="filter-label">关键字</span>
+            <el-row :gutter="20" class="search-form">
+              <el-col :span="12">
+                <el-input
+                  v-model="searchInput"
+                  placeholder="支持按名称/标签/描述模糊查询，输入后点击查询"
+                  clearable
+                  @keyup.enter="searchHandle"
+                  @clear="searchHandle"
+                />
+              </el-col>
+              <el-col :span="12">
+                <div class="search-buttons">
+                  <el-button type="primary" icon="Search" @click="searchHandle">查询</el-button>
+                  <el-button icon="Refresh" @click="resetSearch">重置</el-button>
+                </div>
+              </el-col>
+            </el-row>
+          </div>
+        </div>
+      </div>
+
       <!--数据模式：表格列表-->
       <div v-show="viewMode === 'table'" class="avatar-table-box">
       <fc-filter-table ref="fcTableRef" :tableName="apiName" :requestApi="fetchTableData" :initParam="requestParam" :columns="columns"
@@ -164,7 +233,8 @@ import { ColumnProps, FcFilterTableInstance } from "@/components/fcFilterTable/m
 import { AvatarModelList } from "@/models/systemModel";
 import { ElMessage, ElNotification } from 'element-plus';
 import { fcTableField, PopConfirmField, buttonField } from "@/utils/attrs/field";
-import { TableFieldColumnApi } from "@/api/modules/common";
+import { TableFieldColumnApi, DictEnumOptionApi } from "@/api/modules/common";
+import { OptionEnumModel } from "@/models/X";
 import { SysConfigXtcsKeyApi } from "@/api/modules/systemConfig";
 import { tablePageSize, tablePageSizes } from "@/utils/variable";
 import { avatarTagColor } from "@/utils/utils";
@@ -198,7 +268,10 @@ const batchUploadVisible = ref(false);
 const tableRowMd5 = ref(""); // 默认当前选择的数据MD5
 const apiName = "SystemOpsAvatar"; // 组件标识名称
 let tableSelectList = reactive([] as string[]); // 当前选择数据Keys列表
-const requestParam = reactive({"content": "" });  // 查询内容
+const requestParam = reactive({"content": "", "type": "", "favorite": "", "sort": ""});  // 查询条件：关键字/分类/是否收藏/排序
+const searchInput = ref(""); // 关键字输入框
+const typeOptions = ref<OptionEnumModel[]>([]); // 头像分类选项（字典 avatar-type）
+const queryExpanded = ref(false); // 查询条件展开/收起
 
 // 视图模式：table数据列表 / grid图片浏览（记录在Cookie中，默认数据模式）
 const VIEW_MODE_COOKIE = 'avatar_view_mode';
@@ -221,11 +294,22 @@ const gridColumns = ref(6); // 每行图片数量，来自系统参数 AVATAR-RO
 const pageSizes = tablePageSizes;
 
 onMounted(() => {
+  fetchTypeOptions();
   fetchTableFieldColumn();
   fetchGridColumns();
   // Cookie中记录为图片浏览模式时，进入页面直接加载网格数据
   if (viewMode.value === 'grid') fetchGridData();
 });
+
+// 头像分类选项
+const fetchTypeOptions = async () => {
+  try {
+    const response = await DictEnumOptionApi({ name: 'avatar-type' });
+    typeOptions.value = (response.data || []) as OptionEnumModel[];
+  } catch (e) {
+    typeOptions.value = [];
+  }
+};
 
 const fetchTableFieldColumn = async () => {
   try {
@@ -263,14 +347,33 @@ const reFetchTableData = (isReload: boolean = false) => {
   }
 };
 
-// 查询（图片浏览模式回到第一页）
-const searchHandle = () => {
+// 筛选条件变化（分类/收藏/排序），表格与图片浏览模式都回到第一页
+const filterChange = () => {
   if (viewMode.value === 'grid') {
     gridPage.value = 1;
     fetchGridData();
     return;
   }
-  fcTableRef.value?.getTableList();
+  if (fcTableRef.value) {
+    fcTableRef.value.pageable.page = 1;
+    fcTableRef.value.getTableList();
+  }
+};
+
+// 查询（关键字确认后生效，图片浏览模式回到第一页）
+const searchHandle = () => {
+  requestParam.content = searchInput.value.trim();
+  filterChange();
+};
+
+// 重置（分类/收藏/排序/关键字全部恢复默认）
+const resetSearch = () => {
+  searchInput.value = '';
+  requestParam.content = '';
+  requestParam.type = '';
+  requestParam.favorite = '';
+  requestParam.sort = '';
+  filterChange();
 };
 
 // 每行图片数量（系统参数 AVATAR-ROW-COUNT，未配置时使用默认值）
@@ -290,6 +393,9 @@ const fetchGridData = async () => {
   try {
     const response = await SysOpsAvatarListApi({
       content: requestParam.content,
+      type: requestParam.type || undefined,
+      favorite: requestParam.favorite || undefined,
+      sort: requestParam.sort || undefined,
       page: gridPage.value,
       pageSize: gridPageSize.value
     });
@@ -426,16 +532,126 @@ const batchDeleteHandle = () => {
   margin-right: 4px;
 }
 
+/* 数据区纵向布局：查询面板 + 数据区平分高度 */
+.avatar-main {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* 查询条件面板（头像超市同款筛选） */
+.avatar-filter {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: 12px;
+  margin: 0 20px 16px 20px;
+  padding: 14px 16px;
+  background: var(--el-fill-color-lighter);
+  border: 1px solid var(--el-border-color-extra-light);
+  border-radius: 8px;
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 16px;
+}
+
+.filter-main {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.filter-label {
+  flex-shrink: 0;
+  width: 60px;
+  font-size: 13px;
+  color: var(--el-text-color-regular);
+}
+
+.category-list {
+  flex: 1;
+  min-width: 0;
+}
+
+.category-group {
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 8px;
+}
+
+.avatar-filter :deep(.el-radio-group) {
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 8px;
+}
+
+.avatar-filter :deep(.el-radio-button__inner) {
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  border-left: 1px solid var(--el-border-color-lighter);
+  transition: color 0.2s, background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.avatar-filter :deep(.el-radio-button:not(:first-child)) {
+  margin-left: -1px;
+}
+
+.avatar-filter :deep(.el-radio-button__inner:hover) {
+  color: var(--el-color-primary);
+  background-color: var(--el-color-primary-light-9);
+}
+
+.avatar-filter :deep(.el-radio-button__original-radio:checked + .el-radio-button__inner) {
+  font-weight: 600;
+  box-shadow: -1px 0 0 0 var(--el-color-primary);
+}
+
+.search-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.search-form {
+  flex: 1;
+}
+
+.search-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 展开的查询条件区（是否收藏/排序方式/关键字） */
+.query-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--el-border-color);
+}
+
 /* 表格模式容器（fc-filter-table 多根节点，v-show 需包一层普通元素） */
 .avatar-table-box {
-  height: 100%;
+  flex: 1;
+  min-height: 0;
 }
 
 /* 图片浏览模式 */
 .avatar-grid-box {
-  height: 100%;
+  flex: 1;
+  min-height: 0;
   box-sizing: border-box;
-  padding: 20px;
+  padding: 0 20px 20px 20px;
   overflow-y: auto;
 }
 
