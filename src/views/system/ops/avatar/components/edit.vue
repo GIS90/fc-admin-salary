@@ -107,7 +107,7 @@ const ProfilePlace = publicPlaceHolder.systemAvatarModel;
 
 const dgConfigField = reactive({
   title: '编辑',
-  width: '45%'
+  width: '55%'
 });
 const dgField = {...dialogField, ...dgConfigField}; // DIALOG属性
 const fullView = ref(dgField.fullScreen); // 全屏控制

@@ -766,6 +766,31 @@ const batchDeleteHandle = () => {
   text-overflow: ellipsis;
 }
 
+/* 统计：设置次数/收藏数（图标+数字水平居中对齐） */
+.stat-cell {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-cell .el-icon,
+.stat-cell span {
+  line-height: 1;
+}
+
+.stat-cell.is-count {
+  color: var(--el-color-primary);
+}
+
+.stat-cell.is-favorite {
+  color: var(--el-color-warning);
+}
+
 /* 卡片统计：设置次数/收藏数 */
 .avatar-card-meta {
   display: flex;

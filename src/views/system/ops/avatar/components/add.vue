@@ -131,7 +131,7 @@ const ProfilePlace = publicPlaceHolder.systemAvatarModel;
 
 const dgConfigField = reactive({
   title: '新增',
-  width: '45%',
+  width: '55%',
   closeOnPressEscape: false
 });
 const uploadAttr = reactive({
@@ -147,7 +147,12 @@ const fullViewText = ref('全屏');
 const emit = defineEmits(['update:visible', 'reFetchTableData']);
 const btnDisabled = ref(false); // 禁用
 const btnLoading = ref(false); // 加载中
-const continuousEntry = ref(false); // 连续录入：录入完成后不关闭弹窗，清空数据继续录入
+// 连续录入：录入完成后不关闭弹窗，清空数据继续录入（状态持久化到本地）
+const CONTINUOUS_ENTRY_KEY = 'avatar_add_continuous_entry';
+const continuousEntry = ref(localStorage.getItem(CONTINUOUS_ENTRY_KEY) === '1');
+watch(continuousEntry, (value) => {
+  localStorage.setItem(CONTINUOUS_ENTRY_KEY, value ? '1' : '0');
+});
 const props = defineProps({
   visible: {
     type: Boolean,

@@ -86,7 +86,7 @@ import { avatarTagColor } from "@/utils/utils";
 
 const dgConfigField = reactive({
   title: '查看',
-  width: '45%'
+  width: '55%'
 });
 const dgField = {...dialogField, ...dgConfigField}; // DIALOG属性
 const fullView = ref(dgField.fullScreen); // 全屏控制
