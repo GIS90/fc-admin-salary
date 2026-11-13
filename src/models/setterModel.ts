@@ -1,4 +1,4 @@
-import { OptionEnumModel } from "@/models/X";
+import { OptionEnumModel, PageableModel } from "@/models/X";
 
 
 /**
@@ -40,5 +40,27 @@ export interface ProfileLogItem {
     url: string;
     cost: number;
     createTime: string;
+}
+
+/**
+ * 头像超市查询参数
+ */
+export interface AvatarMarketQuery extends PageableModel {
+    type?: string;
+    favorite?: boolean;
+}
+
+/**
+ * 头像超市列表项
+ */
+export interface AvatarMarketItem {
+    md5: string;
+    name: string;
+    url: string;
+    type: string;
+    summary: string;
+    tag: string;
+    count: number;
+    favorite: boolean;
 }
 

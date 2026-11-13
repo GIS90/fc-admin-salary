@@ -103,9 +103,12 @@
 
     <!--footer-->
     <template #footer>
-      <div class="my-dialog-footer">
-        <el-button :disabled="btnDisabled" @click="closeDialog">取 消</el-button>
-        <el-button :disabled="btnDisabled" :loading="btnLoading" type="primary" @click="confirm(ruleFormRef)">确 定</el-button>
+      <div class="my-dialog-footer avatar-add-footer">
+        <el-checkbox v-model="continuousEntry" class="continuous-entry">连续录入</el-checkbox>
+        <div class="footer-buttons">
+          <el-button :disabled="btnDisabled" @click="closeDialog">取 消</el-button>
+          <el-button :disabled="btnDisabled" :loading="btnLoading" type="primary" @click="confirm(ruleFormRef)">确 定</el-button>
+        </div>
       </div>
     </template>
   </el-dialog>
@@ -144,6 +147,7 @@ const fullViewText = ref('全屏');
 const emit = defineEmits(['update:visible', 'reFetchTableData']);
 const btnDisabled = ref(false); // 禁用
 const btnLoading = ref(false); // 加载中
+const continuousEntry = ref(false); // 连续录入：录入完成后不关闭弹窗，清空数据继续录入
 const props = defineProps({
   visible: {
     type: Boolean,
@@ -326,7 +330,12 @@ const confirm = async (formEl: FormInstance | undefined) => {
           message: '新增成功',
           type: 'success'
         });
-        closeDialog();
+        if (continuousEntry.value) {
+          resetForm();
+          ruleFormRef.value?.clearValidate();
+        } else {
+          closeDialog();
+        }
         emit('reFetchTableData', true);
       }).finally(() => {
         btnDisabled.value = false;
@@ -338,6 +347,17 @@ const confirm = async (formEl: FormInstance | undefined) => {
 </script>
 
 <style scoped>
+.avatar-add-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.continuous-entry {
+  flex-shrink: 0;
+}
+
 .avatar-meta {
   margin-top: 8px;
   font-size: 12px;

@@ -1,5 +1,5 @@
 <template>
-  <el-dialog
+ <el-dialog
       :model-value="props.visible"
       :width="dgField.width"
       :fullscreen="fullView"
@@ -21,11 +21,16 @@
     <!--header-->
     <template #header>
       <div class="my-dialog-header">
-        <div class="my-dialog-header-title">批量上传图片</div>
+        <div class="my-dialog-header-title">{{ dgField.title }}</div>
         <div class="my-dialog-header-icon">
           <el-tooltip effect="dark" :content="fullViewText" placement="top">
             <el-icon @click="fullScreen">
               <FullScreen />
+            </el-icon>
+          </el-tooltip>
+          <el-tooltip effect="dark" content="关闭" placement="top">
+            <el-icon class="margin-left-10px" @click="closeDialog">
+              <Close />
             </el-icon>
           </el-tooltip>
         </div>
@@ -122,8 +127,8 @@ const ProfilePlace = publicPlaceHolder.systemAvatarModel;
 const summarySize = ref({minRows: 3, maxRows: 4});
 
 const dgConfigField = reactive({
-  title: '新增',
-  width: '45%',
+  title: '批量上传',
+  width: '65%',
   closeOnPressEscape: false
 });
 const dgField = {...dialogField, ...dgConfigField}; // DIALOG属性

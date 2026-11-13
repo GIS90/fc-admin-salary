@@ -87,11 +87,6 @@ const menu = [
         title: "账号信息",
         component: account
       },
-      // {
-      //   icon: "Picture",
-      //   title: "头像超市",
-      //   component: market
-      // },
       {
         icon: "Lock",
         title: "密码",
@@ -111,6 +106,11 @@ const menu = [
         icon: "Clock",
         title: "操作日志",
         component: logs
+      },
+      {
+        icon: "Picture",
+        title: "头像超市",
+        component: market
       }
     ]
   }
