@@ -47,7 +47,7 @@ export interface ProfileLogItem {
  */
 export interface AvatarMarketQuery extends PageableModel {
     type?: string;
-    favorite?: boolean;
+    favorite?: 0 | 1;
     sort?: 'count' | 'favorite';
     content?: string;
 }

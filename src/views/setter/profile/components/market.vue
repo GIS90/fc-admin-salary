@@ -260,7 +260,7 @@ const fetchAvatarList = async () => {
       page: page.value,
       pageSize: pageSize.value,
       type: activeType.value || undefined,
-      favorite: favoriteOnly.value,
+      favorite: favoriteOnly.value ? 1 : undefined,
       sort: sortBy.value || undefined,
       content: content.value || undefined,
     });
@@ -296,6 +296,8 @@ const searchHandle = () => {
 const resetSearch = () => {
   searchInput.value = '';
   content.value = '';
+  activeType.value = '';
+  sortBy.value = '';
   page.value = 1;
   fetchAvatarList();
 };
