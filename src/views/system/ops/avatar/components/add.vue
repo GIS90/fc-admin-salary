@@ -124,6 +124,7 @@ import { ElNotification, ElMessage } from 'element-plus';
 import { dialogField, inputField, textAreaField, formField, selectSingleField } from "@/utils/attrs/field";
 import publicLength from "@/utils/attrs/length";
 import publicPlaceHolder from "@/utils/attrs/place";
+import { getCache, setCache } from "@/utils/cache";
 
 // 数据组件属性值
 const ProfileLen = publicLength.systemAvatarModel;
@@ -149,9 +150,9 @@ const btnDisabled = ref(false); // 禁用
 const btnLoading = ref(false); // 加载中
 // 连续录入：录入完成后不关闭弹窗，清空数据继续录入（状态持久化到本地）
 const CONTINUOUS_ENTRY_KEY = 'avatar_add_continuous_entry';
-const continuousEntry = ref(localStorage.getItem(CONTINUOUS_ENTRY_KEY) === '1');
+const continuousEntry = ref(getCache(CONTINUOUS_ENTRY_KEY) === '1');
 watch(continuousEntry, (value) => {
-  localStorage.setItem(CONTINUOUS_ENTRY_KEY, value ? '1' : '0');
+  setCache(CONTINUOUS_ENTRY_KEY, value ? '1' : '0');
 });
 const props = defineProps({
   visible: {
