@@ -168,6 +168,20 @@
               <div v-if="row.lock" class="avatar-card-lock">已禁用</div>
             </div>
             <div class="avatar-card-name" :title="row.name">{{ row.name }}</div>
+            <div class="avatar-card-meta">
+              <el-tooltip effect="dark" content="设置次数" placement="top">
+                <span class="stat-cell is-count">
+                  <el-icon><TrendCharts /></el-icon>
+                  <span>{{ row.count ?? 0 }}</span>
+                </span>
+              </el-tooltip>
+              <el-tooltip effect="dark" content="收藏数" placement="top">
+                <span class="stat-cell is-favorite">
+                  <el-icon><Star /></el-icon>
+                  <span>{{ row.favorite ?? 0 }}</span>
+                </span>
+              </el-tooltip>
+            </div>
             <div class="avatar-card-actions">
               <el-tooltip effect="dark" content="查看" placement="top">
                 <el-icon @click="viewHandle(row)">
@@ -750,6 +764,28 @@ const batchDeleteHandle = () => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* 卡片统计：设置次数/收藏数 */
+.avatar-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 8px;
+  padding: 0 12px;
+}
+
+.avatar-card-meta .stat-cell {
+  gap: 3px;
+  padding: 2px 10px;
+  font-size: 12px;
+  background: var(--el-fill-color-light);
+  border-radius: 10px;
+}
+
+.avatar-card-meta .stat-cell .el-icon {
+  font-size: 13px;
 }
 
 .avatar-card-actions {
