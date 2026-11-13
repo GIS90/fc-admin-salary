@@ -76,7 +76,8 @@
             <div class="avatar-name" :title="row.summary || row.name">{{ row.name }}</div>
             <div class="avatar-meta">
               <span>{{ typeLabel(row.type) }}</span>
-              <span>{{ row.count || 0 }} 次使用 · {{ row.favoriteCount || 0 }} 人收藏</span>
+              <span>使用 {{ row.count || 0 }}</span>
+              <span>收藏 {{ row.favoriteCount || 0 }}</span>
             </div>
             <el-button
               class="set-avatar-button"
@@ -490,14 +491,16 @@ onMounted(async () => {
 
 .avatar-meta {
   display: flex;
-  justify-content: space-between;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 2px 10px;
   margin-top: 7px;
   font-size: 12px;
+  line-height: 1.5;
   color: var(--el-text-color-secondary);
 }
 
 .avatar-meta span {
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
