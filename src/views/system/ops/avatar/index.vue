@@ -252,6 +252,7 @@ import { OptionEnumModel } from "@/models/X";
 import { SysConfigXtcsKeyApi } from "@/api/modules/systemConfig";
 import { tablePageSize, tablePageSizes } from "@/utils/variable";
 import { avatarTagColor } from "@/utils/utils";
+import { getCache, setCache } from "@/utils/cache";
 import Add from "./components/add.vue";
 import BatchAdd from "./components/batchAdd.vue";
 import Edit from "./components/edit.vue";
@@ -287,16 +288,15 @@ const searchInput = ref(""); // 关键字输入框
 const typeOptions = ref<OptionEnumModel[]>([]); // 头像分类选项（字典 avatar-type）
 const queryExpanded = ref(false); // 查询条件展开/收起
 
-// 视图模式：table数据列表 / grid图片浏览（记录在Cookie中，默认数据模式）
-const VIEW_MODE_COOKIE = 'avatar_view_mode';
-const getViewModeCookie = (): 'table' | 'grid' => {
-  const match = document.cookie.match(new RegExp(`(?:^|;\\s*)${VIEW_MODE_COOKIE}=([^;]*)`));
-  return match && decodeURIComponent(match[1]) === 'grid' ? 'grid' : 'table';
+// 视图模式：table数据列表 / grid图片浏览（记录在本地缓存中，默认数据模式）
+const VIEW_MODE_KEY = 'avatar_view_mode';
+const getViewMode = (): 'table' | 'grid' => {
+  return getCache(VIEW_MODE_KEY) === 'grid' ? 'grid' : 'table';
 };
-const setViewModeCookie = (mode: 'table' | 'grid') => {
-  document.cookie = `${VIEW_MODE_COOKIE}=${mode}; path=/; max-age=${60 * 60 * 24 * 365}`;
+const setViewMode = (mode: 'table' | 'grid') => {
+  setCache(VIEW_MODE_KEY, mode);
 };
-const viewMode = ref<'table' | 'grid'>(getViewModeCookie());
+const viewMode = ref<'table' | 'grid'>(getViewMode());
 
 // 图片浏览模式
 const gridLoading = ref(false);
@@ -311,7 +311,7 @@ onMounted(() => {
   fetchTypeOptions();
   fetchTableFieldColumn();
   fetchGridColumns();
-  // Cookie中记录为图片浏览模式时，进入页面直接加载网格数据
+  // 本地缓存记录为图片浏览模式时，进入页面直接加载网格数据
   if (viewMode.value === 'grid') fetchGridData();
 });
 
@@ -425,7 +425,7 @@ const fetchGridData = async () => {
 const toggleViewMode = () => {
   if (viewMode.value === 'table') {
     viewMode.value = 'grid';
-    setViewModeCookie('grid');
+    setViewMode('grid');
     gridPage.value = fcTableRef.value?.pageable?.page ?? 1;
     gridPageSize.value = fcTableRef.value?.pageable?.pageSize ?? tablePageSize;
     fetchGridData();
@@ -433,7 +433,7 @@ const toggleViewMode = () => {
   }
 
   viewMode.value = 'table';
-  setViewModeCookie('table');
+  setViewMode('table');
   if (fcTableRef.value) {
     fcTableRef.value.pageable.page = gridPage.value;
     fcTableRef.value.pageable.pageSize = gridPageSize.value;
