@@ -7,37 +7,84 @@
           <div class="market-subtitle">挑选喜欢的头像，收藏后可在“我的收藏”中快速找到</div>
         </div>
         <div class="current-avatar">
-          <el-avatar :size="42" :src="authStore.userInfo.avatar" />
+          <el-avatar :size="42" :src="previewAvatar" />
           <div>
-            <div class="current-label">当前头像</div>
+            <div class="current-label">预览头像</div>
             <div class="current-name">{{ authStore.userInfo.userName }}</div>
           </div>
         </div>
       </div>
     </template>
 
-    <div class="category-bar">
-      <div class="category-list">
-        <el-radio-group v-model="activeType" class="category-group" @change="selectTypeChange">
-          <el-radio-button value="">全部</el-radio-button>
-          <el-radio-button
-            v-for="item in typeOptions"
-            :key="item.value"
-            :value="item.value"
-            :disabled="item.disabled"
+    <div class="filter-panel">
+      <div class="filter-row">
+        <div class="filter-main">
+          <span class="filter-label">查询类别</span>
+          <div class="category-list">
+            <el-radio-group v-model="activeType" class="category-group" @change="selectTypeChange">
+              <el-radio-button value="">全部</el-radio-button>
+              <el-radio-button
+                v-for="item in typeOptions"
+                :key="item.value"
+                :value="item.value"
+                :disabled="item.disabled"
+              >
+                {{ item.label }}
+              </el-radio-button>
+            </el-radio-group>
+          </div>
+        </div>
+        <div class="filter-actions">
+          <el-button
+            :type="favoriteOnly ? 'warning' : 'default'"
+            :icon="Star"
+            @click="toggleFavoriteOnly"
           >
-            {{ item.label }}
-          </el-radio-button>
-        </el-radio-group>
+            我的收藏
+          </el-button>
+          <el-button
+            text
+            :icon="queryExpanded ? ArrowUp : ArrowDown"
+            @click="queryExpanded = !queryExpanded"
+          >
+            {{ queryExpanded ? '收起查询' : '展开查询' }}
+          </el-button>
+        </div>
       </div>
-      <el-button
-        class="favorite-filter"
-        :type="favoriteOnly ? 'warning' : 'default'"
-        :icon="Star"
-        @click="toggleFavoriteOnly"
-      >
-        我的收藏
-      </el-button>
+
+      <div v-show="queryExpanded" class="query-body">
+        <div class="filter-row">
+          <div class="filter-main">
+            <span class="filter-label">排序方式</span>
+            <el-radio-group v-model="sortBy" class="sort-group" @change="sortChange">
+              <el-radio-button value="">默认</el-radio-button>
+              <el-radio-button value="count">使用最多</el-radio-button>
+              <el-radio-button value="favorite">收藏最多</el-radio-button>
+            </el-radio-group>
+          </div>
+        </div>
+        <div class="search-row">
+          <span class="filter-label">关键字</span>
+          <el-row :gutter="20" class="search-form">
+            <el-col :span="12">
+              <el-input
+                v-model="searchInput"
+                placeholder="输入头像名称、标签、描述进行模糊查询"
+                :prefix-icon="Search"
+                clearable
+                @keyup.enter="searchHandle"
+                @clear="searchHandle"
+              />
+            </el-col>
+            <el-col :span="12">
+              <div class="search-buttons">
+                <el-button type="primary" :icon="Search" @click="searchHandle">查询</el-button>
+                <el-button :icon="Refresh" @click="resetSearch">重置</el-button>
+              </div>
+            </el-col>
+          </el-row>
+        </div>
+      </div>
     </div>
 
     <div v-loading="loading" class="market-content">
@@ -51,6 +98,8 @@
           :key="row.md5"
           class="avatar-card"
           :class="{ 'is-current': isCurrent(row) }"
+          @mouseenter="hoverAvatar = row.url"
+          @mouseleave="hoverAvatar = ''"
         >
           <div class="avatar-image">
             <el-image :src="row.url" :preview-src-list="[row.url]" preview-teleported fit="cover">
@@ -79,17 +128,22 @@
               <span>使用 {{ row.count || 0 }}</span>
               <span>收藏 {{ row.favoriteCount || 0 }}</span>
             </div>
-            <el-button
-              class="set-avatar-button"
-              :type="isCurrent(row) ? 'success' : 'primary'"
-              :plain="!isCurrent(row)"
-              :icon="Check"
-              :loading="settingLoading === row.md5"
-              :disabled="isCurrent(row)"
-              @click="setAvatarHandle(row)"
-            >
-              {{ isCurrent(row) ? '当前头像' : '设为头像' }}
-            </el-button>
+            <div class="avatar-actions">
+              <el-tooltip content="查看详情" placement="top">
+                <el-button type="primary" plain :icon="View" circle @click.stop="viewHandle(row)" />
+              </el-tooltip>
+              <el-tooltip :content="isCurrent(row) ? '当前头像' : '设为头像'" placement="top">
+                <el-button
+                  :type="isCurrent(row) ? 'success' : 'primary'"
+                  :plain="!isCurrent(row)"
+                  :icon="Check"
+                  :loading="settingLoading === row.md5"
+                  :disabled="isCurrent(row)"
+                  circle
+                  @click.stop="setAvatarHandle(row)"
+                />
+              </el-tooltip>
+            </div>
           </div>
         </article>
       </div>
@@ -111,12 +165,15 @@
         @size-change="sizeChange"
       />
     </div>
+
+    <!-- 头像详情 -->
+    <AvatarView v-model:visible="viewVisible" :md5="viewMd5" />
   </el-card>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { Check, Picture, Star, StarFilled } from '@element-plus/icons-vue';
+import { ArrowDown, ArrowUp, Check, Picture, Refresh, Search, Star, StarFilled, View } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import { DictEnumOptionApi } from '@/api/modules/common';
 import { SysConfigXtcsKeyApi } from '@/api/modules/systemConfig';
@@ -129,6 +186,7 @@ import { AvatarMarketItem } from '@/models/setterModel';
 import { OptionEnumModel } from '@/models/X';
 import { tablePageSize } from '@/utils/variable';
 import { useAuthStore } from '@/store/modules/auth';
+import AvatarView from '@/views/system/ops/avatar/components/view.vue';
 
 const authStore = useAuthStore();
 const PAGE_SIZE_STORAGE_KEY = 'avatar_market_page_size';
@@ -150,6 +208,10 @@ const avatarList = ref<AvatarMarketItem[]>([]);
 const typeOptions = ref<OptionEnumModel[]>([]);
 const activeType = ref('');
 const favoriteOnly = ref(false);
+const sortBy = ref<'' | 'count' | 'favorite'>('');
+const queryExpanded = ref(true);
+const searchInput = ref('');
+const content = ref('');
 const gridColumns = ref(6);
 const page = ref(1);
 const pageSizes = computed(() => PAGE_ROW_OPTIONS.map(rows => rows * gridColumns.value));
@@ -157,6 +219,12 @@ const pageSize = ref(getStoredPageSize());
 const total = ref(0);
 const favoriteLoading = ref('');
 const settingLoading = ref('');
+// 鼠标悬停的图片地址：为空时预览当前头像
+const hoverAvatar = ref('');
+const previewAvatar = computed(() => hoverAvatar.value || authStore.userInfo.avatar);
+// 查看详情
+const viewVisible = ref(false);
+const viewMd5 = ref('');
 
 // 每页条数必须是每行列数的倍数，否则回退为最接近的完整行条数
 const normalizePageSize = () => {
@@ -193,6 +261,8 @@ const fetchAvatarList = async () => {
       pageSize: pageSize.value,
       type: activeType.value || undefined,
       favorite: favoriteOnly.value,
+      sort: sortBy.value || undefined,
+      content: content.value || undefined,
     });
     avatarList.value = response.data?.list || [];
     total.value = response.data?.total || 0;
@@ -208,6 +278,24 @@ const selectTypeChange = () => {
 
 const toggleFavoriteOnly = () => {
   favoriteOnly.value = !favoriteOnly.value;
+  page.value = 1;
+  fetchAvatarList();
+};
+
+const sortChange = () => {
+  page.value = 1;
+  fetchAvatarList();
+};
+
+const searchHandle = () => {
+  content.value = searchInput.value.trim();
+  page.value = 1;
+  fetchAvatarList();
+};
+
+const resetSearch = () => {
+  searchInput.value = '';
+  content.value = '';
   page.value = 1;
   fetchAvatarList();
 };
@@ -237,8 +325,12 @@ const favoriteHandle = async (row: AvatarMarketItem) => {
   }
 };
 
-const setAvatarHandle = async (row: AvatarMarketItem) => {
-  if (isCurrent(row) || settingLoading.value) return;
+const viewHandle = (row: AvatarMarketItem) => {
+  viewMd5.value = row.md5;
+  viewVisible.value = true;
+};
+
+const setAvatarHandle = async (row: AvatarMarketItem) => {  if (isCurrent(row) || settingLoading.value) return;
   settingLoading.value = row.md5;
   try {
     const response = await SetProfileAvatarSetApi({ md5: row.md5 });
@@ -318,13 +410,35 @@ onMounted(async () => {
   white-space: nowrap;
 }
 
-.category-bar {
+.filter-panel {
+  padding: 16px;
+  background: var(--el-fill-color-lighter);
+  border: 1px solid var(--el-border-color-extra-light);
+  border-radius: 8px;
+}
+
+.filter-row {
   display: flex;
-  align-items: flex-start;
+  flex-wrap: wrap;
+  align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding-bottom: 18px;
-  border-bottom: 1px solid var(--el-border-color-extra-light);
+  gap: 12px 16px;
+}
+
+.filter-main {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.filter-label {
+  flex-shrink: 0;
+  width: 60px;
+  font-size: 13px;
+  color: var(--el-text-color-regular);
 }
 
 .category-list {
@@ -332,35 +446,70 @@ onMounted(async () => {
   min-width: 0;
 }
 
-.category-group {
+.category-group,
+.sort-group {
   display: flex;
   flex-wrap: wrap;
   row-gap: 8px;
 }
 
-.category-group :deep(.el-radio-button__inner) {
-  padding: 9px 18px;
+.category-group :deep(.el-radio-button__inner),
+.sort-group :deep(.el-radio-button__inner) {
+  padding: 8px 16px;
+  font-size: 13px;
   font-weight: 500;
   border-left: 1px solid var(--el-border-color-lighter);
   transition: color 0.2s, background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
 }
 
-.category-group :deep(.el-radio-button:not(:first-child)) {
+.category-group :deep(.el-radio-button:not(:first-child)),
+.sort-group :deep(.el-radio-button:not(:first-child)) {
   margin-left: -1px;
 }
 
-.category-group :deep(.el-radio-button__inner:hover) {
+.category-group :deep(.el-radio-button__inner:hover),
+.sort-group :deep(.el-radio-button__inner:hover) {
   color: var(--el-color-primary);
   background-color: var(--el-color-primary-light-9);
 }
 
-.category-group :deep(.el-radio-button__original-radio:checked + .el-radio-button__inner) {
+.category-group :deep(.el-radio-button__original-radio:checked + .el-radio-button__inner),
+.sort-group :deep(.el-radio-button__original-radio:checked + .el-radio-button__inner) {
   font-weight: 600;
   box-shadow: -1px 0 0 0 var(--el-color-primary);
 }
 
-.favorite-filter {
+.filter-actions {
+  display: flex;
   flex-shrink: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.query-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--el-border-color);
+}
+
+.search-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.search-form {
+  flex: 1;
+}
+
+.search-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .market-content {
@@ -506,8 +655,10 @@ onMounted(async () => {
   white-space: nowrap;
 }
 
-.set-avatar-button {
-  width: 100%;
+.avatar-actions {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
   margin-top: 12px;
 }
 
@@ -519,7 +670,7 @@ onMounted(async () => {
 
 @media (max-width: 900px) {
   .market-header,
-  .category-bar {
+  .filter-row {
     align-items: stretch;
     flex-direction: column;
   }
@@ -528,8 +679,19 @@ onMounted(async () => {
     align-self: flex-start;
   }
 
-  .favorite-filter {
+  .filter-actions {
     align-self: flex-start;
+  }
+
+  .filter-main {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    gap: 8px;
+  }
+
+  .filter-label {
+    width: auto;
   }
 }
 </style>
