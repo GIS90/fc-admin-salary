@@ -76,7 +76,7 @@
             <div class="avatar-name" :title="row.summary || row.name">{{ row.name }}</div>
             <div class="avatar-meta">
               <span>{{ typeLabel(row.type) }}</span>
-              <span>{{ row.count || 0 }} 次使用</span>
+              <span>{{ row.count || 0 }} 次使用 · {{ row.favoriteCount || 0 }} 人收藏</span>
             </div>
             <el-button
               class="set-avatar-button"
@@ -114,7 +114,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { Check, Picture, Star, StarFilled } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import { DictEnumOptionApi } from '@/api/modules/common';
@@ -126,16 +126,18 @@ import {
 } from '@/api/modules/setter';
 import { AvatarMarketItem } from '@/models/setterModel';
 import { OptionEnumModel } from '@/models/X';
-import { tablePageSize, tablePageSizes } from '@/utils/variable';
+import { tablePageSize } from '@/utils/variable';
 import { useAuthStore } from '@/store/modules/auth';
 
 const authStore = useAuthStore();
 const PAGE_SIZE_STORAGE_KEY = 'avatar_market_page_size';
+// 每页展示的行数，每页条数 = 行数 × 每行列数，保证每页图片都是完整行
+const PAGE_ROW_OPTIONS = [2, 3, 5, 10, 30,100];
 
 // 每页条数：优先读取浏览器本地记录，非法值回退系统默认
 const getStoredPageSize = () => {
   const stored = Number(localStorage.getItem(PAGE_SIZE_STORAGE_KEY));
-  return tablePageSizes.includes(stored) ? stored : tablePageSize;
+  return Number.isInteger(stored) && stored > 0 ? stored : tablePageSize;
 };
 
 const savePageSize = (value: number) => {
@@ -149,11 +151,18 @@ const activeType = ref('');
 const favoriteOnly = ref(false);
 const gridColumns = ref(6);
 const page = ref(1);
+const pageSizes = computed(() => PAGE_ROW_OPTIONS.map(rows => rows * gridColumns.value));
 const pageSize = ref(getStoredPageSize());
 const total = ref(0);
-const pageSizes = tablePageSizes;
 const favoriteLoading = ref('');
 const settingLoading = ref('');
+
+// 每页条数必须是每行列数的倍数，否则回退为最接近的完整行条数
+const normalizePageSize = () => {
+  if (pageSizes.value.includes(pageSize.value)) return;
+  pageSize.value = pageSizes.value.find(size => size >= tablePageSize) ?? pageSizes.value[0];
+  savePageSize(pageSize.value);
+};
 
 const fetchTypeOptions = async () => {
   try {
@@ -172,6 +181,7 @@ const fetchGridColumns = async () => {
   } catch (e) {
     // 未配置系统参数时保持默认每行6张
   }
+  normalizePageSize();
 };
 
 const fetchAvatarList = async () => {
@@ -212,7 +222,7 @@ const favoriteHandle = async (row: AvatarMarketItem) => {
   const value = !row.favorite;
   favoriteLoading.value = row.md5;
   try {
-    await SetProfileAvatarFavoriteApi({ md5: row.md5, value });
+    const response = await SetProfileAvatarFavoriteApi({ md5: row.md5, value });
     ElMessage.success(value ? '收藏成功' : '已取消收藏');
     if (favoriteOnly.value && !value) {
       if (avatarList.value.length === 1 && page.value > 1) page.value -= 1;
@@ -220,6 +230,7 @@ const favoriteHandle = async (row: AvatarMarketItem) => {
       return;
     }
     row.favorite = value;
+    row.favoriteCount = response.data?.favoriteCount ?? row.favoriteCount;
   } finally {
     favoriteLoading.value = '';
   }
@@ -250,9 +261,9 @@ const sizeChange = (value: number) => {
   fetchAvatarList();
 };
 
-onMounted(() => {
+onMounted(async () => {
   fetchTypeOptions();
-  fetchGridColumns();
+  await fetchGridColumns();
   fetchAvatarList();
 });
 </script>

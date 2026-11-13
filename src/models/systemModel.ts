@@ -288,6 +288,7 @@ export interface AvatarModelList extends Omit<__AvatarModelBase, 'tag'> {
     md5: string;
     tag: string[];
     count: number;
+    favorite: number;
     createRtx: string;
     createTime: string;
 }
@@ -298,6 +299,7 @@ export interface AvatarModelList extends Omit<__AvatarModelBase, 'tag'> {
 export interface AvatarModelDetail extends __AvatarModelBase {
     md5: string;
     count: number;
+    favorite: number;
     createRtx: string;
     createTime: string;
 }

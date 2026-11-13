@@ -62,5 +62,6 @@ export interface AvatarMarketItem {
     tag: string;
     count: number;
     favorite: boolean;
+    favoriteCount: number;
 }
 

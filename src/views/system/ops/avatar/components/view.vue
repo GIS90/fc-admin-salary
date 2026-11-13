@@ -54,7 +54,8 @@
           </el-descriptions-item>
           <el-descriptions-item label="尺寸 / 格式">{{ dimensionText }}</el-descriptions-item>
           <el-descriptions-item label="文件大小">{{ formatFileSize(detail.size) }}</el-descriptions-item>
-          <el-descriptions-item label="映射数量">{{ detail.count || 0 }}</el-descriptions-item>
+          <el-descriptions-item label="设置数量">{{ detail.count || 0 }}</el-descriptions-item>
+          <el-descriptions-item label="收藏数量">{{ detail.favorite || 0 }}</el-descriptions-item>
           <el-descriptions-item label="备注说明">{{ detail.summary || '-' }}</el-descriptions-item>
           <el-descriptions-item label="状态">
             <el-tag :type="detail.lock ? 'info' : 'success'" size="small">

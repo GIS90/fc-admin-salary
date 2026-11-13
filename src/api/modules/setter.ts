@@ -38,7 +38,7 @@ export const SetProfileAvatarMarketApi = (params: AvatarMarketQuery) => {
 
 // [PUT]个人中心>收藏或取消收藏头像
 export const SetProfileAvatarFavoriteApi = (params: RequestStatusModel) => {
-    return http.put('/setter/profile.avatar.favorite', params);
+    return http.put<{ md5: string; favorite: boolean; favoriteCount: number }>('/setter/profile.avatar.favorite', params);
 };
 
 // [PUT]个人中心>设置头像超市头像
