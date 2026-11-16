@@ -559,7 +559,7 @@ const batchDeleteHandle = () => {
   flex-direction: column;
   flex-shrink: 0;
   gap: 12px;
-  margin: 0 20px 16px 20px;
+  margin: 16px 20px 16px 20px;
   padding: 14px 16px;
   background: var(--el-fill-color-lighter);
   border: 1px solid var(--el-border-color-extra-light);
