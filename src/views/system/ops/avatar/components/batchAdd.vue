@@ -62,7 +62,7 @@
           </el-col>
         </el-row>
         <el-form-item label="图片标签" prop="tag">
-          <el-input v-model.trim="ruleForm.tag" :maxlength="ProfileLen.tag" :placeholder="ProfilePlace.tag" />
+          <el-input v-model.trim="ruleForm.tag" v-bind="inputField" :maxlength="ProfileLen.tag" :placeholder="ProfilePlace.tag" />
         </el-form-item>
         <el-form-item label="备注说明" prop="summary">
           <el-input v-model="ruleForm.summary"
@@ -92,13 +92,29 @@
           :on-change="handleChange"
           :on-remove="handleRemove"
           :on-exceed="handleExceed"
-          :before-upload="beforeUpload"
+          :on-preview="handlePreview"
       >
         <el-icon class="el-icon--upload"><Plus /></el-icon>
         <template #tip>
-          <div class="el-upload__tip">仅支持 JPG / PNG，单张 ≤ 5MB，最多 {{ uploadLimit }} 张</div>
+          <div class="upload-tip">
+            <span class="upload-tip-item">
+              <el-icon><Picture /></el-icon>
+              仅支持 JPG / PNG
+            </span>
+            <span class="upload-tip-item">
+              <el-icon><Files /></el-icon>
+              单张 ≤ <b>{{ avatarSizeMax }}</b> MB
+            </span>
+            <span class="upload-tip-item" :class="{ 'is-full': fileList.length >= uploadLimit }">
+              <el-icon><Checked /></el-icon>
+              已选 <b>{{ fileList.length }}</b> / {{ uploadLimit }} 张
+            </span>
+          </div>
         </template>
       </el-upload>
+
+      <!--图片查看（放大预览）-->
+      <el-image-viewer v-if="previewVisible" :url-list="[previewUrl]" :teleported="true" @close="previewVisible = false" />
     </div>
 
     <!--footer-->
@@ -116,9 +132,9 @@
 
 <script setup lang='ts'>
 import { ref, reactive, defineProps, defineEmits, watch } from 'vue';
-import { UploadFilesApi, DictEnumOptionApi } from '@/api/modules/common';
-import { ElNotification, ElMessage, type FormInstance, type FormRules } from 'element-plus';
-import { textAreaField, dialogField } from "@/utils/attrs/field";
+import { UploadFilesApi, DictEnumOptionApi, SysConfigXtcsKeysApi } from '@/api/modules/common';
+import { ElNotification, ElMessage, ElImageViewer, type FormInstance, type FormRules } from 'element-plus';
+import { textAreaField, dialogField, inputField } from "@/utils/attrs/field";
 import publicLength from "@/utils/attrs/length";
 import publicPlaceHolder from "@/utils/attrs/place";
 
@@ -147,6 +163,9 @@ function fullScreen() { fullView.value = !fullView.value; }
 const ruleFormRef = ref<FormInstance>();
 const btnDisabled = ref(false);
 const btnLoading = ref(false);
+// 图片放大预览
+const previewVisible = ref(false);
+const previewUrl = ref('');
 const ruleForm = reactive({
   type: "",
   tag: "",
@@ -179,17 +198,33 @@ const fetchTypeOptions = async () => {
 };
 
 // -------- Upload --------
-const uploadLimit = 50;
+// 上传限制（系统参数：图片大小 UPLOAD-AVATAR-SIZE-MAX 单位MB；上传数量 UPLOAD-FILE-MAX）
+const avatarSizeMax = ref(5);
+const uploadLimit = ref(20);
+const fetchUploadLimits = async () => {
+  try {
+    const response = await SysConfigXtcsKeysApi({ keys: ['UPLOAD-AVATAR-SIZE-MAX', 'UPLOAD-FILE-MAX'] });
+    const data = (response as { data: Record<string, string> })?.data || {};
+    const size = Number(data['UPLOAD-AVATAR-SIZE-MAX']);
+    const count = Number(data['UPLOAD-FILE-MAX']);
+    if (size > 0) avatarSizeMax.value = size;
+    if (count > 0) uploadLimit.value = count;
+  } catch (e) {
+    // 参数未配置或请求失败时保持默认限制
+  }
+};
 const uploadRef = ref();
 const fileList = ref<any[]>([]);
 
 function openDialog() {
   fetchTypeOptions();
+  fetchUploadLimits();
   resetForm();
   fileList.value = [];
   uploadRef.value?.clearFiles?.();
 }
 function closeDialog() {
+  previewVisible.value = false;
   emit('update:visible', false);
 }
 function resetForm() {
@@ -204,26 +239,41 @@ function handleClear() {
   uploadRef.value?.clearFiles?.();
 }
 
-const handleChange = (_uploadFile: any, uploadFiles: any[]) => {
+// 选择文件时校验格式与大小（auto-upload 关闭时 before-upload 不会触发）
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png'];
+const validateFile = (uploadFile: any): boolean => {
+  const raw = uploadFile?.raw as File | undefined;
+  if (!raw) return true;
+  if (!ALLOWED_IMAGE_TYPES.includes(raw.type)) {
+    ElMessage.warning('仅支持 JPG / PNG 格式');
+    return false;
+  }
+  if (raw.size > avatarSizeMax.value * 1024 * 1024) {
+    ElMessage.warning(`单张图片不能超过 ${avatarSizeMax.value}MB`);
+    return false;
+  }
+  return true;
+};
+const handleChange = (uploadFile: any, uploadFiles: any[]) => {
+  if (!validateFile(uploadFile)) {
+    uploadRef.value?.handleRemove?.(uploadFile);
+    return;
+  }
   fileList.value = uploadFiles;
 };
 const handleRemove = (_uploadFile: any, uploadFiles: any[]) => {
   fileList.value = uploadFiles;
 };
 const handleExceed = () => {
-  ElNotification({ title: '提示', message: `最多上传 ${uploadLimit} 张图片`, type: 'warning' });
+  ElNotification({ title: '提示', message: `最多上传 ${uploadLimit.value} 张图片`, type: 'warning' });
 };
-const beforeUpload = (rawFile: File) => {
-  const allowTypes = ['image/jpeg', 'image/png'];
-  if (!allowTypes.includes(rawFile.type)) {
-    ElMessage.warning('仅支持 JPG / PNG 格式');
-    return false;
-  }
-  if (rawFile.size > 5 * 1024 * 1024) {
-    ElMessage.warning('单张图片不能超过 5MB');
-    return false;
-  }
-  return true;
+
+// 点击列表图片的查看图标时放大预览
+const handlePreview = (uploadFile: any) => {
+  const url = uploadFile?.url || (uploadFile?.raw ? URL.createObjectURL(uploadFile.raw) : '');
+  if (!url) return;
+  previewUrl.value = url;
+  previewVisible.value = true;
 };
 
 async function submitUpload() {
@@ -267,3 +317,46 @@ async function submitUpload() {
   }
 }
 </script>
+
+<style scoped>
+/* 上传限制提示 */
+.upload-tip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--el-text-color-secondary);
+}
+
+.upload-tip-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: var(--el-fill-color-light);
+  line-height: 1;
+}
+
+.upload-tip-item .el-icon {
+  font-size: 13px;
+  color: var(--el-color-primary);
+}
+
+.upload-tip-item b {
+  font-weight: 600;
+  color: var(--el-color-primary);
+}
+
+/* 已达数量上限时高亮提醒 */
+.upload-tip-item.is-full {
+  background: var(--el-color-warning-light-9);
+}
+
+.upload-tip-item.is-full .el-icon,
+.upload-tip-item.is-full b {
+  color: var(--el-color-warning);
+}
+</style>
