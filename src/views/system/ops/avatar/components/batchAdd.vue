@@ -62,7 +62,7 @@
           </el-col>
         </el-row>
         <el-form-item label="图片标签" prop="tag">
-          <el-input v-model.trim="ruleForm.tag" :maxlength="ProfileLen.tag" placeholder="多个标签用英文逗号分隔" />
+          <el-input v-model.trim="ruleForm.tag" :maxlength="ProfileLen.tag" :placeholder="ProfilePlace.tag" />
         </el-form-item>
         <el-form-item label="备注说明" prop="summary">
           <el-input v-model="ruleForm.summary"
