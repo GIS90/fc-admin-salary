@@ -118,6 +118,7 @@
 import { ref, reactive, defineProps, defineEmits, watch } from 'vue';
 import { AvatarModelDetail } from "@/models/systemModel";
 import { SysOpsAvatarAddApi } from "@/api/modules/systemOps";
+import { SysConfigXtcsKeyApi } from "@/api/modules/systemConfig";
 import { UploadFileApi, DictEnumOptionApi } from "@/api/modules/common";
 import { FormInstance, FormRules } from "element-plus";
 import { ElNotification, ElMessage } from 'element-plus';
@@ -138,7 +139,7 @@ const dgConfigField = reactive({
 const uploadAttr = reactive({
   width: '200px',
   height: '150px',
-  fileSize: 5,
+  fileSize: 5, // 默认大小上限（MB），以系统参数 UPLOAD-AVATAR-SIZE-MAX 为准
   fileType: ['image/png','image/jpeg','image/webp','image/gif']
 });
 const summarySize = ref({minRows: 3, maxRows: 4});
@@ -181,6 +182,7 @@ function fullScreen() {
 // 打开
 function openDialog() {
   fetchTypeOptions();
+  fetchUploadFileSize();
   // 重置验证
   ruleFormRef.value?.clearValidate();
 };
@@ -206,6 +208,17 @@ const fetchTypeOptions = async () => {
     if (e?.code !== 'ERR_CANCELED') {
       ElMessage.warning('图片类型加载失败，请重新打开弹窗');
     }
+  }
+};
+
+// 图片上传大小上限（系统参数 UPLOAD-AVATAR-SIZE-MAX，单位MB；未配置时使用默认值）
+const fetchUploadFileSize = async () => {
+  try {
+    const response = await SysConfigXtcsKeyApi({ key: 'UPLOAD-AVATAR-SIZE-MAX' });
+    const value = Number((response as { data: { value: string } })?.data?.value);
+    if (value > 0) uploadAttr.fileSize = value;
+  } catch (e) {
+    // 参数未配置或请求失败时保持默认大小上限
   }
 };
 

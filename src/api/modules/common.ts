@@ -6,7 +6,7 @@ import { RequestDownloadModel } from "@/models/X";
 export const SystemInfoApi = (params: any) => {
     return http.get('/api/open/system.info', params);
 };
-/* * * * * * * * * * * * * * * * * * * * * * [下载] * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* * * * * * * * * * * * * * * * * * * * * * [文件下载] * * * * * * * * * * * * * * * * * * * * * * * * * */
 // [GET]文件下载.参数枚举
 export const DownloadEnumApi = () => {
     return http.get('/api/download.enum');
@@ -16,8 +16,8 @@ export const DownloadEnumApi = () => {
 export const DownloadTableApi = (params: RequestDownloadModel) => {
     return http.post('/api/download', params);
 };
-/* * * * * * * * * * * * * * * * * * * * * * [上传] * * * * * * * * * * * * * * * * * * * * * * * * * */
-// [POST]上传
+/* * * * * * * * * * * * * * * * * * * * * * [文件上传] * * * * * * * * * * * * * * * * * * * * * * * * * */
+// [POST]多文件上传
 export const UploadFilesApi = (data: any) => {
     return http.post('/api/uploads', data);
 };
@@ -26,12 +26,12 @@ export const UploadFilesApi = (data: any) => {
 export const UploadFileApi = (data: any) => {
     return http.post('/api/upload', data);
 };
-/* * * * * * * * * * * * * * * * * * * * * * [Table] * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* * * * * * * * * * * * * * * * * * * * * * [报表Column] * * * * * * * * * * * * * * * * * * * * * * * * * */
 // [GET]报表Column
 export const TableFieldColumnApi = (params: { xtbb: string }) => {
     return http.get('/system/config/report.field.column', params);
 };
-
+/* * * * * * * * * * * * * * * * * * * * * * [枚举值] * * * * * * * * * * * * * * * * * * * * * * * * * */
 // [GET]EV>通过Key获取枚举值(option格式)
 export const DictEnumOptionApi = (params: { name: string }) => {
     return http.get('/system/config/dict/de.option', params);
