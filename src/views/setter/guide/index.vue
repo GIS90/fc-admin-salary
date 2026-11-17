@@ -732,7 +732,7 @@ const goHome = () => {
   margin: 16px 0 0;
   padding: 12px 14px;
   border-radius: 8px;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.8;
   color: var(--el-text-color-secondary);
   background: var(--el-fill-color-lighter);
