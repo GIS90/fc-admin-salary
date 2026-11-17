@@ -18,8 +18,8 @@ export const DownloadTableApi = (params: RequestDownloadModel) => {
 };
 /* * * * * * * * * * * * * * * * * * * * * * [文件上传] * * * * * * * * * * * * * * * * * * * * * * * * * */
 // [POST]多文件上传
-export const UploadFilesApi = (data: any, config: any = {}) => {
-    return http.post('/api/uploads', data, config);
+export const AvatarUploadFilesApi = (data: any, config: any = {}) => {
+    return http.post('/api/avatar/uploads', data, config);
 };
 
 // [POST]单文件上传

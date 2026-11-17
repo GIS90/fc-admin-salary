@@ -119,7 +119,7 @@
           <span>正在上传 {{ fileList.length }} 张图片…</span>
           <span class="upload-progress-percent">{{ uploadPercent }}%</span>
         </div>
-        <el-progress :percentage="uploadPercent" :stroke-width="10" :show-text="false" striped striped-flow />
+        <el-progress :percentage="uploadPercent" :stroke-width="12" :show-text="false" striped striped-flow />
       </div>
 
       <!--图片查看（放大预览）-->
@@ -141,7 +141,7 @@
 
 <script setup lang='ts'>
 import { ref, reactive, defineProps, defineEmits, watch } from 'vue';
-import { UploadFilesApi, DictEnumOptionApi, SysConfigXtcsKeysApi } from '@/api/modules/common';
+import { AvatarUploadFilesApi, DictEnumOptionApi, SysConfigXtcsKeysApi } from '@/api/modules/common';
 import { ElNotification, ElMessage, ElImageViewer, type FormInstance, type FormRules } from 'element-plus';
 import { textAreaField, dialogField, inputField } from "@/utils/attrs/field";
 import publicLength from "@/utils/attrs/length";
@@ -312,7 +312,7 @@ async function submitUpload() {
       if (file.raw) formData.append('files', file.raw);
     });
 
-    const response = await UploadFilesApi(formData, {
+    const response = await AvatarUploadFilesApi(formData, {
       onUploadProgress: (e: any) => {
         if (!e?.total) return;
         uploadPercent.value = Math.min(99, Math.round((e.loaded / e.total) * 100));
