@@ -11,8 +11,10 @@
         -->
         <h1 class="hero-title">高效办公，从这里开始</h1>
         <p class="hero-desc">
-          它是一款工具箱集合，希望可以帮助你提升办公效率。如果你想定制一款工具，可以发邮件或者微信给管理员；
-          定制化的工具不仅可以帮助你，更可以帮助更多的人。祝你每日生活愉快。
+          它是一款工具箱集合，旨在帮助你提升办公效率，让日常工作更轻松、更高效。如果你希望定制一款更贴合自身需求的工具，欢迎通过邮件或微信联系管理员，说明你的想法与使用场景；定制化的工具不仅能解决你的实际问题，也能惠及更多有相似需求的人。
+        </p>
+        <p class="hero-desc">
+          感谢你的支持与信任，祝你每日生活愉快、工作顺心。
         </p>
         <div class="hero-actions">
           <el-button type="default" size="large" class="hero-btn" @click="goHome">
@@ -347,8 +349,8 @@ const goHome = () => {
 
 .hero-desc {
   margin: 0;
-  max-width: 960px;
-  font-size: 14px;
+  /* max-width: 1960px; */
+  font-size: 15px;
   line-height: 1.8;
   opacity: 0.92;
 }
@@ -408,14 +410,14 @@ const goHome = () => {
 }
 
 .stat-value {
-  font-size: 22px;
+  font-size: 25px;
   font-weight: 700;
   line-height: 1.2;
   color: var(--stat-color, var(--el-color-primary));
 }
 
 .stat-label {
-  font-size: 12px;
+  font-size: 15px;
   color: var(--el-text-color-secondary);
 }
 
