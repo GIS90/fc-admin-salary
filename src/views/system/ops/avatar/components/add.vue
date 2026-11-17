@@ -48,6 +48,13 @@
               :height="uploadAttr.height"
               :fileSize="uploadAttr.fileSize"
               :fileType="uploadAttr.fileType">
+            <template #empty>
+              <div v-if="uploading" class="upload-progress">
+                <el-progress type="circle" :percentage="uploadPercent" :width="72" :stroke-width="6" />
+                <span class="upload-progress-text">上传中</span>
+              </div>
+              <el-icon v-else><Plus /></el-icon>
+            </template>
             <template #tip>支持 PNG / JPG / WebP / GIF，大小不超过 {{ uploadAttr.fileSize }}MB</template>
           </fc-upload-img>
           <div v-if="ruleForm.url" class="avatar-meta">
@@ -107,7 +114,7 @@
         <el-checkbox v-model="continuousEntry" class="continuous-entry">连续录入</el-checkbox>
         <div class="footer-buttons">
           <el-button :disabled="btnDisabled" @click="closeDialog">取 消</el-button>
-          <el-button :disabled="btnDisabled" :loading="btnLoading" type="primary" @click="confirm(ruleFormRef)">确 定</el-button>
+          <el-button :disabled="btnDisabled || uploading" :loading="btnLoading" type="primary" @click="confirm(ruleFormRef)">确 定</el-button>
         </div>
       </div>
     </template>
@@ -149,6 +156,8 @@ const fullViewText = ref('全屏');
 const emit = defineEmits(['update:visible', 'reFetchTableData']);
 const btnDisabled = ref(false); // 禁用
 const btnLoading = ref(false); // 加载中
+const uploading = ref(false); // 图片上传中
+const uploadPercent = ref(0); // 图片上传进度
 // 连续录入：录入完成后不关闭弹窗，清空数据继续录入（状态持久化到本地）
 const CONTINUOUS_ENTRY_KEY = 'avatar_add_continuous_entry';
 const continuousEntry = ref(getCache(CONTINUOUS_ENTRY_KEY) === '1');
@@ -301,14 +310,26 @@ const formatFileSize = (bytes: number) => {
 // 单张图片上传（fc-upload-img 要求 requestApi 返回 { data: url } 结构）
 const uploadAvatarImg = async (formData: FormData) => {
   formData.append('upload_type', '100');
-  const response = await UploadFileApi(formData);
-  const res = response as { data: { name: string; url: string } };
-  const url = res.data?.url || '';
-  // 更换图片时，名称始终跟随最新文件名（去扩展名）
-  if (res.data?.name) {
-    ruleForm.name = res.data.name.replace(/\.[^.]+$/, '').slice(0, ProfileLen.name);
+  uploading.value = true;
+  uploadPercent.value = 0;
+  try {
+    const response = await UploadFileApi(formData, {
+      onUploadProgress: (e: any) => {
+        if (!e?.total) return;
+        uploadPercent.value = Math.min(99, Math.round((e.loaded / e.total) * 100));
+      }
+    });
+    uploadPercent.value = 100;
+    const res = response as { data: { name: string; url: string } };
+    const url = res.data?.url || '';
+    // 更换图片时，名称始终跟随最新文件名（去扩展名）
+    if (res.data?.name) {
+      ruleForm.name = res.data.name.replace(/\.[^.]+$/, '').slice(0, ProfileLen.name);
+    }
+    return { data: url };
+  } finally {
+    uploading.value = false;
   }
-  return { data: url };
 };
 
 // 图片地址变化后回填图片元数据；删除图片时同步清空名称与元数据
@@ -386,6 +407,25 @@ const confirm = async (formEl: FormInstance | undefined) => {
 .avatar-meta-split {
   margin: 0 8px;
   color: var(--el-border-color);
+}
+
+/* 图片上传进度 */
+.upload-progress {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.upload-progress-text {
+  font-size: 12px;
+  line-height: 1;
+  color: var(--el-text-color-secondary);
+}
+
+.upload-progress :deep(.el-progress__text) {
+  font-size: 14px !important;
 }
 
 /* 修复 fc-upload-img 鼠标悬停时边框消失问题 */

@@ -18,13 +18,13 @@ export const DownloadTableApi = (params: RequestDownloadModel) => {
 };
 /* * * * * * * * * * * * * * * * * * * * * * [文件上传] * * * * * * * * * * * * * * * * * * * * * * * * * */
 // [POST]多文件上传
-export const UploadFilesApi = (data: any) => {
-    return http.post('/api/uploads', data);
+export const UploadFilesApi = (data: any, config: any = {}) => {
+    return http.post('/api/uploads', data, config);
 };
 
 // [POST]单文件上传
-export const UploadFileApi = (data: any) => {
-    return http.post('/api/upload', data);
+export const UploadFileApi = (data: any, config: any = {}) => {
+    return http.post('/api/upload', data, config);
 };
 /* * * * * * * * * * * * * * * * * * * * * * [报表Column] * * * * * * * * * * * * * * * * * * * * * * * * * */
 // [GET]报表Column

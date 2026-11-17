@@ -113,6 +113,15 @@
         </template>
       </el-upload>
 
+      <!--上传进度-->
+      <div v-if="btnLoading" class="upload-progress">
+        <div class="upload-progress-head">
+          <span>正在上传 {{ fileList.length }} 张图片…</span>
+          <span class="upload-progress-percent">{{ uploadPercent }}%</span>
+        </div>
+        <el-progress :percentage="uploadPercent" :stroke-width="10" :show-text="false" striped striped-flow />
+      </div>
+
       <!--图片查看（放大预览）-->
       <el-image-viewer v-if="previewVisible" :url-list="[previewUrl]" :teleported="true" @close="previewVisible = false" />
     </div>
@@ -163,6 +172,8 @@ function fullScreen() { fullView.value = !fullView.value; }
 const ruleFormRef = ref<FormInstance>();
 const btnDisabled = ref(false);
 const btnLoading = ref(false);
+// 上传进度
+const uploadPercent = ref(0);
 // 图片放大预览
 const previewVisible = ref(false);
 const previewUrl = ref('');
@@ -287,6 +298,7 @@ async function submitUpload() {
 
   btnDisabled.value = true;
   btnLoading.value = true;
+  uploadPercent.value = 0;
   try {
     const formData = new FormData();
     formData.append('upload_type', '100');
@@ -300,7 +312,13 @@ async function submitUpload() {
       if (file.raw) formData.append('files', file.raw);
     });
 
-    const response = await UploadFilesApi(formData);
+    const response = await UploadFilesApi(formData, {
+      onUploadProgress: (e: any) => {
+        if (!e?.total) return;
+        uploadPercent.value = Math.min(99, Math.round((e.loaded / e.total) * 100));
+      }
+    });
+    uploadPercent.value = 100;
     const respData = (response?.data as { total?: number; success?: number; failed?: number }) || {};
     ElNotification({
       title: '提示',
@@ -358,5 +376,27 @@ async function submitUpload() {
 .upload-tip-item.is-full .el-icon,
 .upload-tip-item.is-full b {
   color: var(--el-color-warning);
+}
+
+/* 上传进度 */
+.upload-progress {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: var(--el-fill-color-lighter);
+}
+
+.upload-progress-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: var(--el-text-color-secondary);
+}
+
+.upload-progress-percent {
+  font-weight: 600;
+  color: var(--el-color-primary);
 }
 </style>
