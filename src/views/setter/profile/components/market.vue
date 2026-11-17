@@ -176,7 +176,7 @@ import { computed, onMounted, ref } from 'vue';
 import { ArrowDown, ArrowUp, Check, Picture, Refresh, Search, Star, StarFilled, View } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import { DictEnumOptionApi } from '@/api/modules/common';
-import { SysConfigXtcsKeyApi } from '@/api/modules/systemConfig';
+import { SysConfigXtcsKeyApi } from '@/api/modules/common';
 import {
   SetProfileAvatarFavoriteApi,
   SetProfileAvatarMarketApi,

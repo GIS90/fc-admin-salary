@@ -48,7 +48,7 @@
 import { ref, reactive, onMounted } from 'vue';
 import { ElNotification } from 'element-plus';
 import { UploadFilled, Download } from '@element-plus/icons-vue';
-import { SysConfigXtcsKeyApi } from "@/api/modules/systemConfig";
+import { SysConfigXtcsKeyApi } from "@/api/modules/common";
 import { XtcsModelDetail } from "@/models/systemModel";
 const templateUrl = ref(""); // 模板下载地址
 

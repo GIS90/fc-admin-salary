@@ -117,7 +117,7 @@
 import { ref, reactive, defineProps, defineEmits, watch, onMounted } from 'vue';
 import { ElNotification } from 'element-plus';
 import { dialogField } from "@/utils/attrs/field";
-import { SysConfigXtcsKeyApi } from "@/api/modules/systemConfig";
+import { SysConfigXtcsKeyApi } from "@/api/modules/common";
 import { XtcsModelDetail } from "@/models/systemModel";
 import { UploadFilesApi} from "@/api/modules/common";
 

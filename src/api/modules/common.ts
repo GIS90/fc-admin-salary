@@ -1,5 +1,5 @@
 import http from "@/api";
-import { RequestDownloadModel } from "@/models/X";
+import { RequestDownloadModel, RequestKeysModel, RequestKeyModel } from "@/models/X";
 
 /* * * * * * * * * * * * * * * * * * * * * * [系统] * * * * * * * * * * * * * * * * * * * * * * * * * */
 // [GET]基础信息
@@ -42,3 +42,15 @@ export const DictEnumOptionApi = (params: { name: string }) => {
 export const DictEnumOptionsApi = (params: any) => {
     return http.get('/system/config/dict/de.options', params, { paramsSerializer: { indexes: null } });
 };
+/* * * * * * * * * * * * * * * * * * * * * * [系统配置] * * * * * * * * * * * * * * * * * * * * * * * * * */
+// [GET]单条系统参数
+export const SysConfigXtcsKeyApi = (params: RequestKeyModel) => {
+    return http.get('/system/config/xtcs.key', params);
+};
+
+// [GET]多条系统参数
+export const SysConfigXtcsKeysApi = (params: RequestKeysModel) => {
+    return http.get('/system/config/xtcs.keys', params, { paramsSerializer: { indexes: null } });
+};
+
+

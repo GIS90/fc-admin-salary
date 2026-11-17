@@ -249,7 +249,7 @@ import { ElMessage, ElNotification } from 'element-plus';
 import { fcTableField, PopConfirmField, buttonField } from "@/utils/attrs/field";
 import { TableFieldColumnApi, DictEnumOptionApi } from "@/api/modules/common";
 import { OptionEnumModel } from "@/models/X";
-import { SysConfigXtcsKeyApi } from "@/api/modules/systemConfig";
+import { SysConfigXtcsKeyApi } from "@/api/modules/common";
 import { tablePageSize, tablePageSizes } from "@/utils/variable";
 import { avatarTagColor } from "@/utils/utils";
 import { getCache, setCache } from "@/utils/cache";

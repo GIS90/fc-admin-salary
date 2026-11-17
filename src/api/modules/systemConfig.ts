@@ -7,7 +7,7 @@ import {
     ReportModelBase, ReportModelList,
     ApiModelList, ApiModelDetail
 } from "@/models/systemModel";
-import {RequestKeyModel, RequestMd5Model, RequestMd5Models, RequestStatusModel} from "@/models/X";
+import { RequestMd5Model, RequestMd5Models, RequestStatusModel } from "@/models/X";
 
 /* * * * * * * * * * * * * * * * * * * * * * [系统配置>参数配置] * * * * * * * * * * * * * * * * * * * * * * * * * */
 // [GET]列表
@@ -48,11 +48,6 @@ export const SysConfigXtcsAddApi = (params: XtcsModelBase) => {
 // [GET]详情
 export const SysConfigXtcsViewApi = (params: RequestMd5Model) => {
     return http.get('/system/config/xtcs.view', params);
-};
-
-// [GET]详情
-export const SysConfigXtcsKeyApi = (params: RequestKeyModel) => {
-    return http.get('/system/config/xtcs.key', params);
 };
 /* * * * * * * * * * * * * * * * * * * * * * [系统维护->数据字典] * * * * * * * * * * * * * * * * * * * * * * * * * */
 // [GET]EK>列表

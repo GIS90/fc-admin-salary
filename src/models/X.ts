@@ -66,6 +66,10 @@ export interface RequestKeyModel {
     key: string;
 }
 
+export interface RequestKeysModel {
+    keys: string[];
+}
+
 export interface SystemInfoModel {
     title: string;
     version: string;

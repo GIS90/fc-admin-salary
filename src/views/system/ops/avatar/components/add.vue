@@ -118,7 +118,7 @@
 import { ref, reactive, defineProps, defineEmits, watch } from 'vue';
 import { AvatarModelDetail } from "@/models/systemModel";
 import { SysOpsAvatarAddApi } from "@/api/modules/systemOps";
-import { SysConfigXtcsKeyApi } from "@/api/modules/systemConfig";
+import { SysConfigXtcsKeyApi } from "@/api/modules/common";
 import { UploadFileApi, DictEnumOptionApi } from "@/api/modules/common";
 import { FormInstance, FormRules } from "element-plus";
 import { ElNotification, ElMessage } from 'element-plus';
