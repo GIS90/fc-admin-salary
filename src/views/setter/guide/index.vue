@@ -474,7 +474,7 @@ const goHome = () => {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 600;
 }
 
@@ -484,7 +484,7 @@ const goHome = () => {
 }
 
 .card-sub {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--el-text-color-secondary);
 }
 
@@ -520,13 +520,13 @@ const goHome = () => {
 
 .step-body h4 {
   margin: 2px 0 6px;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
 }
 
 .step-body p {
   margin: 0;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.7;
   color: var(--el-text-color-secondary);
 }
@@ -568,13 +568,13 @@ const goHome = () => {
 
 .feature-body h4 {
   margin: 2px 0 6px;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
 }
 
 .feature-body p {
   margin: 0;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.7;
   color: var(--el-text-color-secondary);
 }
@@ -598,7 +598,7 @@ const goHome = () => {
   align-items: center;
   gap: 8px;
   margin-bottom: 12px;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
 }
 
