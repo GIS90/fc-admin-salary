@@ -61,7 +61,7 @@ export let selectSingleField = {
 }
 
 /**
- * 选择器 > 单选
+ * 选择器 > 多选
  * */
 let _selectMultiField = {
     multiple: true, // 多选

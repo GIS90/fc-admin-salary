@@ -119,7 +119,7 @@ import { ElNotification } from 'element-plus';
 import { dialogField } from "@/utils/attrs/field";
 import { SysConfigXtcsKeyApi } from "@/api/modules/common";
 import { XtcsModelDetail } from "@/models/systemModel";
-import { UploadFilesApi} from "@/api/modules/common";
+import { UploadFileApi } from "@/api/modules/common";
 
 const uploadRef = ref(null);
 const emit = defineEmits(['update:visible', 'reFetchTableData']);
@@ -296,7 +296,7 @@ const handlePictureCardPreview= (file) => {
 };
 
 // 手动上传的hook
-const submitUpload = () => {
+const submitUpload = async () => {
   // 无上传文件
   if (fileList.value.length < 1) {
     ElNotification({
@@ -323,42 +323,44 @@ const submitUpload = () => {
   btnDisabled.value = true;
   btnLoading.value = true;
 
-  // data form parameters
-  const uploadForm = new FormData();
-  uploadForm.append("upload_type", props.uploadType)
-  fileList.value.forEach(file => {
-    uploadForm.append("files", file.raw)
-    // uploadForm.append(file.name, file.raw)
-  });
-  return new Promise((resolve, reject) => {
-    UploadFilesApi(uploadForm).then(response => {
-      const { code, message } = response;
-      if (code === 100) {
-        ElNotification({
-          title: "提示",
-          message: '文件上传成功' || message,
-          type: "success"
-        });
-        handleClear();
+  // 后端 /api/upload 为单文件上传接口，多文件依次上传
+  const total = fileList.value.length;
+  let success = 0;
+  try {
+    for (const file of fileList.value) {
+      const uploadForm = new FormData();
+      uploadForm.append("upload_type", props.uploadType);
+      uploadForm.append("file", file.raw);
+      try {
+        const response = await UploadFileApi(uploadForm);
+        if (response.code === 100) {
+          success += 1;
+        }
+      } catch (error) {
+        // 失败信息由全局响应拦截器提示，此处继续上传余下文件
       }
-      resolve(response);
+    }
 
+    if (success > 0) {
+      ElNotification({
+        title: "提示",
+        message: total > 1 ? `文件上传完成：成功${success}个，失败${total - success}个` : "文件上传成功",
+        type: success === total ? "success" : "warning"
+      });
+      handleClear();
       // 成功上传后设置自动关闭
-      if (code === 100 && uploadSuccessAutoClose.value) {
-        // 延迟
+      if (uploadSuccessAutoClose.value) {
         setTimeout(() => {
           emit("update:visible", false); // 关闭
           emit("reFetchTableData", true); // 刷新数据
         }, 2000)
       }
-    }).catch(error => {
-      reject(error)
-    }).finally(() => {
-      uploadAttrs.disabled = false;
-      btnDisabled.value = false;
-      btnLoading.value = false;
-    })
-  })
+    }
+  } finally {
+    uploadAttrs.disabled = false;
+    btnDisabled.value = false;
+    btnLoading.value = false;
+  }
 };
 
 const changeAutoClose= (value: boolean) => {

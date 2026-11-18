@@ -1,0 +1,91 @@
+import http from "@/api";
+import { ResultPage } from "@/api/utils/models";
+import { RequestMd5Model, RequestMd5Models } from "@/models/X";
+import { DtalkListModel, DtalkDetailModel, DtalkRobotModel, DtalkSendInitModel } from "@/models/salaryModel";
+
+
+/* * * * * * * * * * * * * * * * * * * * * * [工资 > 消息通知 > 钉钉通知] * * * * * * * * * * * * * * * * * * * * * * * * * */
+// [GET]列表
+export const SalaryNotifyDtalkListApi = (params: any) => {
+    return http.get<ResultPage<DtalkListModel>>('/salary/notify/dtalk.list', params);
+};
+
+// [GET]详情
+export const SalaryNotifyDtalkApi = (params: RequestMd5Model) => {
+    return http.get<DtalkDetailModel>('/salary/notify/dtalk', params);
+};
+
+// [PUT]更新设置
+export const SalaryNotifyDtalkUpdateApi = (params: any) => {
+    return http.put('/salary/notify/dtalk', params);
+};
+
+// [GET]切换Sheet
+export const SalaryNotifyDtalkChangeSheetApi = (params: { md5: string; sheet: string }) => {
+    return http.get('/salary/notify/dtalk.changeSheet', params);
+};
+
+// [DELETE]单条删除
+export const SalaryNotifyDtalkDeleteApi = (params: RequestMd5Model) => {
+    return http.delete('/salary/notify/dtalk.soft', params);
+};
+
+// [PUT]批量删除
+export const SalaryNotifyDtalkBatchDeleteApi = (params: RequestMd5Models) => {
+    return http.put('/salary/notify/dtalk.batch.soft', params);
+};
+
+// [GET]模板下载
+export const SalaryNotifyDtalkTemplateApi = () => {
+    return http.get('/salary/notify/dtalk.template');
+};
+
+// [GET]发送初始化
+export const SalaryNotifyDtalkSendInitApi = (params: RequestMd5Model) => {
+    return http.get<DtalkSendInitModel>('/salary/notify/dtalk.sendInit', params);
+};
+
+// [POST]发送
+export const SalaryNotifyDtalkSendApi = (params: any) => {
+    return http.post('/salary/notify/dtalk.send', params);
+};
+
+// [GET]机器人列表
+export const SalaryNotifyDtalkRobotListApi = () => {
+    return http.get('/salary/notify/dtalk/robot.list');
+};
+
+// [POST]新增机器人
+export const SalaryNotifyDtalkRobotAddApi = (params: any) => {
+    return http.post('/salary/notify/dtalk/robot', params);
+};
+
+// [GET]机器人详情
+export const SalaryNotifyDtalkRobotApi = (params: RequestMd5Model) => {
+    return http.get<DtalkRobotModel>('/salary/notify/dtalk/robot', params);
+};
+
+// [PUT]更新机器人
+export const SalaryNotifyDtalkRobotUpdateApi = (params: any) => {
+    return http.put('/salary/notify/dtalk/robot', params);
+};
+
+// [DELETE]删除机器人
+export const SalaryNotifyDtalkRobotDeleteApi = (params: RequestMd5Model) => {
+    return http.delete('/salary/notify/dtalk/robot.soft', params);
+};
+
+// [PUT]批量删除机器人
+export const SalaryNotifyDtalkRobotBatchDeleteApi = (params: RequestMd5Models) => {
+    return http.put('/salary/notify/dtalk/robot.batch.soft', params);
+};
+
+// [PUT]设置默认机器人
+export const SalaryNotifyDtalkRobotSelectApi = (params: { md5: string; select: boolean }) => {
+    return http.put('/salary/notify/dtalk/robot.select', params);
+};
+
+// [GET]机器人Ping
+export const SalaryNotifyDtalkRobotPingApi = (params: RequestMd5Model) => {
+    return http.get('/salary/notify/dtalk/robot.ping', params);
+};

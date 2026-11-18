@@ -93,6 +93,13 @@ let systemApiModel = {
     long: "请输入API接口详细描述"
 }
 
+let salaryDtalkModel = {
+    name: "请输入文件名称（.xls、.xlsx）",
+    title: "请输入当前Sheet的消息标题，为空时默认使用时间+自动化提醒",
+    setSheet: "请选择需要发送消息的Sheet，支持多选",
+    column: "请选择消息列头，支持多选"
+}
+
 export default {
     setterProfileModel,
     setterProfilePassword,
@@ -106,4 +113,5 @@ export default {
     systemXtcsModel,
     systemReportModel,
     systemApiModel,
+    salaryDtalkModel,
 }

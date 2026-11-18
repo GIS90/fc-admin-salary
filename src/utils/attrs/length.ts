@@ -80,6 +80,11 @@ let systemApiModel = {
     long: 255
 }
 
+let salaryDtalkModel = {
+    name: 80,
+    title: 50
+}
+
 export default {
     setterProfileModel,
     setterProfilePassword,
@@ -93,4 +98,5 @@ export default {
     systemXtcsModel,
     systemReportModel,
     systemApiModel,
+    salaryDtalkModel,
 }
