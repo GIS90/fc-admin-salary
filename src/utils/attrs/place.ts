@@ -74,7 +74,8 @@ let systemAvatarModel = {
 let systemXtcsModel = {
     key: "请输入系统参数名称",
     remark: "请输入系统参数说明",
-    value: "请输入系统参数值"
+    value: "请输入系统参数值",
+    type: "请选择系统参数类型"
 }
 
 let systemReportModel = {

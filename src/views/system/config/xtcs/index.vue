@@ -22,6 +22,13 @@
                 :rowKey="ftField.rowKey" :stripe="ftField.stripe" :border="ftField.border" :pagination="ftField.pagination"
                 :showBottomView="ftField.showBottomView" :showRefreshBtn="ftField.showRefreshBtn"
                 :showColumnBtn="ftField.showColumnBtn" :showDownloadBtn="ftField.showDownloadBtn">
+        <!-- 参数类型 -->
+        <template #type="scope">
+          <el-tag v-if="scope.row.type" :type="scope.row.type === 'FILE' ? 'warning' : 'info'" effect="light">
+            {{ typeLabel(scope.row.type) }}
+          </el-tag>
+          <span v-else>-</span>
+        </template>
         <!-- 表格操作 -->
         <template #options="scope">
           <el-tooltip effect="dark" content="查看" placement="top">
@@ -77,7 +84,7 @@ import { ColumnProps, FcFilterTableInstance } from "@/components/fcFilterTable/m
 import { XtcsModelList } from "@/models/systemModel";
 import { ElMessage, ElNotification } from 'element-plus';
 import { fcTableField, PopConfirmField, buttonField } from "@/utils/attrs/field";
-import { TableFieldColumnApi } from "@/api/modules/common";
+import { TableFieldColumnApi, DictEnumOptionApi } from "@/api/modules/common";
 import Add from "./components/add.vue";
 import Edit from "./components/edit.vue";
 import ViewD from "./components/view.vue";
@@ -97,12 +104,27 @@ const columns = ref<ColumnProps<XtcsModelList>[]>([]);
 
 onMounted(() => {
   fetchTableFieldColumn(); // 表头数据
+  fetchTypeOptions(); // 参数类型枚举
 });
+
+// 参数类型枚举（xtcs-type）
+const typeOptions = ref<Array<{ label: string; value: string; disabled?: boolean }>>([]);
+const fetchTypeOptions = async () => {
+  const response = await DictEnumOptionApi({ name: 'xtcs-type' });
+  if (response.data) {
+    typeOptions.value = response.data as Array<{ label: string; value: string; disabled?: boolean }>;
+  }
+};
+
+// 参数类型名称
+const typeLabel = (value: string) => {
+  return typeOptions.value.find((item) => item.value === value)?.label || value;
+};
 
 const fetchTableFieldColumn = async () => {
   const response = await TableFieldColumnApi({xtbb: apiName});
   if (response.code === 100 && response.data) {
-    columns.value = response.data;
+    columns.value = response.data as any;
   } else {
     ElNotification({
       title: '提示',

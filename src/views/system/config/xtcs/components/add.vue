@@ -65,8 +65,25 @@
                     :disabled="btnDisabled"
           />
         </el-form-item>
+        <el-form-item label="参数类型" prop="type">
+          <el-select v-model="ruleForm.type" :size="selectSingleField.size"
+                     :placeholder="ProfilePlace.type" style="width: 100%;" :disabled="btnDisabled">
+            <el-option v-for="item in typeOptions" :key="item.value" :label="item.label" :value="item.value" :disabled="item.disabled" />
+          </el-select>
+          <div class="el-form-item-msg">参数类型为「文件」时，参数值需上传文件，保存云存储地址</div>
+        </el-form-item>
         <el-form-item label="参数值" prop="value">
-          <el-input v-model="ruleForm.value"
+          <template v-if="ruleForm.type === 'FILE'">
+            <el-upload :show-file-list="false" :http-request="uploadHandle" :disabled="btnDisabled || uploading">
+              <el-button :size="buttonField.size" :loading="uploading" :disabled="btnDisabled">选择文件上传</el-button>
+            </el-upload>
+            <div v-if="ruleForm.value" class="file-value">
+              <a :href="ruleForm.value" target="_blank">{{ ruleForm.value }}</a>
+              <el-button link type="danger" :disabled="btnDisabled || uploading" @click="ruleForm.value = ''">移除</el-button>
+            </div>
+            <div class="el-form-item-msg">上传成功后自动填充云存储文件地址</div>
+          </template>
+          <el-input v-else v-model="ruleForm.value"
                     :type="textAreaField.type"
                     :size="textAreaField.size"
                     :show-word-limit="textAreaField.showWordLimit"
@@ -112,8 +129,9 @@ import { ref, reactive, defineProps, defineEmits, watch } from 'vue';
 import { XtcsModelBase } from "@/models/systemModel";
 import { SysConfigXtcsAddApi } from "@/api/modules/systemConfig";
 import { FormInstance, FormRules } from "element-plus";
-import { ElNotification } from 'element-plus';
-import { dialogField, inputField, textAreaField, formField, inputNumberField } from "@/utils/attrs/field";
+import { ElMessage, ElNotification } from 'element-plus';
+import { dialogField, inputField, textAreaField, formField, inputNumberField, selectSingleField, buttonField } from "@/utils/attrs/field";
+import { UploadFileApi, DictEnumOptionApi } from "@/api/modules/common";
 import publicLength from "@/utils/attrs/length";
 import publicPlaceHolder from "@/utils/attrs/place";
 
@@ -132,6 +150,8 @@ const fullViewText = ref('全屏');
 const emit = defineEmits(['update:visible', 'reFetchTableData']);
 const btnDisabled = ref(false); // 禁用
 const btnLoading = ref(false); // 加载中
+const uploading = ref(false); // 文件上传中
+const typeOptions = ref<Array<{ label: string; value: string; disabled?: boolean }>>([]); // 参数类型枚举
 const props = defineProps({
   visible: {
     type: Boolean,
@@ -158,8 +178,43 @@ function fullScreen() {
 
 // 打开
 function openDialog() {
+  fetchTypeOptions();
   // 重置验证
   ruleFormRef.value?.clearValidate();
+};
+
+// 参数类型枚举（xtcs-type）
+const fetchTypeOptions = async () => {
+  if (typeOptions.value.length > 0) return;
+  const response = await DictEnumOptionApi({ name: 'xtcs-type' });
+  if (response.data) {
+    typeOptions.value = response.data as Array<{ label: string; value: string; disabled?: boolean }>;
+  }
+};
+
+// 文件类型参数值：上传文件到云存储，回填云存储地址
+const uploadHandle = async (options: any) => {
+  const file = options?.file;
+  if (!file) return;
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_type', '6');
+  uploading.value = true;
+  try {
+    const response = await UploadFileApi(formData);
+    const url = (response as { data: { url: string } })?.data?.url || '';
+    if (!url) {
+      ElMessage.warning('文件上传失败，请重新上传');
+      options.onError?.(new Error('upload failed'));
+      return;
+    }
+    ruleForm.value = url;
+    options.onSuccess?.({ url }, file);
+  } catch (e) {
+    options.onError?.(e);
+  } finally {
+    uploading.value = false;
+  }
 };
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -170,6 +225,7 @@ function openDialog() {
 const ruleFormRef = ref<FormInstance>();
 const ruleForm = reactive({
   key: "",
+  type: "",
   remark: "",
   value: "",
   orderId: 1
@@ -179,6 +235,9 @@ const rules = reactive<FormRules<XtcsModelBase>>({
   key: [
     { required: true, message: "系统参数名称不允许为空", trigger: 'blur' },
     { min: 1, max: ProfileLen.key, message: '最大长度支持'+ProfileLen.key+'位', trigger: 'blur' },
+  ],
+  type: [
+    { required: true, message: "系统参数类型不允许为空", trigger: 'change' }
   ],
   remark: [
     { required: true, message: "系统参数说明不允许为空", trigger: 'blur' },
@@ -195,6 +254,7 @@ const rules = reactive<FormRules<XtcsModelBase>>({
 
 const resetForm = () => {
   ruleForm.key = "";
+  ruleForm.type = "";
   ruleForm.remark = "";
   ruleForm.value = "";
   ruleForm.orderId = undefined;
@@ -226,4 +286,11 @@ const confirm = async (formEl: FormInstance | undefined) => {
 </script>
 
 <style scoped>
+.file-value {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  word-break: break-all;
+}
 </style>

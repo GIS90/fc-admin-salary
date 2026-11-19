@@ -87,6 +87,7 @@ export interface RoleAuthUpdateModel extends RequestIDModels {
  */
 export interface XtcsModelBase {
     key: string;
+    type: string;
     remark: string;
     value: string;
     orderId ?: number;

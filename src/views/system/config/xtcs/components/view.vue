@@ -45,11 +45,18 @@
         <el-form-item label="参数名称" prop="key">
           <el-input v-model.trim="ruleForm.key" :size="inputField.size" disabled/>
         </el-form-item>
+        <el-form-item label="参数类型" prop="type">
+          <el-tag v-if="ruleForm.type" :type="ruleForm.type === 'FILE' ? 'warning' : 'info'" effect="light">
+            {{ typeLabel(ruleForm.type) }}
+          </el-tag>
+          <span v-else>-</span>
+        </el-form-item>
         <el-form-item label="参数说明" prop="remark">
           <el-input v-model.trim="ruleForm.remark" :size="inputField.size" disabled/>
         </el-form-item>
         <el-form-item label="参数值" prop="value">
-          <el-input v-model="ruleForm.value"
+          <a v-if="ruleForm.type === 'FILE' && ruleForm.value" :href="ruleForm.value" target="_blank" class="file-value-link">{{ ruleForm.value }}</a>
+          <el-input v-else v-model="ruleForm.value"
                     :type="textAreaField.type"
                     :size="textAreaField.size"
                     :rows="4"
@@ -93,6 +100,7 @@
 import { ref, reactive, defineProps, defineEmits, watch } from 'vue';
 import { XtcsModelView } from "@/models/systemModel";
 import { SysConfigXtcsViewApi } from "@/api/modules/systemConfig";
+import { DictEnumOptionApi } from "@/api/modules/common";
 import { FormInstance } from "element-plus";
 import { dialogField, inputField, textAreaField, formField } from "@/utils/attrs/field";
 
@@ -135,10 +143,26 @@ function fullScreen() {
 
 // 打开
 function openDialog() {
+  fetchTypeOptions();
   // 重置验证
   ruleFormRef.value?.clearValidate();
   // 请求数据
   fetchApiData(props.md5);
+};
+
+// 参数类型枚举（xtcs-type）
+const typeOptions = ref<Array<{ label: string; value: string }>>([]);
+const fetchTypeOptions = async () => {
+  if (typeOptions.value.length > 0) return;
+  const response = await DictEnumOptionApi({ name: 'xtcs-type' });
+  if (response.data) {
+    typeOptions.value = response.data as Array<{ label: string; value: string }>;
+  }
+};
+
+// 参数类型名称
+const typeLabel = (value: string) => {
+  return typeOptions.value.find((item) => item.value === value)?.label || value;
 };
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -150,6 +174,7 @@ const ruleFormRef = ref<FormInstance>();
 const ruleForm = reactive({
   md5: "",
   key: "",
+  type: "",
   remark: "",
   value: "",
   orderId: undefined,
@@ -171,4 +196,9 @@ const fetchApiData = async (md5: string) => {
 </script>
 
 <style scoped>
+.file-value-link {
+  display: block;
+  width: 100%;
+  word-break: break-all;
+}
 </style>
