@@ -67,7 +67,7 @@ let _selectMultiField = {
     multiple: true, // 多选
     collapseTags: true, // 折叠标签
     collapseTagsTooltip: true, // 鼠标悬停显示折叠标签
-    maxCollapseTags: 6, // 最大折叠
+    maxCollapseTags: 7, // 最大折叠
     limit: 0 // 多选的个数
 }
 export const selectMultiField = {...selectSingleField, ..._selectMultiField}

@@ -16,7 +16,7 @@
       <!--header-->
       <el-header class="robot-header">
         <div class="left-panel">
-          <h2>Robot配置</h2>
+          <h2>{{ entityName }}配置</h2>
         </div>
         <div class="right-panel">
           <el-button type="primary" plain icon="Plus" @click="addHandle">新增</el-button>
@@ -31,27 +31,29 @@
         <div class="robot-table-box">
           <el-table :data="rows" row-key="md5" v-loading="loading" border stripe height="100%"
                     @selection-change="selectionChange">
-            <el-table-column type="selection" width="55" align="center" />
-            <el-table-column prop="id" label="序号" width="70" align="center" />
-            <el-table-column prop="name" label="机器人名称" min-width="140" show-overflow-tooltip />
-            <el-table-column prop="key" label="APP-KEY" min-width="170" show-overflow-tooltip />
-            <el-table-column label="APP-SECRET" min-width="140">
+            <el-table-column type="selection" width="80" align="center" />
+            <el-table-column prop="id" label="序号" width="100" align="center" />
+            <el-table-column :label="`${entityName}名称`" show-overflow-tooltip>
+              <template #default="scope">{{ scope.row.name || "-" }}</template>
+            </el-table-column>
+            <el-table-column prop="key" label="APP-KEY" show-overflow-tooltip />
+            <el-table-column label="APP-SECRET" show-overflow-tooltip>
               <template #default="scope">
                 <span v-if="scope.row.secret">••••••••</span>
                 <span v-else>-</span>
               </template>
             </el-table-column>
-            <el-table-column prop="description" label="描述" min-width="160" show-overflow-tooltip>
+            <el-table-column prop="description" label="描述" show-overflow-tooltip>
               <template #default="scope">{{ scope.row.description || "-" }}</template>
             </el-table-column>
-            <el-table-column label="默认" width="80" align="center">
+            <el-table-column label="默认" align="center">
               <template #default="scope">
                 <el-tag v-if="scope.row.select" type="success">默认</el-tag>
                 <span v-else>-</span>
               </template>
             </el-table-column>
-            <el-table-column prop="createTime" label="创建时间" width="170" align="center" />
-            <el-table-column label="操作" width="250" align="center" fixed="right">
+            <el-table-column prop="createTime" label="创建时间" show-overflow-tooltip align="center" />
+            <el-table-column label="操作" width="260" align="center" fixed="right">
               <template #default="scope">
                 <el-button link type="primary" icon="EditPen" @click="editHandle(scope.row)">编辑</el-button>
                 <el-button link type="success" icon="Connection" :loading="pingLoading === scope.row.md5"
@@ -61,7 +63,7 @@
               </template>
             </el-table-column>
             <template #empty>
-              <el-empty description="暂无机器人配置" :image-size="90" />
+              <el-empty :description="`暂无${entityName}配置`" :image-size="90" />
             </template>
           </el-table>
         </div>
@@ -69,83 +71,48 @@
     </el-container>
 
     <!--新增/编辑-->
-    <el-dialog v-model="editVisible" :title="form.md5 ? '编辑机器人' : '新增机器人'" width="520px"
-               append-to-body :close-on-click-modal="false" :destroy-on-close="true">
-      <el-form :model="form" label-width="104px">
-        <el-form-item label="机器人名称" required>
-          <el-input v-model.trim="form.name" maxlength="30" show-word-limit placeholder="请输入机器人名称" clearable />
-        </el-form-item>
-        <el-form-item label="APP-KEY" required>
-          <el-input v-model.trim="form.key" maxlength="30" show-word-limit placeholder="请输入机器人APP-KEY" clearable />
-        </el-form-item>
-        <el-form-item label="APP-SECRET" required>
-          <el-input v-model.trim="form.secret" maxlength="70" show-word-limit placeholder="请输入机器人APP-SECRET" clearable />
-        </el-form-item>
-        <el-form-item label="描述">
-          <el-input v-model.trim="form.description" maxlength="120" show-word-limit placeholder="请输入描述" clearable />
-        </el-form-item>
-        <el-form-item label="设为默认">
-          <el-switch v-model="form.select" />
-          <div class="el-form-item-msg">默认机器人会在发送消息时自动选中</div>
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <div class="my-dialog-footer">
-          <el-button :disabled="btnDisabled" @click="editVisible = false">取 消</el-button>
-          <el-button type="primary" :disabled="btnDisabled" :loading="btnLoading" @click="saveHandle">确 定</el-button>
-        </div>
-      </template>
-    </el-dialog>
+    <RobotEdit v-model:visible="editVisible" :md5="editMd5" :default-select="rows.length === 0"
+               :api-set="props.apiSet" @reFetchTableData="fetchList" />
   </el-drawer>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from "vue";
+import { ref, reactive, computed } from "vue";
 import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
 import { drawerField } from "@/utils/attrs/field";
-import {
-  SalaryNotifyDtalkRobotListApi,
-  SalaryNotifyDtalkRobotApi,
-  SalaryNotifyDtalkRobotAddApi,
-  SalaryNotifyDtalkRobotUpdateApi,
-  SalaryNotifyDtalkRobotDeleteApi,
-  SalaryNotifyDtalkRobotBatchDeleteApi,
-  SalaryNotifyDtalkRobotSelectApi,
-  SalaryNotifyDtalkRobotPingApi
-} from "@/api/modules/salaryNotify";
-import { DtalkRobotModel } from "@/models/salaryModel";
+import RobotEdit from "./edit.vue";
+import type { RobotApiSet } from "./model";
 
 const props = defineProps({
   visible: {
     type: Boolean,
     required: true,
     default: false
+  },
+  // 渠道接口集合（钉钉、企业微信等）
+  apiSet: {
+    type: Object as () => RobotApiSet,
+    required: true
   }
 });
 const emit = defineEmits(["update:visible"]);
 
 // Drawer属性
 const dwConfigField = reactive({
-  size: "80%",
+  size: "85%",
   withHeader: false
 });
 const dwField = { ...drawerField, ...dwConfigField };
 
+// 实体名称
+const entityName = computed(() => props.apiSet.entityName || "机器人");
+
 const loading = ref(false);
-const btnDisabled = ref(false);
-const btnLoading = ref(false);
 const pingLoading = ref("");
-const rows = ref<DtalkRobotModel[]>([]);
+const rows = ref<any[]>([]);
 const selectedKeys = ref<string[]>([]);
 const editVisible = ref(false);
-const form = reactive({
-  md5: "",
-  name: "",
-  key: "",
-  secret: "",
-  description: "",
-  select: false
-});
+const editMd5 = ref("");
 
 // 打开
 const openHandle = () => {
@@ -162,7 +129,7 @@ const fetchList = async () => {
   loading.value = true;
   let response: any = null;
   try {
-    response = await SalaryNotifyDtalkRobotListApi();
+    response = await props.apiSet.list();
   } finally {
     loading.value = false;
   }
@@ -170,68 +137,27 @@ const fetchList = async () => {
 };
 
 // 选择
-const selectionChange = (selection: DtalkRobotModel[]) => {
+const selectionChange = (selection: any[]) => {
   selectedKeys.value = selection.map(item => item.md5);
 };
 
 // 新增
 const addHandle = () => {
-  form.md5 = "";
-  form.name = "";
-  form.key = "";
-  form.secret = "";
-  form.description = "";
-  form.select = rows.value.length === 0;
+  editMd5.value = "";
   editVisible.value = true;
 };
 
 // 编辑
-const editHandle = async (row: DtalkRobotModel) => {
-  const response: any = await SalaryNotifyDtalkRobotApi({ md5: row.md5 });
-  const data = response?.data;
-  if (!data) return;
-  form.md5 = data.md5 || "";
-  form.name = data.name || "";
-  form.key = data.key || "";
-  form.secret = data.secret || "";
-  form.description = data.description || "";
-  form.select = !!data.select;
+const editHandle = (row: any) => {
+  editMd5.value = row.md5;
   editVisible.value = true;
 };
 
-// 保存
-const saveHandle = () => {
-  if (!form.name || !form.key || !form.secret) {
-    ElMessage.warning("机器人名称、APP-KEY、APP-SECRET 不允许为空");
-    return;
-  }
-  const params = {
-    name: form.name,
-    key: form.key,
-    secret: form.secret,
-    description: form.description,
-    select: form.select
-  };
-  btnDisabled.value = true;
-  btnLoading.value = true;
-  const request = form.md5
-      ? SalaryNotifyDtalkRobotUpdateApi({ md5: form.md5, ...params })
-      : SalaryNotifyDtalkRobotAddApi(params);
-  request.then(() => {
-    ElNotification.success({ title: "提示", message: "保存成功" });
-    editVisible.value = false;
-    fetchList();
-  }).finally(() => {
-    btnDisabled.value = false;
-    btnLoading.value = false;
-  });
-};
-
 // Ping
-const pingHandle = (row: DtalkRobotModel) => {
+const pingHandle = (row: any) => {
   if (pingLoading.value) return;
   pingLoading.value = row.md5;
-  SalaryNotifyDtalkRobotPingApi({ md5: row.md5 }).then(() => {
+  props.apiSet.ping({ md5: row.md5 }).then(() => {
     ElNotification.success({ title: "提示", message: "PING成功，配置可用" });
   }).finally(() => {
     pingLoading.value = "";
@@ -239,21 +165,21 @@ const pingHandle = (row: DtalkRobotModel) => {
 };
 
 // 设为默认
-const selectHandle = (row: DtalkRobotModel) => {
-  SalaryNotifyDtalkRobotSelectApi({ md5: row.md5, select: true }).then(() => {
-    ElNotification.success({ title: "提示", message: "默认机器人设置成功" });
+const selectHandle = (row: any) => {
+  props.apiSet.select({ md5: row.md5, select: true }).then(() => {
+    ElNotification.success({ title: "提示", message: `默认${entityName.value}设置成功` });
     fetchList();
   });
 };
 
 // 单条删除
-const deleteHandle = (row: DtalkRobotModel) => {
-  ElMessageBox.confirm("确认删除该机器人配置吗？", "提示", {
+const deleteHandle = (row: any) => {
+  ElMessageBox.confirm(`确认删除该${entityName.value}配置吗？`, "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning"
   }).then(() => {
-    SalaryNotifyDtalkRobotDeleteApi({ md5: row.md5 }).then(() => {
+    props.apiSet.remove({ md5: row.md5 }).then(() => {
       ElNotification.success({ title: "提示", message: "删除成功" });
       fetchList();
     }).catch(() => {});
@@ -265,15 +191,15 @@ const deleteHandle = (row: DtalkRobotModel) => {
 // 批量删除
 const batchDeleteHandle = () => {
   if (selectedKeys.value.length === 0) {
-    ElMessage.warning("请选择需要删除的机器人");
+    ElMessage.warning(`请选择需要删除的${entityName.value}`);
     return;
   }
-  ElMessageBox.confirm(`确认删除选择的 ${selectedKeys.value.length} 条机器人配置吗？`, "提示", {
+  ElMessageBox.confirm(`确认删除选择的 ${selectedKeys.value.length} 条${entityName.value}配置吗？`, "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning"
   }).then(() => {
-    SalaryNotifyDtalkRobotBatchDeleteApi({ md5: selectedKeys.value }).then(() => {
+    props.apiSet.batchRemove({ md5: selectedKeys.value }).then(() => {
       ElNotification.success({ title: "提示", message: "删除成功" });
       fetchList();
     }).catch(() => {});
@@ -303,7 +229,7 @@ const batchDeleteHandle = () => {
   .left-panel h2 {
     font-size: 18px;
     font-weight: 600;
-    color: var(--el-text-color-primary);
+    color: var(--el-text-color-secondary);
   }
 
   .right-panel {
@@ -319,6 +245,12 @@ const batchDeleteHandle = () => {
 .robot-main {
   padding: 0;
   background: var(--el-bg-color);
+}
+
+// 表格表头背景色
+:deep(.el-table th.el-table__cell) {
+  background-color: var(--el-fill-color-light);
+  color: var(--el-text-color-regular);
 }
 
 .robot-table-box {

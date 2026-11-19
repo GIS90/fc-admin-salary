@@ -7,6 +7,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Edit: typeof import('./src/components/fcRobotConfig/edit.vue')['default']
     ElAlert: typeof import('element-plus/es')['ElAlert']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
@@ -87,6 +88,7 @@ declare module 'vue' {
     FcPasswordStrength: typeof import('./src/components/fcPasswordStrength/index.vue')['default']
     FcQrCode: typeof import('./src/components/fcQrCode/index.vue')['default']
     FcQuery: typeof import('./src/components/fcQuery/index.vue')['default']
+    FcRobotConfig: typeof import('./src/components/fcRobotConfig/index.vue')['default']
     FcSelectFilter: typeof import('./src/components/fcSelectFilter/index.vue')['default']
     FcStatistic: typeof import('./src/components/fcStatistic/index.vue')['default']
     FcTable: typeof import('./src/components/fcTable/index.vue')['default']

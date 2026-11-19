@@ -39,8 +39,11 @@
           <div class="el-form-item-msg">默认选中「Robot配置」中设置为默认的机器人</div>
         </el-form-item>
         <el-form-item label="发送Sheet" required>
-          <el-select v-model="form.sheet" multiple collapse-tags collapse-tags-tooltip
-                     placeholder="请选择需要发送的Sheet" style="width: 100%;">
+          <el-select v-model="form.sheet" :multiple="selectMultiField.multiple" :collapse-tags="selectMultiField.collapseTags" 
+                     :collapse-tags-tooltip="selectMultiField.collapseTagsTooltip" :disabled="btnDisabled"
+                     :max-collapse-tags="selectMultiField.maxCollapseTags" :limit="selectMultiField.limit"
+                     :size="selectMultiField.size" :clearable="selectMultiField.clearable"
+                     :placeholder="DtalkPlace.setSheet" style="width: 100%;">
             <el-option v-for="item in sheetNames" :key="item.key" :label="`表${item.key}：${item.value}`" :value="item.key" />
           </el-select>
           <div class="el-form-item-msg">按行向钉钉用户推送，第一列为User-ID</div>
@@ -62,10 +65,12 @@
 <script setup lang="ts">
 import { ref, reactive } from "vue";
 import { ElMessage, ElNotification } from "element-plus";
-import { dialogField } from "@/utils/attrs/field";
+import { dialogField, selectMultiField } from "@/utils/attrs/field";
 import { SalaryNotifyDtalkSendInitApi, SalaryNotifyDtalkSendApi } from "@/api/modules/salaryNotify";
 import { DtalkSheetName } from "@/models/salaryModel";
+import publicPlaceHolder from "@/utils/attrs/place";
 
+const DtalkPlace = publicPlaceHolder.salaryDtalkModel;
 const props = defineProps({
   visible: {
     type: Boolean,

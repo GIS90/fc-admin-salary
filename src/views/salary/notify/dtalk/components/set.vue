@@ -77,7 +77,7 @@
         <el-form-item label="消息列头" required>
           <el-select v-model="form.column" :multiple="selectMultiField.multiple" :collapse-tags="selectMultiField.collapseTags" 
                      :collapse-tags-tooltip="selectMultiField.collapseTagsTooltip" :disabled="btnDisabled || sheetSaving"
-                     :max-collapse-tags="selectMultiField.maxCollapseTags" :limit="selectMultiField.limit"
+                     :max-collapse-tags="maxCollapseTags" :limit="selectMultiField.limit"
                      :size="selectMultiField.size" :clearable="selectMultiField.clearable"
                      :placeholder="DtalkPlace.column" style="width: 100%;">
             <el-option v-for="item in setColumns" :key="item.key" :label="`${item.key}：${item.value}`" :value="item.key" />
@@ -106,6 +106,7 @@ import publicPlaceHolder from "@/utils/attrs/place";
 import { SalaryNotifyDtalkApi, SalaryNotifyDtalkUpdateApi, SalaryNotifyDtalkChangeSheetApi } from "@/api/modules/salaryNotify";
 import { DtalkSheetName } from "@/models/salaryModel";
 
+const maxCollapseTags = ref(12);
 const props = defineProps({
   visible: {
     type: Boolean,

@@ -101,6 +101,14 @@ let salaryDtalkModel = {
     column: "请选择消息列头，支持多选"
 }
 
+// 工资->消息通知->钉钉绩效->Robot配置
+let salaryDtalkRobotModel = {
+    name: "请输入消息机器人名称",
+    key: "请输入消息机器人APP-KEY",
+    secret: "请输入消息机器人APP-SECRET",
+    description: "请输入消息机器人描述"
+}
+
 export default {
     setterProfileModel,
     setterProfilePassword,
@@ -115,4 +123,5 @@ export default {
     systemReportModel,
     systemApiModel,
     salaryDtalkModel,
+    salaryDtalkRobotModel,
 }

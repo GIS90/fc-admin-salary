@@ -74,7 +74,7 @@ const emit = defineEmits(["update:visible"]);
 // Dialog属性
 const dgConfigField = reactive({
   title: "操作说明",
-  width: "55%",
+  width: "65%",
   top: "5vh"
 });
 const dgField = { ...dialogField, ...dgConfigField };

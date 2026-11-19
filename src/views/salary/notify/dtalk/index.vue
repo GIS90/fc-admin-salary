@@ -133,7 +133,7 @@
     <DtalkSet v-model:visible="setVisible" :md5="rowMd5" @reFetchTableData="reFetchTableData" />
 
     <!--Robot配置-->
-    <DtalkRobot v-model:visible="robotVisible" />
+    <FcRobotConfig v-model:visible="robotVisible" :api-set="dtalkRobotApiSet" />
 
     <!--发送-->
     <DtalkSend v-model:visible="sendVisible" :md5="rowMd5" @reFetchTableData="reFetchTableData" />
@@ -205,16 +205,42 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from "vue";
 import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
-import { SalaryNotifyDtalkListApi, SalaryNotifyDtalkDeleteApi, SalaryNotifyDtalkBatchDeleteApi } from "@/api/modules/salaryNotify";
+import {
+  SalaryNotifyDtalkListApi,
+  SalaryNotifyDtalkDeleteApi,
+  SalaryNotifyDtalkBatchDeleteApi,
+  SalaryNotifyDtalkRobotListApi,
+  SalaryNotifyDtalkRobotApi,
+  SalaryNotifyDtalkRobotAddApi,
+  SalaryNotifyDtalkRobotUpdateApi,
+  SalaryNotifyDtalkRobotDeleteApi,
+  SalaryNotifyDtalkRobotBatchDeleteApi,
+  SalaryNotifyDtalkRobotSelectApi,
+  SalaryNotifyDtalkRobotPingApi
+} from "@/api/modules/salaryNotify";
 import { SysConfigXtcsKeyApi, TableFieldColumnApi } from "@/api/modules/common";
 import { ColumnProps, FcFilterTableInstance } from "@/components/fcFilterTable/model";
 import { DtalkListModel } from "@/models/salaryModel";
 import { fcTableField, buttonField } from "@/utils/attrs/field";
 import FcUploadFile from "@/components/fcUploadFile/index.vue";
+import FcRobotConfig from "@/components/fcRobotConfig/index.vue";
+import type { RobotApiSet } from "@/components/fcRobotConfig/model";
 import DtalkSet from "./components/set.vue";
-import DtalkRobot from "./components/robot.vue";
 import DtalkSend from "./components/send.vue";
 import DtalkTip from "./components/tip.vue";
+
+// Robot配置接口集合（钉钉）
+const dtalkRobotApiSet: RobotApiSet = {
+  list: SalaryNotifyDtalkRobotListApi,
+  detail: SalaryNotifyDtalkRobotApi,
+  add: SalaryNotifyDtalkRobotAddApi,
+  update: SalaryNotifyDtalkRobotUpdateApi,
+  remove: SalaryNotifyDtalkRobotDeleteApi,
+  batchRemove: SalaryNotifyDtalkRobotBatchDeleteApi,
+  select: SalaryNotifyDtalkRobotSelectApi,
+  ping: SalaryNotifyDtalkRobotPingApi,
+  entityName: "机器人"
+};
 
 // fc-table属性
 const fcTableConfig = reactive({

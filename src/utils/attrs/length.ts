@@ -85,6 +85,14 @@ let salaryDtalkModel = {
     title: 50
 }
 
+// 工资->消息通知->钉钉绩效->Robot配置
+let salaryDtalkRobotModel = {
+    name: 30,
+    key: 30,
+    secret: 80,
+    description: 120
+}
+
 export default {
     setterProfileModel,
     setterProfilePassword,
@@ -99,4 +107,5 @@ export default {
     systemReportModel,
     systemApiModel,
     salaryDtalkModel,
+    salaryDtalkRobotModel,
 }

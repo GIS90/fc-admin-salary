@@ -21,7 +21,7 @@
         :header-cell-style="headerCellStyle"
         v-loading="props.loading"
     >
-      <el-table-column prop="id" label="序号" :width="tableWidth.id" align="center" />
+      <el-table-column prop="id" label="序号" width="100" align="center" />
       <el-table-column prop="rtxId" label="账号" align="center" />
       <el-table-column prop="name" label="昵称" align="center" />
       <el-table-column prop="sex" label="性别" align="center">
@@ -56,7 +56,6 @@
 
 <script setup lang="ts">
 import { computed, reactive } from 'vue';
-import { tableWidth } from "@/utils/attrs/table";
 
 const props = defineProps<{
   previewData: any,
