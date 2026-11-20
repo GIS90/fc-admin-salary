@@ -15,6 +15,7 @@
       :overflow="dgField.overflow"
       :center="dgField.center"
       :align-center="dgField.alignCenter"
+      class="resend-dialog"
       :destroy-on-close="true"
       @open="openHandle"
       @close="closeHandle"
@@ -82,10 +83,10 @@
                    :loading="btnLoading" @click="resendHandle">重 发</el-button>
       </div>
     </template>
-
-    <!--发送结果-->
-    <FcSendResult v-model:visible="resultVisible" :results="resultData" />
   </el-dialog>
+
+  <!--发送结果：放在重发弹窗外部，避免父弹窗 destroy-on-close 时一起销毁-->
+  <FcSendResult v-model:visible="resultVisible" :results="resultData" />
 </template>
 
 <script setup lang="ts">
@@ -219,6 +220,8 @@ const buildGroups = (data: any): FailureGroup[] => {
 };
 
 const openHandle = () => {
+  resultVisible.value = false;
+  resultData.value = [];
   fetchInit();
 };
 
@@ -292,6 +295,32 @@ const resendHandle = () => {
 .my-dialog-body {
   max-height: 66vh;
   overflow-y: auto;
+}
+
+.resend-dialog.is-fullscreen {
+  :deep(.el-dialog__body) {
+    height: calc(100vh - 122px);
+    padding-bottom: 24px;
+    overflow: hidden;
+  }
+
+  :deep(.el-form),
+  :deep(.el-form-item__content) {
+    width: 100%;
+  }
+
+  .my-dialog-body {
+    height: 100%;
+    max-height: none;
+  }
+
+  .sheet-group-list {
+    max-height: calc(100vh - 300px);
+  }
+
+  .user-group {
+    max-height: calc(100vh - 380px);
+  }
 }
 
 .user-toolbar {
