@@ -479,7 +479,7 @@ const closeHandle = () => {
 }
 
 .summary-label {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--el-text-color-secondary);
   white-space: nowrap;
 }
@@ -511,7 +511,7 @@ const closeHandle = () => {
 
 .section-title-tip {
   margin-left: auto;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 400;
   color: var(--el-text-color-placeholder);
 }
