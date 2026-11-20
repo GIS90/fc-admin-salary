@@ -33,7 +33,7 @@
                 style="margin-bottom: 20px;" />
       <el-form :model="form" label-width="96px" v-loading="loading">
         <el-form-item label="机器人" required>
-          <el-select v-model="form.robot" placeholder="请选择机器人" style="width: 100%;">
+          <el-select v-model="form.robot" placeholder="请选择机器人" style="width: 100%;" :disabled="btnDisabled">
             <el-option v-for="item in robotEnums" :key="item.key" :label="item.value" :value="item.key" />
           </el-select>
           <div class="el-form-item-msg">默认选中「Robot配置」中设置为默认的机器人</div>

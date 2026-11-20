@@ -2,12 +2,19 @@
   <el-dialog
       :model-value="props.visible"
       :width="dgField.width"
+      :fullscreen="fullView"
       :top="dgField.top"
       :modal="dgField.modal"
       :lock-scroll="dgField.lockScroll"
+      :open-delay="dgField.openDelay"
+      :close-delay="dgField.closeDelay"
       :close-on-click-modal="dgField.closeOnClickModal"
       :close-on-press-escape="dgField.closeOnPressEscape"
       :show-close="dgField.showClose"
+      :draggable="dgField.draggable"
+      :overflow="dgField.overflow"
+      :center="dgField.center"
+      :align-center="dgField.alignCenter"
       :destroy-on-close="true"
       @open="openHandle"
       @close="closeHandle"
@@ -16,6 +23,11 @@
       <div class="my-dialog-header">
         <div class="my-dialog-header-title">{{ dgField.title }}</div>
         <div class="my-dialog-header-icon">
+          <el-tooltip effect="dark" :content="fullViewText" placement="top">
+            <el-icon class="margin-right-15px" @click="fullScreen">
+              <FullScreen />
+            </el-icon>
+          </el-tooltip>
           <el-tooltip effect="dark" content="关闭" placement="top">
             <el-icon @click="closeHandle">
               <Close />
@@ -77,7 +89,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import { ElMessage } from "element-plus";
 import { dialogField } from "@/utils/attrs/field";
 import FcSendResult from "@/components/fcSendResult/index.vue";
@@ -118,6 +130,16 @@ const dgConfigField = reactive({
   top: "5vh"
 });
 const dgField = { ...dialogField, ...dgConfigField };
+const fullView = ref(dgField.fullScreen);
+const fullViewText = ref("全屏");
+
+watch(fullView, (value) => {
+  fullViewText.value = value ? "取消全屏" : "全屏";
+}, { immediate: true });
+
+const fullScreen = () => {
+  fullView.value = !fullView.value;
+};
 
 const loading = ref(false);
 const btnDisabled = ref(false);
