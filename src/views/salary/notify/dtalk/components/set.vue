@@ -124,7 +124,7 @@ const emit = defineEmits(["update:visible", "reFetchTableData"]);
 // Dialog属性
 const dgConfigField = reactive({
   title: "消息设置",
-  width: "50%",
+  width: "55%",
   top: "5vh"
 });
 const dgField = { ...dialogField, ...dgConfigField };
