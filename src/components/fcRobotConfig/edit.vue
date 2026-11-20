@@ -23,7 +23,14 @@
     <!--header-->
     <template #header>
       <div class="my-dialog-header">
-        <div class="my-dialog-header-title">{{ dialogTitle }}</div>
+        <div class="my-dialog-header-title">
+          <span>{{ dialogTitle }}</span>
+          <el-link v-if="docUrl" :href="docUrl" target="_blank" type="primary" :underline="false"
+                   class="header-doc-link" :title="docRemark || docLabel">
+            <el-icon class="header-doc-icon"><Link /></el-icon>
+            {{ docLabel }}
+          </el-link>
+        </div>
         <div class="my-dialog-header-icon">
           <el-tooltip effect="dark" :content="fullViewText" placement="top">
             <el-icon @click="fullScreen" class="margin-right-15px">
@@ -41,6 +48,14 @@
 
     <!--body-->
     <div class="my-dialog-body">
+      <el-alert v-if="docUrl" class="doc-alert" type="info" show-icon :closable="false">
+        <template #title>
+          <span class="doc-alert-text">{{ docRemark || `请参考官网手册完成${entityName}配置` }}</span>
+          <el-link :href="docUrl" target="_blank" type="primary" :underline="false" class="doc-alert-link">
+            查看配置手册
+          </el-link>
+        </template>
+      </el-alert>
       <el-form :model="ruleForm" :label-width="formField.labelWidth" :label-position="formField.labelPosition"
                :size="formField.size" v-loading="loading" style="width: 100%">
         <el-form-item :label="`${entityName}名称`" required>
@@ -48,12 +63,17 @@
                     :size="inputField.size" :show-word-limit="inputField.showWordLimit" :clearable="inputField.clearable"
                     :disabled="btnDisabled" />
         </el-form-item>
-        <el-form-item label="APP-KEY" required>
+        <el-form-item :label="agentLabel" :required="agentRequired">
+          <el-input v-model.trim="ruleForm.agentId" :maxlength="RobotLen.agentId" :placeholder="RobotPlace.agentId"
+                    :size="inputField.size" :show-word-limit="inputField.showWordLimit" :clearable="inputField.clearable"
+                    :disabled="btnDisabled" />
+        </el-form-item>
+        <el-form-item :label="keyLabel" required>
           <el-input v-model.trim="ruleForm.key" :maxlength="RobotLen.key" :placeholder="RobotPlace.key"
                     :size="inputField.size" :show-word-limit="inputField.showWordLimit" :clearable="inputField.clearable"
                     :disabled="btnDisabled" />
         </el-form-item>
-        <el-form-item label="APP-SECRET" required>
+        <el-form-item :label="secretLabel" required>
           <el-input v-model.trim="ruleForm.secret" :maxlength="RobotLen.secret" :placeholder="RobotPlace.secret"
                     :size="inputField.size" :show-word-limit="inputField.showWordLimit" :clearable="inputField.clearable"
                     :disabled="btnDisabled" />
@@ -86,7 +106,8 @@ import { ElMessage, ElNotification } from 'element-plus';
 import { dialogField, formField, inputField } from "@/utils/attrs/field";
 import publicLength from "@/utils/attrs/length";
 import publicPlaceHolder from "@/utils/attrs/place";
-import type { RobotApiSet } from "./model";
+import { SysConfigXtcsKeyApi } from "@/api/modules/common";
+import type { RobotApiSet, RobotFieldSchema } from "./model";
 
 const props = defineProps({
   visible: {
@@ -111,12 +132,45 @@ const props = defineProps({
 });
 const emit = defineEmits(['update:visible', 'reFetchTableData']);
 
-// 字段长度、占位提示
-const RobotLen = publicLength.salaryDtalkRobotModel;
-const RobotPlace = publicPlaceHolder.salaryDtalkRobotModel;
+// 渠道字段配置（默认钉钉）
+const schema = computed<RobotFieldSchema>(() => props.apiSet.schema || {});
+const RobotLen = computed(() => schema.value.length || publicLength.salaryDtalkRobotModel);
+const RobotPlace = computed(() => schema.value.placeholder || publicPlaceHolder.salaryDtalkRobotModel);
+const keyLabel = computed(() => schema.value.keyLabel || "AppKey");
+const secretLabel = computed(() => schema.value.secretLabel || "AppSecret");
+const agentLabel = computed(() => schema.value.agentLabel || "AgentId");
+const agentRequired = computed(() => !!schema.value.agentRequired);
 
 // 实体名称
 const entityName = computed(() => props.apiSet.entityName || "机器人");
+
+// 官网手册（系统参数）
+const docUrl = ref("");
+const docRemark = ref("");
+const docLabel = computed(() => props.apiSet.docLabel || "官网手册");
+
+// 依次尝试渠道配置的参数 key，取第一个有效地址；参数缺失不影响表单使用
+const fetchDocInfo = async () => {
+  docUrl.value = "";
+  docRemark.value = "";
+  const raw = props.apiSet.docKey;
+  const keys: string[] = Array.isArray(raw) ? raw : raw ? [raw] : [];
+  for (const key of keys) {
+    if (!key) continue;
+    try {
+      const response: any = await SysConfigXtcsKeyApi({ key });
+      const data: any = response?.data;
+      const url: string = typeof data === "string" ? data : data?.value || "";
+      if (url) {
+        docUrl.value = url;
+        docRemark.value = data?.remark || "";
+        break;
+      }
+    } catch {
+      // 忽略单个参数获取失败，继续尝试下一个
+    }
+  }
+};
 
 // Dialog属性
 const dgConfigField = reactive({
@@ -151,6 +205,7 @@ function fullScreen() {
 // 打开
 function openDialog() {
   resetForm();
+  fetchDocInfo();
   if (props.md5) {
     fetchApiData(props.md5);
   } else {
@@ -168,6 +223,7 @@ const ruleForm = reactive({
   name: "",
   key: "",
   secret: "",
+  agentId: "",
   description: "",
   select: false
 });
@@ -178,6 +234,7 @@ const resetForm = () => {
   ruleForm.name = "";
   ruleForm.key = "";
   ruleForm.secret = "";
+  ruleForm.agentId = "";
   ruleForm.description = "";
   ruleForm.select = false;
 };
@@ -197,6 +254,7 @@ const fetchApiData = async (md5: string) => {
   ruleForm.name = data.name || "";
   ruleForm.key = data.key || "";
   ruleForm.secret = data.secret || "";
+  ruleForm.agentId = data.agentId || "";
   ruleForm.description = data.description || "";
   ruleForm.select = !!data.select;
 };
@@ -208,11 +266,15 @@ const validateForm = (): boolean => {
     return false;
   }
   if (!ruleForm.key) {
-    ElMessage.warning("请输入APP-KEY");
+    ElMessage.warning(`请输入${keyLabel.value}`);
     return false;
   }
   if (!ruleForm.secret) {
-    ElMessage.warning("请输入APP-SECRET");
+    ElMessage.warning(`请输入${secretLabel.value}`);
+    return false;
+  }
+  if (agentRequired.value && !ruleForm.agentId) {
+    ElMessage.warning(`请输入${agentLabel.value}`);
     return false;
   }
   return true;
@@ -225,6 +287,7 @@ const confirm = () => {
     name: ruleForm.name,
     key: ruleForm.key,
     secret: ruleForm.secret,
+    agentId: ruleForm.agentId,
     description: ruleForm.description,
     select: ruleForm.select
   };
@@ -244,5 +307,46 @@ const confirm = () => {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+.my-dialog-header-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-doc-link {
+  font-size: 13px;
+  font-weight: 400;
+
+  .header-doc-icon {
+    margin-right: 4px;
+    vertical-align: -2px;
+  }
+}
+
+.my-dialog-body {
+  max-height: 66vh;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.doc-alert {
+  margin-bottom: 18px;
+
+  :deep(.el-alert__title) {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    line-height: 1.6;
+  }
+}
+
+.doc-alert-link {
+  font-size: 13px;
+}
+
+:deep(.el-form-item) {
+  margin-bottom: 20px;
+}
 </style>

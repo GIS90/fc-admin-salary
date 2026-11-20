@@ -39,7 +39,7 @@
           <div class="el-form-item-msg">默认选中「Robot配置」中设置为默认的机器人</div>
         </el-form-item>
         <el-form-item label="发送Sheet" required>
-          <el-select v-model="form.sheet" :multiple="selectMultiField.multiple" :collapse-tags="selectMultiField.collapseTags" 
+          <el-select v-model="form.sheet" :multiple="selectMultiField.multiple" :collapse-tags="selectMultiField.collapseTags"
                      :collapse-tags-tooltip="selectMultiField.collapseTagsTooltip" :disabled="btnDisabled"
                      :max-collapse-tags="selectMultiField.maxCollapseTags" :limit="selectMultiField.limit"
                      :size="selectMultiField.size" :clearable="selectMultiField.clearable"
@@ -60,15 +60,19 @@
       </div>
     </template>
   </el-dialog>
+
+  <!--发送结果-->
+  <FcSendResult v-model:visible="resultVisible" :results="resultData" />
 </template>
 
 <script setup lang="ts">
 import { ref, reactive } from "vue";
-import { ElMessage, ElNotification } from "element-plus";
+import { ElMessage } from "element-plus";
 import { dialogField, selectMultiField } from "@/utils/attrs/field";
 import { SalaryNotifyDtalkSendInitApi, SalaryNotifyDtalkSendApi } from "@/api/modules/salaryNotify";
 import { DtalkSheetName } from "@/models/salaryModel";
 import publicPlaceHolder from "@/utils/attrs/place";
+import FcSendResult from "@/components/fcSendResult/index.vue";
 
 const DtalkPlace = publicPlaceHolder.salaryDtalkModel;
 const props = defineProps({
@@ -102,6 +106,10 @@ const form = reactive({
   robot: "",
   sheet: [] as string[]
 });
+
+// 发送结果（展示由 FcSendResult 组件负责）
+const resultVisible = ref(false);
+const resultData = ref<any[]>([]);
 
 // 打开
 const openHandle = () => {
@@ -148,14 +156,8 @@ const sendHandle = () => {
   btnDisabled.value = true;
   btnLoading.value = true;
   SalaryNotifyDtalkSendApi({ md5: props.md5, robot: form.robot, sheet: form.sheet }).then((response: any) => {
-    const message = response?.message || "发送完成";
-    const hasFailure = /失败：[1-9]/.test(message) || message.includes("无数据");
-    ElNotification({
-      title: hasFailure ? "发送完成（存在失败）" : "发送完成",
-      message,
-      type: hasFailure ? "warning" : "success",
-      duration: 8000
-    });
+    resultData.value = response?.data || [];
+    resultVisible.value = true;
     emit("reFetchTableData", true);
     closeHandle();
   }).finally(() => {
@@ -169,5 +171,10 @@ const sendHandle = () => {
 .my-dialog-body {
   max-height: 66vh;
   overflow-y: auto;
+}
+
+// 覆盖全局 .my-dialog-footer 的顶部分隔线，仅本页生效
+.my-dialog-footer {
+  border-top: none;
 }
 </style>

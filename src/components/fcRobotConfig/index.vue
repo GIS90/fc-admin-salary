@@ -36,8 +36,9 @@
             <el-table-column :label="`${entityName}名称`" show-overflow-tooltip>
               <template #default="scope">{{ scope.row.name || "-" }}</template>
             </el-table-column>
-            <el-table-column prop="key" label="APP-KEY" show-overflow-tooltip />
-            <el-table-column label="APP-SECRET" show-overflow-tooltip>
+            <el-table-column prop="agentId" :label="agentLabel" show-overflow-tooltip />
+            <el-table-column prop="key" :label="keyLabel" show-overflow-tooltip />
+            <el-table-column :label="secretLabel" show-overflow-tooltip>
               <template #default="scope">
                 <span v-if="scope.row.secret">••••••••</span>
                 <span v-else>-</span>
@@ -81,7 +82,7 @@ import { ref, reactive, computed } from "vue";
 import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
 import { drawerField } from "@/utils/attrs/field";
 import RobotEdit from "./edit.vue";
-import type { RobotApiSet } from "./model";
+import type { RobotApiSet, RobotFieldSchema } from "./model";
 
 const props = defineProps({
   visible: {
@@ -106,6 +107,11 @@ const dwField = { ...drawerField, ...dwConfigField };
 
 // 实体名称
 const entityName = computed(() => props.apiSet.entityName || "机器人");
+// 渠道字段配置（默认钉钉）
+const schema = computed<RobotFieldSchema>(() => props.apiSet.schema || {});
+const keyLabel = computed(() => schema.value.keyLabel || "AppKey");
+const secretLabel = computed(() => schema.value.secretLabel || "AppSecret");
+const agentLabel = computed(() => schema.value.agentLabel || "AgentId");
 
 const loading = ref(false);
 const pingLoading = ref("");

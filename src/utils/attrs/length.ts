@@ -90,6 +90,21 @@ let salaryDtalkRobotModel = {
     name: 30,
     key: 30,
     secret: 80,
+    agentId: 30,
+    description: 120
+}
+
+let salaryQywxModel = {
+    name: 80,
+    title: 50
+}
+
+// 工资->消息通知->企微绩效->Robot配置
+let salaryQywxRobotModel = {
+    name: 30,
+    key: 30,
+    secret: 80,
+    agentId: 30,
     description: 120
 }
 
@@ -108,4 +123,6 @@ export default {
     systemApiModel,
     salaryDtalkModel,
     salaryDtalkRobotModel,
+    salaryQywxModel,
+    salaryQywxRobotModel,
 }

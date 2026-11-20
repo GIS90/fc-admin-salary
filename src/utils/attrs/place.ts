@@ -104,8 +104,25 @@ let salaryDtalkModel = {
 // 工资->消息通知->钉钉绩效->Robot配置
 let salaryDtalkRobotModel = {
     name: "请输入消息机器人名称",
-    key: "请输入消息机器人APP-KEY",
-    secret: "请输入消息机器人APP-SECRET",
+    key: "请输入AppKey",
+    secret: "请输入AppSecret",
+    agentId: "请输入AgentId（选填）",
+    description: "请输入消息机器人描述"
+}
+
+let salaryQywxModel = {
+    name: "请输入文件名称（.xls、.xlsx）",
+    title: "请输入当前Sheet的消息标题，为空时默认使用时间+自动化提醒",
+    setSheet: "请选择需要发送消息的Sheet，支持多选",
+    column: "请选择消息列头，支持多选"
+}
+
+// 工资->消息通知->企微绩效->Robot配置
+let salaryQywxRobotModel = {
+    name: "请输入消息机器人名称",
+    key: "请输入企业ID（CorpID）",
+    secret: "请输入应用密钥（Secret）",
+    agentId: "请输入应用ID（AgentId）",
     description: "请输入消息机器人描述"
 }
 
@@ -124,4 +141,6 @@ export default {
     systemApiModel,
     salaryDtalkModel,
     salaryDtalkRobotModel,
+    salaryQywxModel,
+    salaryQywxRobotModel,
 }

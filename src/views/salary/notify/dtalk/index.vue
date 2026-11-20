@@ -23,7 +23,7 @@
 
     <!--数据区-->
     <el-main class="nopadding">
-      <fc-filter-table ref="fcTableRef" :apiName="apiName" :requestApi="fetchTableData" :initParam="requestParam" :columns="columns"
+      <fc-filter-table ref="fcTableRef" :tableName="apiName" :requestApi="fetchTableData" :initParam="requestParam" :columns="columns"
                        :rowKey="ftField.rowKey" :stripe="ftField.stripe" :border="ftField.border" :pagination="ftField.pagination"
                        :showBottomView="ftField.showBottomView" :showRefreshBtn="ftField.showRefreshBtn"
                        :showColumnBtn="ftField.showColumnBtn" :showDownloadBtn="ftField.showDownloadBtn">
@@ -127,7 +127,7 @@
     </el-main>
 
     <!--文件上传-->
-    <fc-upload-file v-model:visible="uploadVisible" uploadDialogTitle="钉钉绩效文件上传" uploadType="4" @reFetchTableData="reFetchTableData" />
+    <fc-upload-file v-model:visible="uploadVisible" uploadDialogTitle="文件上传" uploadType="4" @reFetchTableData="reFetchTableData" />
 
     <!--设置-->
     <DtalkSet v-model:visible="setVisible" :md5="rowMd5" @reFetchTableData="reFetchTableData" />
@@ -222,6 +222,8 @@ import { SysConfigXtcsKeyApi, TableFieldColumnApi } from "@/api/modules/common";
 import { ColumnProps, FcFilterTableInstance } from "@/components/fcFilterTable/model";
 import { DtalkListModel } from "@/models/salaryModel";
 import { fcTableField, buttonField } from "@/utils/attrs/field";
+import publicLength from "@/utils/attrs/length";
+import publicPlaceHolder from "@/utils/attrs/place";
 import FcUploadFile from "@/components/fcUploadFile/index.vue";
 import FcRobotConfig from "@/components/fcRobotConfig/index.vue";
 import type { RobotApiSet } from "@/components/fcRobotConfig/model";
@@ -239,7 +241,17 @@ const dtalkRobotApiSet: RobotApiSet = {
   batchRemove: SalaryNotifyDtalkRobotBatchDeleteApi,
   select: SalaryNotifyDtalkRobotSelectApi,
   ping: SalaryNotifyDtalkRobotPingApi,
-  entityName: "机器人"
+  entityName: "机器人",
+  schema: {
+    keyLabel: "AppKey",
+    secretLabel: "AppSecret",
+    agentLabel: "AgentId",
+    agentRequired: false,
+    length: publicLength.salaryDtalkRobotModel,
+    placeholder: publicPlaceHolder.salaryDtalkRobotModel
+  },
+  docKey: "SALARY-DTALK-ROBOT",
+  docLabel: "官网手册"
 };
 
 // fc-table属性

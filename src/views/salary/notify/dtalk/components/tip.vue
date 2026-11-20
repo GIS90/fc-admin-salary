@@ -82,7 +82,7 @@ const dgField = { ...dialogField, ...dgConfigField };
 const steps = [
   {
     title: "配置通知机器人",
-    desc: "进入「Robot配置」，新增机器人并填写 APP-KEY、APP-SECRET，可点击 Ping 验证配置是否正确，并勾选「设为默认」。"
+    desc: "进入「Robot配置」，新增机器人并填写 APP-KEY、APP-SECRET（应用ID AgentId 选填），可点击 Ping 验证配置是否正确，并勾选「设为默认」。"
   },
   {
     title: "上传薪资文件",
