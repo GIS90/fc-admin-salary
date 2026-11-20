@@ -98,6 +98,22 @@
           </el-popover>
           <span v-else class="empty-text">-</span>
         </template>
+        <!-- 成功名单 -->
+        <template #success="scope">
+          <el-link v-if="userCount(scope.row.success)" type="success" :underline="false" class="list-link"
+                   @click="openUserList('success', scope.row)">
+            <el-icon><User /></el-icon>{{ userCount(scope.row.success) }} 人
+          </el-link>
+          <span v-else class="empty-text">-</span>
+        </template>
+        <!-- 失败名单 -->
+        <template #failure="scope">
+          <el-link v-if="userCount(scope.row.failure)" type="danger" :underline="false" class="list-link"
+                   @click="openUserList('failure', scope.row)">
+            <el-icon><User /></el-icon>{{ userCount(scope.row.failure) }} 人
+          </el-link>
+          <span v-else class="empty-text">-</span>
+        </template>
         <!-- 表格操作 -->
         <template #options="scope">
           <el-tooltip effect="dark" content="设置" placement="top">
@@ -108,6 +124,11 @@
           <el-tooltip effect="dark" content="发送" placement="top">
             <el-icon class="table-handle-icon margin-left-30px" @click="sendHandle(scope.row)">
               <Promotion />
+            </el-icon>
+          </el-tooltip>
+          <el-tooltip v-if="userCount(scope.row.failure)" effect="dark" content="重发失败人员" placement="top">
+            <el-icon class="table-handle-icon margin-left-30px" @click="resendHandle(scope.row)">
+              <RefreshRight />
             </el-icon>
           </el-tooltip>
           <el-tooltip effect="dark" content="下载" placement="top">
@@ -137,6 +158,15 @@
 
     <!--发送-->
     <DtalkSend v-model:visible="sendVisible" :md5="rowMd5" @reFetchTableData="reFetchTableData" />
+
+    <!--重发-->
+    <NotifyResend v-model:visible="resendVisible" :md5="resendMd5"
+                  :init-api="SalaryNotifyDtalkResendInitApi" :resend-api="SalaryNotifyDtalkResendApi"
+                  @reFetchTableData="reFetchTableData" />
+
+    <!--人员名单-->
+    <UserListDrawer v-model:visible="userListVisible" :type="userListType" :users="userListUsers"
+                    :sheet-names="userListSheetNames" :file-name="userListFileName" />
 
     <!--操作说明-->
     <DtalkTip v-model:visible="tipVisible" />
@@ -216,7 +246,9 @@ import {
   SalaryNotifyDtalkRobotDeleteApi,
   SalaryNotifyDtalkRobotBatchDeleteApi,
   SalaryNotifyDtalkRobotSelectApi,
-  SalaryNotifyDtalkRobotPingApi
+  SalaryNotifyDtalkRobotPingApi,
+  SalaryNotifyDtalkResendInitApi,
+  SalaryNotifyDtalkResendApi
 } from "@/api/modules/salaryNotify";
 import { SysConfigXtcsKeyApi, TableFieldColumnApi } from "@/api/modules/common";
 import { ColumnProps, FcFilterTableInstance } from "@/components/fcFilterTable/model";
@@ -229,6 +261,8 @@ import FcRobotConfig from "@/components/fcRobotConfig/index.vue";
 import type { RobotApiSet } from "@/components/fcRobotConfig/model";
 import DtalkSet from "./components/set.vue";
 import DtalkSend from "./components/send.vue";
+import NotifyResend from "../components/resend.vue";
+import UserListDrawer from "../components/userListDrawer.vue";
 import DtalkTip from "./components/tip.vue";
 
 // Robot配置接口集合（钉钉）
@@ -272,6 +306,13 @@ const setVisible = ref(false);
 const sendVisible = ref(false);
 const robotVisible = ref(false);
 const tipVisible = ref(false);
+const resendVisible = ref(false);
+const resendMd5 = ref("");
+const userListVisible = ref(false);
+const userListType = ref<"success" | "failure">("success");
+const userListUsers = ref<Record<string, string[]> | string[]>({});
+const userListSheetNames = ref<any[]>([]);
+const userListFileName = ref("");
 const rowMd5 = ref("");
 const apiName = "SalaryNotifyDtalk"; // 组件标识名称
 
@@ -310,6 +351,37 @@ const normalizeSheetNames = (raw: any): { key: string; value: string }[] => {
 
 // 行数据的 Sheet 列表（模板中使用）
 const sheetList = (row: any) => normalizeSheetNames(row?.sheetNames);
+
+// 解析 success/failure 字段：兼容 JSON 字符串、按 Sheet 分组对象与旧扁平数组
+const parseUserMap = (raw: any): Record<string, string[]> => {
+  if (!raw) return {};
+  if (typeof raw === "string") {
+    try {
+      return parseUserMap(JSON.parse(raw));
+    } catch {
+      return {};
+    }
+  }
+  if (Array.isArray(raw)) {
+    return { "0": raw.map((item) => String(item)) };
+  }
+  if (typeof raw === "object") {
+    return Object.keys(raw).reduce((acc: Record<string, string[]>, key: string) => {
+      const users = (raw as any)[key];
+      acc[key] = Array.isArray(users) ? users.map((item) => String(item)) : [];
+      return acc;
+    }, {});
+  }
+  return {};
+};
+
+// 人员名单数量
+const userCount = (raw: any): number => {
+  const map = parseUserMap(raw);
+  return (Object.values(map) as string[][]).reduce(
+    (sum: number, list: string[]) => sum + list.length, 0
+  );
+};
 
 // 判断某个 sheet 是否为已选的操作 Sheet（优先使用后端返回的 setSheetIndex，其次按名称匹配）
 const isSheetSelected = (row: any, key: string): boolean => {
@@ -360,6 +432,15 @@ const fetchTableFieldColumn = async () => {
   const response = await TableFieldColumnApi({ xtbb: apiName });
   if (response.code === 100 && response.data) {
     columns.value = response.data as ColumnProps<DtalkListModel>[];
+    // 确保成功/失败字段列存在（slot 自定义展示）
+    [
+      { prop: "success", label: "成功名单", align: "center", minWidth: 100 },
+      { prop: "failure", label: "失败名单", align: "center", minWidth: 100 }
+    ].forEach((column: any) => {
+      if (!columns.value.some((item: any) => item?.prop === column.prop)) {
+        columns.value.push(column as any);
+      }
+    });
   } else {
     ElNotification({
       title: "提示",
@@ -392,6 +473,21 @@ const setHandle = (row: DtalkListModel) => {
 const sendHandle = (row: DtalkListModel) => {
   rowMd5.value = row.md5;
   sendVisible.value = true;
+};
+
+// 重发失败人员
+const resendHandle = (row: DtalkListModel) => {
+  resendMd5.value = row.md5;
+  resendVisible.value = true;
+};
+
+// 打开人员名单 Drawer
+const openUserList = (type: "success" | "failure", row: DtalkListModel) => {
+  userListType.value = type;
+  userListUsers.value = parseUserMap(type === "success" ? row.success : row.failure);
+  userListSheetNames.value = row.sheetNames || [];
+  userListFileName.value = row.fileName || "";
+  userListVisible.value = true;
 };
 
 // 单条删除
@@ -483,6 +579,14 @@ const templateHandle = () => {
 
 .empty-text {
   color: var(--el-text-color-placeholder);
+}
+
+.list-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 .mr-6px {
@@ -612,6 +716,10 @@ const templateHandle = () => {
     flex: 0 0 auto;
     font-size: 12px;
     color: var(--el-text-color-placeholder);
+  }
+
+  .name-tag {
+    margin: 0 4px 6px 0;
   }
 
   // 消息标题面板（格式：Sheet名称【索引】：消息标题）

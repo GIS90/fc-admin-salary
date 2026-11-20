@@ -98,6 +98,22 @@
           </el-popover>
           <span v-else class="empty-text">-</span>
         </template>
+        <!-- 成功名单 -->
+        <template #successUsers="scope">
+          <el-link v-if="userCount(scope.row.successUsers)" type="success" :underline="false" class="list-link"
+                   @click="openUserList('success', scope.row)">
+            <el-icon><User /></el-icon>{{ userCount(scope.row.successUsers) }} 人
+          </el-link>
+          <span v-else class="empty-text">-</span>
+        </template>
+        <!-- 失败名单 -->
+        <template #failureUsers="scope">
+          <el-link v-if="userCount(scope.row.failureUsers)" type="danger" :underline="false" class="list-link"
+                   @click="openUserList('failure', scope.row)">
+            <el-icon><User /></el-icon>{{ userCount(scope.row.failureUsers) }} 人
+          </el-link>
+          <span v-else class="empty-text">-</span>
+        </template>
         <!-- 表格操作 -->
         <template #options="scope">
           <el-tooltip effect="dark" content="设置" placement="top">
@@ -108,6 +124,11 @@
           <el-tooltip effect="dark" content="发送" placement="top">
             <el-icon class="table-handle-icon margin-left-30px" @click="sendHandle(scope.row)">
               <Promotion />
+            </el-icon>
+          </el-tooltip>
+          <el-tooltip v-if="userCount(scope.row.failureUsers)" effect="dark" content="重发失败人员" placement="top">
+            <el-icon class="table-handle-icon margin-left-30px" @click="resendHandle(scope.row)">
+              <RefreshRight />
             </el-icon>
           </el-tooltip>
           <el-tooltip effect="dark" content="下载" placement="top">
@@ -137,6 +158,15 @@
 
     <!--发送-->
     <QywxSend v-model:visible="sendVisible" :md5="rowMd5" @reFetchTableData="reFetchTableData" />
+
+    <!--重发-->
+    <NotifyResend v-model:visible="resendVisible" :md5="resendMd5"
+                  :init-api="SalaryNotifyQywxResendInitApi" :resend-api="SalaryNotifyQywxResendApi"
+                  @reFetchTableData="reFetchTableData" />
+
+    <!--人员名单-->
+    <UserListDrawer v-model:visible="userListVisible" :type="userListType" :users="userListUsers"
+                    :sheet-names="userListSheetNames" :file-name="userListFileName" />
 
     <!--操作说明-->
     <QywxTip v-model:visible="tipVisible" />
@@ -216,7 +246,9 @@ import {
   SalaryNotifyQywxRobotDeleteApi,
   SalaryNotifyQywxRobotBatchDeleteApi,
   SalaryNotifyQywxRobotSelectApi,
-  SalaryNotifyQywxRobotPingApi
+  SalaryNotifyQywxRobotPingApi,
+  SalaryNotifyQywxResendInitApi,
+  SalaryNotifyQywxResendApi
 } from "@/api/modules/salaryNotify";
 import { SysConfigXtcsKeyApi, TableFieldColumnApi } from "@/api/modules/common";
 import { ColumnProps, FcFilterTableInstance } from "@/components/fcFilterTable/model";
@@ -230,6 +262,8 @@ import type { RobotApiSet } from "@/components/fcRobotConfig/model";
 import QywxSet from "./components/set.vue";
 import QywxSend from "./components/send.vue";
 import QywxTip from "./components/tip.vue";
+import NotifyResend from "../components/resend.vue";
+import UserListDrawer from "../components/userListDrawer.vue";
 
 // Robot配置接口集合（企业微信）
 const qywxRobotApiSet: RobotApiSet = {
@@ -273,6 +307,13 @@ const setVisible = ref(false);
 const sendVisible = ref(false);
 const robotVisible = ref(false);
 const tipVisible = ref(false);
+const resendVisible = ref(false);
+const resendMd5 = ref("");
+const userListVisible = ref(false);
+const userListType = ref<"success" | "failure">("success");
+const userListUsers = ref<Record<string, string[]> | string[]>({});
+const userListSheetNames = ref<any[]>([]);
+const userListFileName = ref("");
 const rowMd5 = ref("");
 const apiName = "SalaryNotifyQywx"; // 组件标识名称
 
@@ -311,6 +352,18 @@ const normalizeSheetNames = (raw: any): { key: string; value: string }[] => {
 
 // 行数据的 Sheet 列表（模板中使用）
 const sheetList = (row: any) => normalizeSheetNames(row?.sheetNames);
+
+// 人员名单数量：兼容按 Sheet 分组对象与旧扁平数组
+const userCount = (raw: any): number => {
+  if (!raw) return 0;
+  if (Array.isArray(raw)) return raw.length;
+  if (typeof raw === "object") {
+    return (Object.values(raw) as unknown[]).reduce(
+      (sum: number, list: any) => sum + (Array.isArray(list) ? list.length : 0), 0
+    );
+  }
+  return 0;
+};
 
 // 判断某个 sheet 是否为已选的操作 Sheet
 const isSheetSelected = (row: any, key: string): boolean => {
@@ -361,6 +414,11 @@ const fetchTableFieldColumn = async () => {
   const response = await TableFieldColumnApi({ xtbb: apiName });
   if (response.code === 100 && response.data) {
     columns.value = response.data as ColumnProps<QywxListModel>[];
+    // 追加成功/失败名单列（slot 自定义展示）
+    columns.value.push(
+      { prop: "successUsers", label: "成功名单", align: "center", minWidth: 100 } as any,
+      { prop: "failureUsers", label: "失败名单", align: "center", minWidth: 100 } as any
+    );
   } else {
     ElNotification({
       title: "提示",
@@ -393,6 +451,21 @@ const setHandle = (row: QywxListModel) => {
 const sendHandle = (row: QywxListModel) => {
   rowMd5.value = row.md5;
   sendVisible.value = true;
+};
+
+// 重发失败人员
+const resendHandle = (row: QywxListModel) => {
+  resendMd5.value = row.md5;
+  resendVisible.value = true;
+};
+
+// 打开人员名单 Drawer
+const openUserList = (type: "success" | "failure", row: QywxListModel) => {
+  userListType.value = type;
+  userListUsers.value = type === "success" ? row.successUsers || {} : row.failureUsers || {};
+  userListSheetNames.value = row.sheetNames || [];
+  userListFileName.value = row.fileName || "";
+  userListVisible.value = true;
 };
 
 // 单条删除
@@ -484,6 +557,14 @@ const templateHandle = () => {
 
 .empty-text {
   color: var(--el-text-color-placeholder);
+}
+
+.list-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 .mr-6px {
@@ -613,6 +694,10 @@ const templateHandle = () => {
     flex: 0 0 auto;
     font-size: 12px;
     color: var(--el-text-color-placeholder);
+  }
+
+  .name-tag {
+    margin: 0 4px 6px 0;
   }
 
   // 消息标题面板（格式：Sheet名称【索引】：消息标题）

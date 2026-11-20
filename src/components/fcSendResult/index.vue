@@ -153,6 +153,10 @@
           <el-tag type="danger" effect="dark" size="small" class="failure-panel-count">
             {{ totalFailure }} 人
           </el-tag>
+          <el-button type="danger" size="small" plain icon="DocumentCopy" class="copy-all-btn"
+                     @click="copyFailureUsers()">
+            一键复制全部
+          </el-button>
         </div>
         <div class="failure-panel-body">
           <div v-for="group in failureGroups" :key="group.sheet" class="failure-group">
@@ -160,6 +164,10 @@
               <el-icon><Document /></el-icon>
               {{ group.sheetName || `表 ${group.sheet}` }}
               <span class="failure-group-count">{{ group.users.length }} 人失败</span>
+              <el-button link type="danger" size="small" icon="DocumentCopy"
+                         @click="copyFailureUsers(group)">
+                复制本组
+              </el-button>
             </div>
             <div class="failure-tags">
               <el-tag v-for="(uid, i) in group.users" :key="i" type="danger" effect="plain" size="small" class="user-tag">
@@ -181,6 +189,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, watch } from "vue";
+import { ElMessage } from "element-plus";
 import {
   CircleCheckFilled, CircleCloseFilled, DataAnalysis,
   Document, Files, WarningFilled
@@ -309,6 +318,33 @@ const resultTagText = (item: SendResultItem): string => {
   if (!item.ok) return item.message || "发送失败";
   if ((item.data?.failure ?? 0) > 0) return "部分失败";
   return "全部成功";
+};
+
+// 复制失败名单（换行分隔）；不传 group 时复制全部
+const copyFailureUsers = async (group?: { sheet: string; sheetName?: string; users: string[] }) => {
+  const users = group ? group.users : failureGroups.value.flatMap((item) => item.users);
+  if (!users.length) {
+    ElMessage.warning("暂无可复制的失败名单");
+    return;
+  }
+  const text = users.join("\n");
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+    } else {
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
+    }
+    ElMessage.success(`已复制 ${users.length} 个失败名单`);
+  } catch {
+    ElMessage.error("复制失败，请手动选择复制");
+  }
 };
 
 const closeHandle = () => {
@@ -560,6 +596,10 @@ const closeHandle = () => {
   margin-left: auto;
 }
 
+.copy-all-btn {
+  margin-left: 4px;
+}
+
 .failure-panel-body {
   padding: 12px 14px;
   max-height: 220px;
@@ -589,6 +629,10 @@ const closeHandle = () => {
   font-size: 12px;
   font-weight: 400;
   color: var(--el-color-danger);
+}
+
+.failure-group-title :deep(.el-button) {
+  margin-left: auto;
 }
 
 .num-success {

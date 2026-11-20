@@ -1,8 +1,8 @@
 import http from "@/api";
 import { ResultPage } from "@/api/utils/models";
 import { RequestMd5Model, RequestMd5Models } from "@/models/X";
-import { DtalkListModel, DtalkDetailModel, DtalkRobotModel, DtalkSendInitModel } from "@/models/salaryModel";
-import { QywxListModel, QywxDetailModel, QywxRobotModel, QywxSendInitModel } from "@/models/salaryModel";
+import { DtalkListModel, DtalkDetailModel, DtalkRobotModel, DtalkSendInitModel, DtalkResendInitModel } from "@/models/salaryModel";
+import { QywxListModel, QywxDetailModel, QywxRobotModel, QywxSendInitModel, QywxResendInitModel } from "@/models/salaryModel";
 
 
 /* * * * * * * * * * * * * * * * * * * * * * [工资 > 消息通知 > 钉钉通知] * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -49,6 +49,16 @@ export const SalaryNotifyDtalkSendInitApi = (params: RequestMd5Model) => {
 // [POST]发送
 export const SalaryNotifyDtalkSendApi = (params: any) => {
     return http.post('/salary/notify/dtalk.send', params);
+};
+
+// [GET]重发初始化
+export const SalaryNotifyDtalkResendInitApi = (params: RequestMd5Model) => {
+    return http.get<DtalkResendInitModel>('/salary/notify/dtalk.resendInit', params);
+};
+
+// [POST]重发失败人员
+export const SalaryNotifyDtalkResendApi = (params: any) => {
+    return http.post('/salary/notify/dtalk.resend', params);
 };
 
 // [GET]机器人列表
@@ -131,6 +141,16 @@ export const SalaryNotifyQywxSendInitApi = (params: RequestMd5Model) => {
 // [POST]发送
 export const SalaryNotifyQywxSendApi = (params: any) => {
     return http.post('/salary/notify/qywx.send', params);
+};
+
+// [GET]重发初始化
+export const SalaryNotifyQywxResendInitApi = (params: RequestMd5Model) => {
+    return http.get<QywxResendInitModel>('/salary/notify/qywx.resendInit', params);
+};
+
+// [POST]重发失败人员
+export const SalaryNotifyQywxResendApi = (params: any) => {
+    return http.post('/salary/notify/qywx.resend', params);
 };
 
 // [GET]机器人列表

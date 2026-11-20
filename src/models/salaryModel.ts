@@ -8,6 +8,16 @@ export interface DtalkSheetName {
     value: string;
 }
 
+// 按 Sheet 索引分组的人员名单
+export type SheetUserMap = Record<string, string[]>;
+
+// 按 Sheet 分组的重发人员项
+export interface SheetUserGroup {
+    sheet: string;
+    sheetName?: string;
+    users: string[];
+}
+
 // 列表数据
 export interface DtalkListModel {
     id: number;
@@ -19,6 +29,10 @@ export interface DtalkListModel {
     count: number;
     number: number;
     setTitle: string;
+    success: string;
+    failure: string;
+    successUsers: SheetUserMap;
+    failureUsers: SheetUserMap;
     createRtx: string;
     createTime: string;
     url: string;
@@ -58,6 +72,16 @@ export interface DtalkSendInitModel {
     robotEnums: { key: string; value: string }[];
 }
 
+// 重发初始化
+export interface DtalkResendInitModel {
+    sheetIndex: string[];
+    sheetNames: DtalkSheetName[];
+    failureUsers: SheetUserMap;
+    failureGroups: SheetUserGroup[];
+    robotIndex: string;
+    robotEnums: { key: string; value: string }[];
+}
+
 /**
  * 工资 > 消息通知 > 企业微信通知
  */
@@ -79,6 +103,10 @@ export interface QywxListModel {
     count: number;
     number: number;
     setTitle: string;
+    success: string;
+    failure: string;
+    successUsers: SheetUserMap;
+    failureUsers: SheetUserMap;
     createRtx: string;
     createTime: string;
     url: string;
@@ -115,6 +143,16 @@ export interface QywxRobotModel {
 export interface QywxSendInitModel {
     sheetIndex: string[];
     sheetNames: QywxSheetName[];
+    robotIndex: string;
+    robotEnums: { key: string; value: string }[];
+}
+
+// 重发初始化
+export interface QywxResendInitModel {
+    sheetIndex: string[];
+    sheetNames: QywxSheetName[];
+    failureUsers: SheetUserMap;
+    failureGroups: SheetUserGroup[];
     robotIndex: string;
     robotEnums: { key: string; value: string }[];
 }

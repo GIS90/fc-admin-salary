@@ -42,10 +42,10 @@
 
       <el-alert type="warning" :closable="false" show-icon title="注意事项">
         <div class="tip-warning">
-          <p>1、文件第一列必须为钉钉 User-ID，其余列为消息内容。</p>
-          <p>2、相同文件重复上传时会提示「文件数据已存在」，无需重复上传。</p>
+          <p>1、文件第一列必须为钉钉_User_ID，其余列为消息内容。</p>
+          <p>2、发送执行1此后，建议用失败人员重发功能，不然再次点击发送会重置发送成功人员、发送失败人员数据。</p>
           <p>3、删除操作为软删除，删除后不可在列表查看。</p>
-        </div>
+          </div>
       </el-alert>
     </div>
 
@@ -86,7 +86,7 @@ const steps = [
   },
   {
     title: "上传薪资文件",
-    desc: "点击「上传」选择薪资 Excel 文件（.xls、.xlsx），第一列必须为钉钉 User-ID，其余列为消息内容。上传成功后列表会显示文件的 Sheet 信息。"
+    desc: "点击「上传」选择薪资 Excel 文件（.xls、.xlsx），第一列必须为钉钉_User_ID，其余列为消息内容。上传成功后列表会显示文件的 Sheet 信息。"
   },
   {
     title: "设置消息内容",
