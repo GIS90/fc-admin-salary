@@ -99,18 +99,18 @@
           <span v-else class="empty-text">-</span>
         </template>
         <!-- 成功名单 -->
-        <template #successUsers="scope">
-          <el-link v-if="userCount(scope.row.successUsers)" type="success" :underline="false" class="list-link"
+        <template #success="scope">
+          <el-link v-if="userCount(scope.row.success)" type="success" :underline="false" class="list-link"
                    @click="openUserList('success', scope.row)">
-            <el-icon><User /></el-icon>{{ userCount(scope.row.successUsers) }} 人
+            <el-icon><User /></el-icon>{{ userCount(scope.row.success) }} 人
           </el-link>
           <span v-else class="empty-text">-</span>
         </template>
         <!-- 失败名单 -->
-        <template #failureUsers="scope">
-          <el-link v-if="userCount(scope.row.failureUsers)" type="danger" :underline="false" class="list-link"
+        <template #failure="scope">
+          <el-link v-if="userCount(scope.row.failure)" type="danger" :underline="false" class="list-link"
                    @click="openUserList('failure', scope.row)">
-            <el-icon><User /></el-icon>{{ userCount(scope.row.failureUsers) }} 人
+            <el-icon><User /></el-icon>{{ userCount(scope.row.failure) }} 人
           </el-link>
           <span v-else class="empty-text">-</span>
         </template>
@@ -126,7 +126,7 @@
               <Promotion />
             </el-icon>
           </el-tooltip>
-          <el-tooltip v-if="userCount(scope.row.failureUsers)" effect="dark" content="重发失败人员" placement="top">
+          <el-tooltip v-if="userCount(scope.row.failure)" effect="dark" content="重发失败人员" placement="top">
             <el-icon class="table-handle-icon margin-left-30px" @click="resendHandle(scope.row)">
               <RefreshRight />
             </el-icon>
@@ -353,16 +353,35 @@ const normalizeSheetNames = (raw: any): { key: string; value: string }[] => {
 // 行数据的 Sheet 列表（模板中使用）
 const sheetList = (row: any) => normalizeSheetNames(row?.sheetNames);
 
-// 人员名单数量：兼容按 Sheet 分组对象与旧扁平数组
-const userCount = (raw: any): number => {
-  if (!raw) return 0;
-  if (Array.isArray(raw)) return raw.length;
-  if (typeof raw === "object") {
-    return (Object.values(raw) as unknown[]).reduce(
-      (sum: number, list: any) => sum + (Array.isArray(list) ? list.length : 0), 0
-    );
+// 解析 success/failure 字段：兼容 JSON 字符串、按 Sheet 分组对象与旧扁平数组
+const parseUserMap = (raw: any): Record<string, string[]> => {
+  if (!raw) return {};
+  if (typeof raw === "string") {
+    try {
+      return parseUserMap(JSON.parse(raw));
+    } catch {
+      return {};
+    }
   }
-  return 0;
+  if (Array.isArray(raw)) {
+    return { "0": raw.map((item) => String(item)) };
+  }
+  if (typeof raw === "object") {
+    return Object.keys(raw).reduce((acc: Record<string, string[]>, key: string) => {
+      const users = (raw as any)[key];
+      acc[key] = Array.isArray(users) ? users.map((item) => String(item)) : [];
+      return acc;
+    }, {});
+  }
+  return {};
+};
+
+// 人员名单数量
+const userCount = (raw: any): number => {
+  const map = parseUserMap(raw);
+  return (Object.values(map) as string[][]).reduce(
+    (sum: number, list: string[]) => sum + list.length, 0
+  );
 };
 
 // 判断某个 sheet 是否为已选的操作 Sheet
@@ -414,11 +433,15 @@ const fetchTableFieldColumn = async () => {
   const response = await TableFieldColumnApi({ xtbb: apiName });
   if (response.code === 100 && response.data) {
     columns.value = response.data as ColumnProps<QywxListModel>[];
-    // 追加成功/失败名单列（slot 自定义展示）
-    columns.value.push(
-      { prop: "successUsers", label: "成功名单", align: "center", minWidth: 100 } as any,
-      { prop: "failureUsers", label: "失败名单", align: "center", minWidth: 100 } as any
-    );
+    // 确保成功/失败字段列存在（slot 自定义展示）
+    [
+      { prop: "success", label: "成功名单", align: "center", minWidth: 100 },
+      { prop: "failure", label: "失败名单", align: "center", minWidth: 100 }
+    ].forEach((column: any) => {
+      if (!columns.value.some((item: any) => item?.prop === column.prop)) {
+        columns.value.push(column as any);
+      }
+    });
   } else {
     ElNotification({
       title: "提示",
@@ -462,7 +485,7 @@ const resendHandle = (row: QywxListModel) => {
 // 打开人员名单 Drawer
 const openUserList = (type: "success" | "failure", row: QywxListModel) => {
   userListType.value = type;
-  userListUsers.value = type === "success" ? row.successUsers || {} : row.failureUsers || {};
+  userListUsers.value = parseUserMap(type === "success" ? row.success : row.failure);
   userListSheetNames.value = row.sheetNames || [];
   userListFileName.value = row.fileName || "";
   userListVisible.value = true;

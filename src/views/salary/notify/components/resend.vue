@@ -44,7 +44,7 @@
 
       <el-form label-width="90px" v-loading="loading">
         <el-form-item label="机器人" required>
-          <el-select v-model="robot" placeholder="请选择机器人" style="width: 100%;">
+          <el-select v-model="robot" placeholder="请选择机器人" style="width: 100%;" :disabled="btnDisabled">
             <el-option v-for="item in robotEnums" :key="item.key" :label="item.value" :value="item.key" />
           </el-select>
         </el-form-item>
@@ -66,7 +66,7 @@
                 </div>
               </div>
               <el-checkbox-group v-model="selectedBySheet[group.sheet]" class="user-group">
-                <el-checkbox v-for="uid in group.users" :key="uid" :value="uid" :label="uid" class="user-checkbox">
+                <el-checkbox v-for="uid in group.users" :key="uid" :value="uid" :label="uid" class="user-checkbox" :disabled="btnDisabled">
                   {{ uid }}
                 </el-checkbox>
               </el-checkbox-group>
