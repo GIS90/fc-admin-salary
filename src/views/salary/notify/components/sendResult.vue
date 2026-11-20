@@ -677,4 +677,44 @@ const closeHandle = () => {
     padding: 12px 22px 18px;
   }
 }
+
+// 全屏时让内容区撑满，避免底部出现大块空白
+.fc-send-result-dialog.is-fullscreen {
+  display: flex;
+  flex-direction: column;
+
+  .el-dialog__header,
+  .el-dialog__footer {
+    flex: 0 0 auto;
+  }
+
+  .el-dialog__body {
+    flex: 1 1 auto;
+    height: auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .result-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .failure-panel {
+    flex: 1 1 auto;
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .failure-panel-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
+  }
+}
 </style>

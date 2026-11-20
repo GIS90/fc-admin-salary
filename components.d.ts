@@ -90,7 +90,6 @@ declare module 'vue' {
     FcQuery: typeof import('./src/components/fcQuery/index.vue')['default']
     FcRobotConfig: typeof import('./src/components/fcRobotConfig/index.vue')['default']
     FcSelectFilter: typeof import('./src/components/fcSelectFilter/index.vue')['default']
-    FcSendResult: typeof import('./src/components/fcSendResult/index.vue')['default']
     FcStatistic: typeof import('./src/components/fcStatistic/index.vue')['default']
     FcTable: typeof import('./src/components/fcTable/index.vue')['default']
     FcTreeFilter: typeof import('./src/components/fcTreeFilter/index.vue')['default']

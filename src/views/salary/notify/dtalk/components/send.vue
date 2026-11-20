@@ -62,7 +62,7 @@
   </el-dialog>
 
   <!--发送结果-->
-  <FcSendResult v-model:visible="resultVisible" :results="resultData" />
+  <SendResult v-model:visible="resultVisible" :results="resultData" />
 </template>
 
 <script setup lang="ts">
@@ -72,7 +72,7 @@ import { dialogField, selectMultiField } from "@/utils/attrs/field";
 import { SalaryNotifyDtalkSendInitApi, SalaryNotifyDtalkSendApi } from "@/api/modules/salaryNotify";
 import { DtalkSheetName } from "@/models/salaryModel";
 import publicPlaceHolder from "@/utils/attrs/place";
-import FcSendResult from "@/components/fcSendResult/index.vue";
+import SendResult from "@/views/salary/notify/components/sendResult.vue";
 
 const DtalkPlace = publicPlaceHolder.salaryDtalkModel;
 const props = defineProps({
@@ -107,7 +107,7 @@ const form = reactive({
   sheet: [] as string[]
 });
 
-// 发送结果（展示由 FcSendResult 组件负责）
+// 发送结果（展示由 SendResult 组件负责）
 const resultVisible = ref(false);
 const resultData = ref<any[]>([]);
 

@@ -86,14 +86,14 @@
   </el-dialog>
 
   <!--发送结果：放在重发弹窗外部，避免父弹窗 destroy-on-close 时一起销毁-->
-  <FcSendResult v-model:visible="resultVisible" :results="resultData" />
+  <SendResult v-model:visible="resultVisible" :results="resultData" />
 </template>
 
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from "vue";
 import { ElMessage } from "element-plus";
 import { dialogField } from "@/utils/attrs/field";
-import FcSendResult from "@/components/fcSendResult/index.vue";
+import SendResult from "@/views/salary/notify/components/sendResult.vue";
 
 interface FailureGroup {
   sheet: string;
