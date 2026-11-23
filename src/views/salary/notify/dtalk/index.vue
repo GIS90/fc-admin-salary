@@ -159,7 +159,7 @@
     <FcRobotConfig v-model:visible="robotVisible" :api-set="dtalkRobotApiSet" />
 
     <!--发送-->
-    <DtalkSend v-model:visible="sendVisible" :md5="rowMd5" @reFetchTableData="reFetchTableData" />
+    <DtalkSend v-model:visible="sendVisible" :md5="sendMd5" @reFetchTableData="reFetchTableData" />
 
     <!--重发-->
     <NotifyResend v-model:visible="resendVisible" :md5="resendMd5"
@@ -316,6 +316,7 @@ const userListUsers = ref<Record<string, string[]> | string[]>({});
 const userListSheetNames = ref<any[]>([]);
 const userListFileName = ref("");
 const rowMd5 = ref("");
+const sendMd5 = ref("");
 const apiName = "SalaryNotifyDtalk"; // 组件标识名称
 
 // 详情 Drawer
@@ -473,7 +474,7 @@ const setHandle = (row: DtalkListModel) => {
 
 // 发送
 const sendHandle = (row: DtalkListModel) => {
-  rowMd5.value = row.md5;
+  sendMd5.value = row.md5;
   sendVisible.value = true;
 };
 

@@ -100,6 +100,7 @@ const dgField = { ...dialogField, ...dgConfigField };
 const loading = ref(false);
 const btnDisabled = ref(false);
 const btnLoading = ref(false);
+const currentMd5 = ref("");
 const sheetNames = ref<EmailSheetName[]>([]);
 const robotEnums = ref<{ key: string; value: string }[]>([]);
 const form = reactive({
@@ -113,6 +114,7 @@ const resultData = ref<any[]>([]);
 
 // 打开
 const openHandle = () => {
+  currentMd5.value = props.md5;
   form.robot = "";
   form.sheet = [];
   sheetNames.value = [];
@@ -127,11 +129,11 @@ const closeHandle = () => {
 
 // 初始化数据
 const fetchInit = async () => {
-  if (!props.md5) return;
+  if (!currentMd5.value) return;
   loading.value = true;
   let response: any = null;
   try {
-    response = await SalaryNotifyEmailSendInitApi({ md5: props.md5 });
+    response = await SalaryNotifyEmailSendInitApi({ md5: currentMd5.value });
   } finally {
     loading.value = false;
   }
@@ -155,7 +157,7 @@ const sendHandle = () => {
   }
   btnDisabled.value = true;
   btnLoading.value = true;
-  SalaryNotifyEmailSendApi({ md5: props.md5, robot: form.robot, sheet: form.sheet }).then((response: any) => {
+  SalaryNotifyEmailSendApi({ md5: currentMd5.value, robot: form.robot, sheet: form.sheet }).then((response: any) => {
     resultData.value = response?.data || [];
     resultVisible.value = true;
     emit("reFetchTableData", true);

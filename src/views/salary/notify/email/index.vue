@@ -158,7 +158,7 @@
     <FcRobotConfig v-model:visible="robotVisible" :api-set="emailRobotApiSet" />
 
     <!--发送-->
-    <EmailSend v-model:visible="sendVisible" :md5="rowMd5" @reFetchTableData="reFetchTableData" />
+    <EmailSend v-model:visible="sendVisible" :md5="sendMd5" @reFetchTableData="reFetchTableData" />
 
     <!--重发-->
     <NotifyResend v-model:visible="resendVisible" :md5="resendMd5"
@@ -315,6 +315,7 @@ const userListUsers = ref<Record<string, string[]> | string[]>({});
 const userListSheetNames = ref<any[]>([]);
 const userListFileName = ref("");
 const rowMd5 = ref("");
+const sendMd5 = ref("");
 const apiName = "SalaryNotifyEmail"; // 组件标识名称
 
 // 详情 Drawer
@@ -522,7 +523,7 @@ const setHandle = (row: EmailListModel) => {
 
 // 发送
 const sendHandle = (row: EmailListModel) => {
-  rowMd5.value = row.md5;
+  sendMd5.value = row.md5;
   sendVisible.value = true;
 };
 
