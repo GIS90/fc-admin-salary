@@ -4,6 +4,7 @@ import { ResultPage } from "@/api/utils/models";
 import { RequestMd5Model, RequestMd5Models } from "@/models/X";
 import { DtalkListModel, DtalkDetailModel, DtalkRobotModel, DtalkSendInitModel, DtalkResendInitModel } from "@/models/salaryModel";
 import { QywxListModel, QywxDetailModel, QywxRobotModel, QywxSendInitModel, QywxResendInitModel } from "@/models/salaryModel";
+import { EmailListModel, EmailDetailModel, EmailRobotModel, EmailSendInitModel, EmailResendInitModel } from "@/models/salaryModel";
 
 
 interface NotifyTaskParams {
@@ -252,4 +253,103 @@ export const SalaryNotifyQywxRobotSelectApi = (params: { md5: string; select: bo
 // [GET]机器人Ping
 export const SalaryNotifyQywxRobotPingApi = (params: RequestMd5Model) => {
     return http.get('/salary/notify/qywx/robot.ping', params);
+};
+
+
+/* * * * * * * * * * * * * * * * * * * * * * [工资 > 消息通知 > 邮件通知] * * * * * * * * * * * * * * * * * * * * * * * * * */
+// [GET]列表
+export const SalaryNotifyEmailListApi = (params: any) => {
+    return http.get<ResultPage<EmailListModel>>('/salary/notify/email.list', params);
+};
+
+// [GET]详情
+export const SalaryNotifyEmailApi = (params: RequestMd5Model) => {
+    return http.get<EmailDetailModel>('/salary/notify/email', params);
+};
+
+// [PUT]更新设置
+export const SalaryNotifyEmailUpdateApi = (params: any) => {
+    return http.put('/salary/notify/email', params);
+};
+
+// [GET]切换Sheet
+export const SalaryNotifyEmailChangeSheetApi = (params: { md5: string; sheet: string }) => {
+    return http.get('/salary/notify/email.changeSheet', params);
+};
+
+// [DELETE]单条删除
+export const SalaryNotifyEmailDeleteApi = (params: RequestMd5Model) => {
+    return http.delete('/salary/notify/email.soft', params);
+};
+
+// [PUT]批量删除
+export const SalaryNotifyEmailBatchDeleteApi = (params: RequestMd5Models) => {
+    return http.put('/salary/notify/email.batch.soft', params);
+};
+
+// [GET]发送初始化
+export const SalaryNotifyEmailSendInitApi = (params: RequestMd5Model) => {
+    return http.get<EmailSendInitModel>('/salary/notify/email.sendInit', params);
+};
+
+// [GET]发送/重发任务状态
+export const SalaryNotifyEmailTaskApi = (params: NotifyTaskParams) => {
+    return http.get('/salary/notify/email.task', params);
+};
+
+// [POST]提交发送请求
+export const SalaryNotifyEmailSendApi = async (params: any) => {
+    const response = await http.post('/salary/notify/email.send', params);
+    return await waitNotifyTask(SalaryNotifyEmailTaskApi, response);
+};
+
+// [GET]重发初始化
+export const SalaryNotifyEmailResendInitApi = (params: RequestMd5Model) => {
+    return http.get<EmailResendInitModel>('/salary/notify/email.resendInit', params);
+};
+
+// [POST]提交重发请求
+export const SalaryNotifyEmailResendApi = async (params: any) => {
+    const response = await http.post('/salary/notify/email.resend', params);
+    return await waitNotifyTask(SalaryNotifyEmailTaskApi, response);
+};
+
+// [GET]邮件服务列表
+export const SalaryNotifyEmailRobotListApi = () => {
+    return http.get('/salary/notify/email/robot.list');
+};
+
+// [POST]新增邮件服务
+export const SalaryNotifyEmailRobotAddApi = (params: any) => {
+    return http.post('/salary/notify/email/robot', params);
+};
+
+// [GET]邮件服务详情
+export const SalaryNotifyEmailRobotApi = (params: RequestMd5Model) => {
+    return http.get<EmailRobotModel>('/salary/notify/email/robot', params);
+};
+
+// [PUT]更新邮件服务
+export const SalaryNotifyEmailRobotUpdateApi = (params: any) => {
+    return http.put('/salary/notify/email/robot', params);
+};
+
+// [DELETE]删除邮件服务
+export const SalaryNotifyEmailRobotDeleteApi = (params: RequestMd5Model) => {
+    return http.delete('/salary/notify/email/robot.soft', params);
+};
+
+// [PUT]批量删除邮件服务
+export const SalaryNotifyEmailRobotBatchDeleteApi = (params: RequestMd5Models) => {
+    return http.put('/salary/notify/email/robot.batch.soft', params);
+};
+
+// [PUT]设置默认邮件服务
+export const SalaryNotifyEmailRobotSelectApi = (params: { md5: string; select: boolean }) => {
+    return http.put('/salary/notify/email/robot.select', params);
+};
+
+// [GET]邮件服务连接测试
+export const SalaryNotifyEmailRobotPingApi = (params: RequestMd5Model) => {
+    return http.get('/salary/notify/email/robot.ping', params);
 };

@@ -98,6 +98,7 @@
           </el-popover>
           <span v-else class="empty-text">-</span>
         </template>
+        
         <!-- 成功名单 -->
         <template #success="scope">
           <el-link v-if="userCount(scope.row.success)" type="success" :underline="false" class="list-link"
@@ -114,6 +115,7 @@
           </el-link>
           <span v-else class="empty-text">-</span>
         </template>
+
         <!-- 表格操作 -->
         <template #options="scope">
           <el-tooltip effect="dark" content="设置" placement="top">

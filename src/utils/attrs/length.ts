@@ -108,6 +108,20 @@ let salaryQywxRobotModel = {
     description: 120
 }
 
+let salaryEmailModel = {
+    name: 80,
+    title: 50
+}
+
+// 工资->消息通知->邮件通知->邮件服务配置
+let salaryEmailRobotModel = {
+    name: 30,
+    key: 120,
+    secret: 120,
+    agentId: 120,
+    description: 120
+}
+
 export default {
     setterProfileModel,
     setterProfilePassword,
@@ -125,4 +139,6 @@ export default {
     salaryDtalkRobotModel,
     salaryQywxModel,
     salaryQywxRobotModel,
+    salaryEmailModel,
+    salaryEmailRobotModel,
 }

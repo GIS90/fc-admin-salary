@@ -156,3 +156,71 @@ export interface QywxResendInitModel {
     robotIndex: string;
     robotEnums: { key: string; value: string }[];
 }
+
+/**
+ * 工资 > 消息通知 > 邮件通知
+ */
+export interface EmailSheetName {
+    key: string;
+    value: string;
+}
+
+export interface EmailListModel {
+    id: number;
+    md5: string;
+    fileName: string;
+    setSheetName: string;
+    sheetNames: EmailSheetName[];
+    nsheet: number;
+    count: number;
+    number: number;
+    setTitle: string;
+    success: string;
+    failure: string;
+    successUsers: SheetUserMap;
+    failureUsers: SheetUserMap;
+    createRtx: string;
+    createTime: string;
+    url: string;
+}
+
+export interface EmailDetailModel {
+    md5: string;
+    fileName: string;
+    sheetNames: EmailSheetName[];
+    setSheetIndex: string[];
+    curSheet: string;
+    setTitle: string;
+    setColumns: EmailSheetName[];
+    setSelectColumn: string[];
+    nsheet: number;
+    url: string;
+}
+
+export interface EmailRobotModel {
+    id: number;
+    md5: string;
+    name: string;
+    key: string;
+    secret: string;
+    agentId: string;
+    select: boolean;
+    description: string;
+    createTime: string;
+}
+
+export interface EmailSendInitModel {
+    sheetIndex: string[];
+    sheetNames: EmailSheetName[];
+    robotIndex: string;
+    robotEnums: { key: string; value: string }[];
+}
+
+export interface EmailResendInitModel {
+    sheetIndex: string[];
+    sheetNames: EmailSheetName[];
+    failureUsers: SheetUserMap;
+    failureGroups: SheetUserGroup[];
+    robotIndex: string;
+    robotEnums: { key: string; value: string }[];
+}

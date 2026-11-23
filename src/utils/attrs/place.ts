@@ -126,6 +126,22 @@ let salaryQywxRobotModel = {
     description: "请输入消息机器人描述"
 }
 
+let salaryEmailModel = {
+    name: "请输入文件名称（.xls、.xlsx）",
+    title: "请输入当前Sheet的邮件标题，为空时默认使用时间+自动化提醒",
+    setSheet: "请选择需要发送邮件的Sheet，支持多选",
+    column: "请选择消息列头，支持多选"
+}
+
+// 工资->消息通知->邮件通知->邮件服务配置
+let salaryEmailRobotModel = {
+    name: "请输入邮件服务名称",
+    key: "请输入SMTP服务器地址:端口，例如 smtp.qq.com:465",
+    secret: "请输入邮箱密码或授权码",
+    agentId: "请输入发件邮箱地址",
+    description: "请输入邮件服务描述"
+}
+
 export default {
     setterProfileModel,
     setterProfilePassword,
@@ -143,4 +159,6 @@ export default {
     salaryDtalkRobotModel,
     salaryQywxModel,
     salaryQywxRobotModel,
+    salaryEmailModel,
+    salaryEmailRobotModel,
 }
