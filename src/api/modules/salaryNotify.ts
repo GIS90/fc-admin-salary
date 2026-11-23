@@ -1,8 +1,55 @@
 import http from "@/api";
+import { ElNotification } from "element-plus";
 import { ResultPage } from "@/api/utils/models";
 import { RequestMd5Model, RequestMd5Models } from "@/models/X";
 import { DtalkListModel, DtalkDetailModel, DtalkRobotModel, DtalkSendInitModel, DtalkResendInitModel } from "@/models/salaryModel";
 import { QywxListModel, QywxDetailModel, QywxRobotModel, QywxSendInitModel, QywxResendInitModel } from "@/models/salaryModel";
+
+
+interface NotifyTaskParams {
+    taskId: string;
+}
+
+interface NotifyTaskResult {
+    status: string;
+    code?: number;
+    message?: string;
+    result?: any;
+}
+
+const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+
+/**
+ * 后端发送/重发已改为异步任务，这里统一轮询任务结果。
+ * 对调用方仍返回原有结果结构，避免改动发送和重发组件。
+ */
+const waitNotifyTask = async (
+    taskApi: (params: NotifyTaskParams) => Promise<any>,
+    submitted: any,
+    timeoutMs: number = 10 * 60 * 1000
+) => {
+    const taskId: string | undefined = submitted?.data?.taskId;
+    if (!taskId) return submitted;
+
+    const startedAt = Date.now();
+    while (Date.now() - startedAt < timeoutMs) {
+        await sleep(1000);
+        const response: any = await taskApi({ taskId });
+        const task: NotifyTaskResult = response?.data || {};
+        if (task.status === "SUCCESS") {
+            return { ...response, data: task.result || [] };
+        }
+        if (task.status === "FAILURE") {
+            const message = task.message || "任务处理失败";
+            ElNotification.error({ title: "请求错误提示", message });
+            return Promise.reject({ code: task.code || 900, message });
+        }
+    }
+
+    const message = "任务处理时间较长，请稍后刷新列表查看结果";
+    ElNotification.error({ title: "请求错误提示", message });
+    return Promise.reject({ code: 900, message });
+};
 
 
 /* * * * * * * * * * * * * * * * * * * * * * [工资 > 消息通知 > 钉钉通知] * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -46,9 +93,15 @@ export const SalaryNotifyDtalkSendInitApi = (params: RequestMd5Model) => {
     return http.get<DtalkSendInitModel>('/salary/notify/dtalk.sendInit', params);
 };
 
-// [POST]发送
-export const SalaryNotifyDtalkSendApi = (params: any) => {
-    return http.post('/salary/notify/dtalk.send', params);
+// [GET]发送/重发任务状态
+export const SalaryNotifyDtalkTaskApi = (params: NotifyTaskParams) => {
+    return http.get('/salary/notify/dtalk.task', params);
+};
+
+// [POST]提交发送请求
+export const SalaryNotifyDtalkSendApi = async (params: any) => {
+    const response = await http.post('/salary/notify/dtalk.send', params);
+    return await waitNotifyTask(SalaryNotifyDtalkTaskApi, response);
 };
 
 // [GET]重发初始化
@@ -56,9 +109,10 @@ export const SalaryNotifyDtalkResendInitApi = (params: RequestMd5Model) => {
     return http.get<DtalkResendInitModel>('/salary/notify/dtalk.resendInit', params);
 };
 
-// [POST]重发失败人员
-export const SalaryNotifyDtalkResendApi = (params: any) => {
-    return http.post('/salary/notify/dtalk.resend', params);
+// [POST]提交重发请求
+export const SalaryNotifyDtalkResendApi = async (params: any) => {
+    const response = await http.post('/salary/notify/dtalk.resend', params);
+    return await waitNotifyTask(SalaryNotifyDtalkTaskApi, response);
 };
 
 // [GET]机器人列表
@@ -138,9 +192,15 @@ export const SalaryNotifyQywxSendInitApi = (params: RequestMd5Model) => {
     return http.get<QywxSendInitModel>('/salary/notify/qywx.sendInit', params);
 };
 
-// [POST]发送
-export const SalaryNotifyQywxSendApi = (params: any) => {
-    return http.post('/salary/notify/qywx.send', params);
+// [GET]发送/重发任务状态
+export const SalaryNotifyQywxTaskApi = (params: NotifyTaskParams) => {
+    return http.get('/salary/notify/qywx.task', params);
+};
+
+// [POST]提交发送请求
+export const SalaryNotifyQywxSendApi = async (params: any) => {
+    const response = await http.post('/salary/notify/qywx.send', params);
+    return await waitNotifyTask(SalaryNotifyQywxTaskApi, response);
 };
 
 // [GET]重发初始化
@@ -148,9 +208,10 @@ export const SalaryNotifyQywxResendInitApi = (params: RequestMd5Model) => {
     return http.get<QywxResendInitModel>('/salary/notify/qywx.resendInit', params);
 };
 
-// [POST]重发失败人员
-export const SalaryNotifyQywxResendApi = (params: any) => {
-    return http.post('/salary/notify/qywx.resend', params);
+// [POST]提交重发请求
+export const SalaryNotifyQywxResendApi = async (params: any) => {
+    const response = await http.post('/salary/notify/qywx.resend', params);
+    return await waitNotifyTask(SalaryNotifyQywxTaskApi, response);
 };
 
 // [GET]机器人列表
