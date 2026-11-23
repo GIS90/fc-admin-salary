@@ -60,7 +60,7 @@
 
         <template #tip>
           <!-- 文件类型 -->
-          <div v-if="['1', '2', '3', '4', '7'].includes(props.uploadType)" class="upload-remark">
+          <div v-if="['1', '2', '3', '4', '7', '8'].includes(props.uploadType)" class="upload-remark">
             <div><em>拖拽或者点击上传</em></div>
             <!-- 提示说明 支持html显示-->
             <p v-html="getUploadTip()" />
@@ -139,9 +139,10 @@ const props = defineProps({
   //     1：工具->文档工具->表格合并                         //
   //     2：工具->文档工具->表格拆分                         //
   //     3：工具->文档工具->PDF转WORD                       //
-  //     4：工资->消息通知->钉钉绩效                         //
-  //     7：工资->消息通知->企业微信绩效                     //
-  //     100：系统维护->头像管理                            //
+  //     4：工资->消息通知->钉钉                            //
+  //     7：工资->消息通知->企业微信                        //
+  //     8：工资->消息通知->邮件群发                        //
+  //     100：系统维护->头像管理                           //
   // --------------------------------------------------- //
   uploadType: {
     type: String,
@@ -152,7 +153,9 @@ const props = defineProps({
 
 const dgConfigField = reactive({
   title: props.uploadDialogTitle,
-  width: props.uploadType === "100" ? "75%" : "55%"
+  width: props.uploadType === "100" ? "75%" : "55%",
+  closeOnPressEscape: false,
+  closeOnClickModal: false,
 });
 const dgField = {...dialogField, ...dgConfigField}; // DIALOG属性
 const fullView = ref(dgField.fullScreen); // 全屏控制
@@ -186,7 +189,7 @@ const uploadAttrs = reactive({
 
 // upload tip内容，支持html
 const getUploadTip = () => {
-  if (["1", "2", "4", "7"].includes(props.uploadType)) {
+  if (["1", "2", "4", "7", "8"].includes(props.uploadType)) {
     return '<strong>提示</strong>：支持<span class="info_red_weight">.xls</span>、<span class="info_red_weight">.xlsx</span>格式文件上传，.xls格式文件条数最大支持为<strong>65535</strong>行，超出请上传.xlxs格式数据。'
   } else if (props.uploadType === "3") {
     return '<strong>提示</strong>：仅支持<span class="info_red_weight">.pdf</span>格式文件上传。'
@@ -197,11 +200,11 @@ const getUploadTip = () => {
 
 // 上传文件的类型
 const uploadAccept = () => {
-  if (['1', '2', '4', '7'].includes(props.uploadType)) {
+  if (["1", "2", "4", "7", "8"].includes(props.uploadType)) {
     return '.xls,.xlsx'
-  }  else if (props.uploadType === '3') {
+  }  else if (props.uploadType === "3") {
     return '.pdf'
-  } else if (props.uploadType === '100') {
+  } else if (props.uploadType === "100") {
     return '.jpg,.jpeg,.png'
   } else {
     return ''
@@ -215,7 +218,7 @@ const uploadDrag = () => {
 
 // 文件列表的类型 "text" | "picture" | "picture-card"
 const uploadListType = () => {
-  if (["1", "2", "3", "4", "7"].includes(props.uploadType)) {
+  if (["1", "2", "4", "7", "8"].includes(props.uploadType)) {
     return "text"
   } else if (props.uploadType === "100") {
     return "picture-card"
