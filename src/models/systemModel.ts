@@ -305,6 +305,77 @@ export interface AvatarModelDetail extends __AvatarModelBase {
     createTime: string;
 }
 
+// - - - - - - - - - - - - - - - - - - - - - [系统维护>Redis缓存管理] - - - - - - - - - - - - - - - - - - - - - -
+/**
+ * Redis连接配置>列表
+ */
+export interface RedisConfigModelList {
+    id: number;
+    md5: string;
+    name: string;
+    host: string;
+    port: number;
+    db: number;
+    password?: string;
+    orderId: number;
+    summary?: string;
+    lock: boolean;
+    lockText?: string;
+    createTime?: string;
+    createRtx?: string;
+}
+
+/**
+ * Redis连接配置>新增/编辑
+ */
+export interface RedisConfigForm {
+    md5?: string;
+    name: string;
+    host: string;
+    port: number;
+    db: number;
+    password?: string;
+    orderId: number;
+    summary?: string;
+    lock: boolean;
+}
+
+/**
+ * Redis清理规则>列表
+ */
+export interface RedisRuleModelList {
+    id: number;
+    md5: string;
+    name: string;
+    redisMd5: string;
+    configName?: string;
+    match: string;
+    pattern: string;
+    maxKeys: number;
+    summary?: string;
+    lock: boolean;
+    lockText?: string;
+    orderId: number;
+    lastCleanTime?: string;
+    lastCleanCount: number;
+    createTime?: string;
+}
+
+/**
+ * Redis清理规则>新增/编辑
+ */
+export interface RedisRuleForm {
+    md5?: string;
+    name: string;
+    redisMd5: string;
+    match: string;
+    pattern: string;
+    maxKeys: number;
+    summary?: string;
+    lock: boolean;
+    orderId: number;
+}
+
 // - - - - - - - - - - - - - - - - - - - - - [系统配置>报表配置] - - - - - - - - - - - - - - - - - - - - - -
 /**
  * 系统报表>基础模型

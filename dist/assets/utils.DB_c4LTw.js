@@ -1,0 +1,1 @@
+const o={GET:"success",POST:"primary",PUT:"warning",PATCH:"info",DELETE:"danger"};function t(n){return o[(n||"").toUpperCase()]??"info"}const e=["primary","success","warning","danger","info"];function s(n){let r=0;for(let a=0;a<n.length;a++)r=r*31+n.charCodeAt(a)>>>0;return e[r%e.length]}export{s as a,t as m};

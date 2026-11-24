@@ -23,9 +23,9 @@
                 :showBottomView="ftField.showBottomView" :showRefreshBtn="ftField.showRefreshBtn"
                 :showColumnBtn="ftField.showColumnBtn" :showDownloadBtn="ftField.showDownloadBtn">
         <!-- 参数类型 -->
-        <template #type="scope">
-          <el-tag v-if="scope.row.type" :type="scope.row.type === 'FILE' ? 'warning' : 'info'" effect="light">
-            {{ typeLabel(scope.row.type) }}
+        <template #type__text="scope">
+          <el-tag v-if="scope.row.type__text" :type="scope.row.type__text === '文件' ? 'warning' : 'info'" effect="light">
+            {{ typeLabel(scope.row.type__text) }}
           </el-tag>
           <span v-else>-</span>
         </template>

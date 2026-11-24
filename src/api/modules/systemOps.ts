@@ -6,9 +6,13 @@ import {
     TaskModelList,
     LogModelList,
     AvatarModelList,
-    AvatarModelDetail
+    AvatarModelDetail,
+    RedisRuleModelList,
+    RedisRuleForm,
+    RedisConfigModelList,
+    RedisConfigForm
 } from "@/models/systemModel";
-import {RequestMd5Model, RequestMd5Models} from "@/models/X";
+import {RequestMd5Model, RequestMd5Models, OptionEnumModelList} from "@/models/X";
 
 /* * * * * * * * * * * * * * * * * * * * * * [系统维护>任务中心] * * * * * * * * * * * * * * * * * * * * * * * * * */
 // [POST]列表
@@ -137,4 +141,93 @@ export const SysOpsAvatarDeleteApi = (params: RequestMd5Model) => {
 // [PUT]批量删除
 export const SysOpsAvatarsDeleteApi = (params: RequestMd5Models) => {
     return http.put('/system/ops/avatar.batch.soft', params);
+};
+
+/* * * * * * * * * * * * * * * * * * * * * * [系统维护>Redis缓存管理] * * * * * * * * * * * * * * * * * * * * * */
+// [GET]Redis连接配置列表
+export const SysOpsRedisConfigListApi = (params?: any) => {
+    return http.get<{ list: RedisConfigModelList[]; total: number }>('/system/ops/redis.config.list', params);
+};
+
+// [GET]Redis连接配置下拉选项
+export const SysOpsRedisConfigOptionsApi = () => {
+    return http.get<OptionEnumModelList>('/system/ops/redis.config.options');
+};
+
+// [GET]Redis连接配置详情
+export const SysOpsRedisConfigApi = (params: RequestMd5Model) => {
+    return http.get<RedisConfigModelList>('/system/ops/redis.config', params);
+};
+
+// [POST]新增Redis连接配置
+export const SysOpsRedisConfigAddApi = (params: RedisConfigForm) => {
+    return http.post('/system/ops/redis.config', params);
+};
+
+// [PUT]更新Redis连接配置
+export const SysOpsRedisConfigUpdateApi = (params: RedisConfigForm) => {
+    return http.put('/system/ops/redis.config', params);
+};
+
+// [DELETE]删除Redis连接配置
+export const SysOpsRedisConfigDeleteApi = (params: RequestMd5Model) => {
+    return http.delete('/system/ops/redis.config.delete', params);
+};
+
+// [POST]测试Redis连接
+export const SysOpsRedisConfigTestApi = (params: RedisConfigForm) => {
+    return http.post<{ dbsize: number; host: string; port: number; db: number }>('/system/ops/redis.config.test', params);
+};
+
+// [GET]规则过滤条件
+export const SysOpsRedisRuleFilterApi = () => {
+    return http.get<{
+        config: OptionEnumModelList;
+        match: OptionEnumModelList;
+    }>('/system/ops/redis.rule.filter');
+};
+
+// [POST]规则列表
+export const SysOpsRedisRuleListApi = (params: any) => {
+    return http.post<ResultPage<RedisRuleModelList>>('/system/ops/redis.rule.list', params);
+};
+
+// [GET]规则详情
+export const SysOpsRedisRuleApi = (params: RequestMd5Model) => {
+    return http.get<RedisRuleModelList>('/system/ops/redis.rule', params);
+};
+
+// [POST]新增清理规则
+export const SysOpsRedisRuleAddApi = (params: RedisRuleForm) => {
+    return http.post('/system/ops/redis.rule', params);
+};
+
+// [PUT]更新清理规则
+export const SysOpsRedisRuleUpdateApi = (params: RedisRuleForm) => {
+    return http.put('/system/ops/redis.rule', params);
+};
+
+// [PUT]启用/停用规则
+export const SysOpsRedisRuleLockApi = (params: any) => {
+    return http.put('/system/ops/redis.rule.lock', params);
+};
+
+// [DELETE]删除规则
+export const SysOpsRedisRuleDeleteApi = (params: RequestMd5Model) => {
+    return http.delete('/system/ops/redis.rule.delete', params);
+};
+
+// [PUT]批量删除规则
+export const SysOpsRedisRulesDeleteApi = (params: RequestMd5Models) => {
+    return http.put('/system/ops/redis.rule.batch.delete', params);
+};
+
+// [POST]预览规则匹配的缓存键（规则由后台读取）
+export const SysOpsRedisRulePreviewApi = (params: RequestMd5Model) => {
+    return http.post<{ rule: string; config: string; count: number; match: string; sample: string[]; maxKeys: number }>('/system/ops/redis.rule.preview', params);
+};
+
+// [POST]按后台规则执行清理（规则由后台读取）
+export const SysOpsRedisRuleCleanApi = (params: RequestMd5Model) => {
+    return http.post<{ rule: string; config: string; count: number; sample: string[] }>('/system/ops/redis.rule.clean', params);
 };

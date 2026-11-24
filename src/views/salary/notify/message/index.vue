@@ -146,7 +146,7 @@ const router = useRouter();
 const showNotice = ref(false);
 const dgConfigField = {
   title: "当前可使用的通知方式",
-  width: "620px",
+  width: "650px",
   top: "10vh"
 };
 const dgField = { ...dialogField, ...dgConfigField };
@@ -514,7 +514,7 @@ h1 {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 18px 20px;
+  padding: 28px 30px;
 }
 
 .notice-item {
