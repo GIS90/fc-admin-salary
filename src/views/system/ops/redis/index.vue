@@ -103,23 +103,25 @@
             <el-table-column prop="createTime" label="创建时间" align="center" />
             <el-table-column label="操作" width="320" align="center" fixed="right">
               <template #default="scope">
-                <el-button link type="primary" icon="Edit" @click="editConfigHandle(scope.row)">编辑</el-button>
-                <el-tooltip effect="dark" :disabled="!scope.row.lock" content="配置已停用，无法浏览" placement="top">
-                  <span>
-                    <el-button link type="primary" icon="View" :disabled="scope.row.lock"
-                               @click="openKeyBrowser(scope.row)">查看Key</el-button>
-                  </span>
-                </el-tooltip>
-                <el-button link type="success" icon="Connection" @click="pingHandle(scope.row.md5)">PING</el-button>
-                <el-popconfirm title="确认删除该连接配置？" confirm-button-text="确定" cancel-button-text="取消"
-                               @confirm="deleteConfigHandle(scope.row.md5)">
-                  <template #reference>
-                    <el-button link type="danger" icon="Delete">删除</el-button>
-                  </template>
-                </el-popconfirm>
+                <div class="config-operations">
+                  <el-button link type="primary" icon="Edit" @click="editConfigHandle(scope.row)">编辑</el-button>
+                  <el-tooltip effect="dark" :disabled="!scope.row.lock" content="配置已停用，无法浏览" placement="top">
+                    <span>
+                      <el-button link type="primary" icon="View" :disabled="scope.row.lock"
+                                 @click="openKeyBrowser(scope.row)">查看</el-button>
+                    </span>
+                  </el-tooltip>
+                  <el-button link type="success" icon="Connection" @click="pingHandle(scope.row.md5)">PING</el-button>
+                  <el-popconfirm title="确认删除该连接配置？" confirm-button-text="确定" cancel-button-text="取消"
+                                 @confirm="deleteConfigHandle(scope.row.md5)">
+                    <template #reference>
+                      <el-button link type="danger" icon="Delete">删除</el-button>
+                    </template>
+                  </el-popconfirm>
+                </div>
               </template>
             </el-table-column>
-            <template #empty><el-empty description="暂无Redis连接配置" :image-size="80" /></template>
+            <template #empty><el-empty description="暂无Redis连接配置" :image-size="200"/></template>
           </el-table>
         </div>
       </div>
@@ -291,7 +293,7 @@ const cleanHandle = async (row: RedisRuleModelList) => {
 
 const statusHandle = async (md5: string, value: any) => {
   await SysOpsRedisRuleLockApi({ md5, value: Boolean(value) });
-  ElMessage.success(value ? '规则已禁用' : '规则已启用');
+  ElNotification({ title: '提示', message: value ? '规则已禁用' : '规则已启用', type: 'success' });
   reFetchTableData(true);
 };
 
@@ -362,4 +364,12 @@ const refreshConfigHandle = async () => {
 .left-panel, .right-panel { display: flex; align-items: center; gap: 8px; }
 .tab-group { margin-right: 4px; }
 :deep(.el-radio-button__inner) { min-width: 92px; }
+.config-operations {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+.config-operations :deep(.el-button + .el-button) { margin-left: 0; }
 </style>
