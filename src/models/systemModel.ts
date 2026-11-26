@@ -376,6 +376,17 @@ export interface RedisRuleForm {
     orderId: number;
 }
 
+/**
+ * Redis键值浏览>列表
+ */
+export interface RedisKeyValueModel {
+    key: string;
+    type: string;
+    ttl: number;
+    ttlText: string;
+    value: string;
+}
+
 // - - - - - - - - - - - - - - - - - - - - - [系统配置>报表配置] - - - - - - - - - - - - - - - - - - - - - -
 /**
  * 系统报表>基础模型

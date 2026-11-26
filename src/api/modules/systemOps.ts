@@ -10,7 +10,8 @@ import {
     RedisRuleModelList,
     RedisRuleForm,
     RedisConfigModelList,
-    RedisConfigForm
+    RedisConfigForm,
+    RedisKeyValueModel
 } from "@/models/systemModel";
 import {RequestMd5Model, RequestMd5Models, OptionEnumModelList} from "@/models/X";
 
@@ -187,6 +188,18 @@ export const SysOpsRedisPingApi = (params?: { md5?: string }) => {
         success: number;
         failed: number;
     }>('/system/ops/redis.ping', params);
+};
+
+// [GET]浏览Redis键和值（只读）
+export const SysOpsRedisKeysApi = (params: { md5: string; pattern?: string; limit?: number }) => {
+    return http.get<{
+        list: RedisKeyValueModel[];
+        total: number;
+        pattern: string;
+        limit: number;
+        truncated: boolean;
+        config: string;
+    }>('/system/ops/redis.keys', params);
 };
 
 // [GET]规则过滤条件

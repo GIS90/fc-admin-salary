@@ -75,8 +75,8 @@
         </el-row>
         <el-form-item label="键匹配内容" prop="pattern">
           <el-input v-model.trim="ruleForm.pattern" v-bind="inputField"
-                    :maxlength="ruleLength.pattern" :placeholder="rulePlace.pattern" />
-          <div class="form-tip">清理内容与匹配表达式由后台解析执行，前端不直接传递 key pattern。</div>
+                    :maxlength="ruleLength.pattern" :placeholder="patternPlaceholder" />
+          <div class="el-form-item-msg">{{ patternTip }}</div>
         </el-form-item>
         <el-row :gutter="20">
           <el-col :span="12">
@@ -110,7 +110,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, watch } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
 import { ElNotification } from 'element-plus';
 import { OptionEnumModelList } from '@/models/X';
@@ -148,6 +148,19 @@ const initForm = (): RedisRuleForm => ({
   orderId: 1, summary: '', lock: false
 });
 const ruleForm = reactive<RedisRuleForm>(initForm());
+
+const PATTERN_PLACEHOLDERS: Record<string, string> = {
+  prefix: '请输入 key 前缀，例如 app:cache:user:',
+  pattern: '请输入通配符表达式，例如 app:cache:*',
+  regex: '请输入正则表达式，例如 ^app:cache:\\d+$'
+};
+const PATTERN_TIPS: Record<string, string> = {
+  prefix: '前缀匹配：后台会自动在末尾追加 *；请勿配置为 * 进行全库清理。',
+  pattern: '通配符匹配：支持 * 和 ?；请勿配置为 * 进行全库清理。',
+  regex: '正则匹配：后台会扫描并逐键校验；请勿使用 .* 等匹配全部键的表达式。'
+};
+const patternPlaceholder = computed(() => PATTERN_PLACEHOLDERS[ruleForm.match] || rulePlace.pattern);
+const patternTip = computed(() => PATTERN_TIPS[ruleForm.match] || '清理内容与匹配表达式由后台解析执行。');
 
 const rules = reactive<FormRules>({
   name: [{ required: true, message: '请输入规则名称', trigger: 'blur' }],
@@ -200,5 +213,4 @@ const submit = async () => {
 
 <style scoped>
 .full-width { width: 100%; min-width: 0; }
-.form-tip { font-size: 12px; color: #909399; line-height: 1.5; }
 </style>

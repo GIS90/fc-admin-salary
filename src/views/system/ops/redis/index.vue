@@ -101,9 +101,15 @@
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" align="center" />
-            <el-table-column label="操作" width="220" align="center" fixed="right">
+            <el-table-column label="操作" width="320" align="center" fixed="right">
               <template #default="scope">
                 <el-button link type="primary" icon="Edit" @click="editConfigHandle(scope.row)">编辑</el-button>
+                <el-tooltip effect="dark" :disabled="!scope.row.lock" content="配置已停用，无法浏览" placement="top">
+                  <span>
+                    <el-button link type="primary" icon="View" :disabled="scope.row.lock"
+                               @click="openKeyBrowser(scope.row)">查看Key</el-button>
+                  </span>
+                </el-tooltip>
                 <el-button link type="success" icon="Connection" @click="pingHandle(scope.row.md5)">PING</el-button>
                 <el-popconfirm title="确认删除该连接配置？" confirm-button-text="确定" cancel-button-text="取消"
                                @confirm="deleteConfigHandle(scope.row.md5)">
@@ -125,6 +131,7 @@
     <PingResult v-model:visible="pingVisible" :list="pingList" :total="pingTotal" :success="pingSuccess" :failed="pingFailed" />
     <PreviewResult v-model:visible="previewVisible" :rule="previewRule" :config="previewConfig" :match="previewMatch"
                    :count="previewCount" :max-keys="previewMaxKeys" :sample="previewSample" />
+    <KeyBrowser v-model:visible="keyBrowserVisible" :md5="keyBrowserMd5" :config-name="keyBrowserConfigName" />
   </el-container>
 </template>
 
@@ -147,6 +154,7 @@ import RuleForm from './components/ruleForm.vue';
 import ConfigForm from './components/configForm.vue';
 import PingResult from './components/pingResult.vue';
 import PreviewResult from './components/previewResult.vue';
+import KeyBrowser from './components/keyBrowser.vue';
 
 const fcTableConfig = reactive({ rowKey: 'md5', border: false });
 const ftField = { ...fcTableField, ...fcTableConfig };
@@ -183,6 +191,9 @@ const previewCount = ref(0);
 const previewMaxKeys = ref(0);
 const previewSample = ref<string[]>([]);
 
+const keyBrowserVisible = ref(false);
+const keyBrowserMd5 = ref('');
+const keyBrowserConfigName = ref('');
 
 const matchText = (value: string) => {
   return matchOptions.value.find(item => item.value === value)?.label || value;
@@ -306,6 +317,12 @@ const batchDeleteHandle = () => {
 
 const addConfigHandle = () => { configFormMd5.value = ''; configFormVisible.value = true; };
 const editConfigHandle = (row: RedisConfigModelList) => { configFormMd5.value = row.md5; configFormVisible.value = true; };
+
+const openKeyBrowser = (row: RedisConfigModelList) => {
+  keyBrowserMd5.value = row.md5;
+  keyBrowserConfigName.value = row.name;
+  keyBrowserVisible.value = true;
+};
 
 const pingHandle = async (md5?: string) => {
   const response = await SysOpsRedisPingApi(md5 ? { md5 } : {});

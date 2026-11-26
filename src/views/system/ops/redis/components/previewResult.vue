@@ -60,7 +60,7 @@
 
       <div class="preview-section-title">
         <span>示例键名</span>
-        <span class="preview-section-tip">最多展示 20 条</span>
+        <span class="preview-section-tip">最多展示 20 条，更多详情请查看 Redis 连接配置中功能</span>
       </div>
       <el-table :data="sampleRows" border stripe size="default" max-height="320" style="width: 100%">
         <el-table-column label="序号" width="120" align="center" type="index" />
