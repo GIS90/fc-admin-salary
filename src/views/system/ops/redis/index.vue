@@ -158,7 +158,7 @@ import PingResult from './components/pingResult.vue';
 import PreviewResult from './components/previewResult.vue';
 import KeyBrowser from './components/keyBrowser.vue';
 
-const fcTableConfig = reactive({ rowKey: 'md5', border: false });
+const fcTableConfig = reactive({ rowKey: 'md5', border: true });
 const ftField = { ...fcTableField, ...fcTableConfig };
 const fcTableRef = ref<FcFilterTableInstance>();
 
