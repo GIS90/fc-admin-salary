@@ -4,13 +4,12 @@
  *        
  * @date  Wed Nov 04 2026 17:19:30
  * @author PyGo²
- * @org   福建博思软件股份有限公司
  */
 
 // 请求方式 → el-tag 类型映射（el-tag 只接受 primary/success/info/warning/danger）
 const METHOD_TAG_TYPE: Record<string, "primary" | "success" | "info" | "warning" | "danger"> = {
-    GET: "success",
-    POST: "primary",
+    GET: "primary",
+    POST: "success",
     PUT: "warning",
     PATCH: "info",
     DELETE: "danger"
