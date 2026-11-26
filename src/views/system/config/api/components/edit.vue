@@ -87,7 +87,8 @@
                      :placeholder="ProfilePlace.method"
                      style="width: 100%;"
                      :disabled="btnDisabled">
-            <el-option v-for="item in methodOptions" :key="item.value" :label="item.label" :value="item.value" />
+            <el-option v-for="item in methodOptions" :key="item.value" :label="item.label" :value="item.value"
+                       :disabled="item.disabled" />
           </el-select>
         </el-form-item>
         <el-form-item label="简述" prop="short">
@@ -146,19 +147,37 @@
 import { ref, reactive, defineProps, defineEmits, watch } from 'vue';
 import { ApiModelDetail } from "@/models/systemModel";
 import { SysConfigApiApi, SysConfigApiUpdateApi } from "@/api/modules/systemConfig";
+import { DictEnumOptionApi } from "@/api/modules/common";
 import { FormInstance, FormRules } from "element-plus";
 import { ElNotification } from 'element-plus';
 import { dialogField, inputField, textAreaField, formField, inputNumberField, selectSingleField } from "@/utils/attrs/field";
 import publicLength from "@/utils/attrs/length";
 import publicPlaceHolder from "@/utils/attrs/place";
 
-const methodOptions = [
+interface MethodOption { label: string; value: string; disabled?: boolean }
+
+const DEFAULT_METHOD_OPTIONS: MethodOption[] = [
   { label: "GET", value: "GET" },
   { label: "POST", value: "POST" },
   { label: "PUT", value: "PUT" },
   { label: "PATCH", value: "PATCH" },
   { label: "DELETE", value: "DELETE" },
 ];
+const methodOptions = ref<MethodOption[]>([]);
+
+// 请求方式枚举（api-type）：label 是请求方式，value 是标签颜色，需交换后作为表单值
+const fetchTypeOptions = async () => {
+  if (methodOptions.value.length > 0) return;
+  const response = await DictEnumOptionApi({ name: 'api-type' });
+  if (response.data) {
+    methodOptions.value = (response.data as MethodOption[]).map(item => ({
+      label: item.label,
+      value: item.label,
+      disabled: item.disabled
+    }));
+  }
+  if (!methodOptions.value.length) methodOptions.value = [...DEFAULT_METHOD_OPTIONS];
+};
 
 const ProfileLen = publicLength.systemApiModel;
 const ProfilePlace = publicPlaceHolder.systemApiModel;
@@ -206,6 +225,8 @@ function fullScreen() {
 function openDialog() {
   // 重置验证
   ruleFormRef.value?.clearValidate();
+  // 加载请求方式枚举
+  fetchTypeOptions();
   // 请求数据
   fetchApiData(props.md5);
 };

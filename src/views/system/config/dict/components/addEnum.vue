@@ -235,8 +235,7 @@ const resetForm = () => {
 const fetchApiData = async () => {
   const response = await SysOpsDictEnumAddInitApi();
   if (response.data) {
-    const res = response as { data: { key: OptionEnumModel[] } }; // declare
-    keyOption.value = res.data.key as OptionEnumModel[];
+    keyOption.value = response.data as OptionEnumModel[];
   }
 };
 

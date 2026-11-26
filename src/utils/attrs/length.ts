@@ -80,6 +80,19 @@ let systemApiModel = {
     long: 255
 }
 
+let systemRedisConfigModel = {
+    name: 55,
+    host: 120,
+    password: 120,
+    summary: 255
+}
+
+let systemRedisRuleModel = {
+    name: 55,
+    pattern: 255,
+    summary: 255
+}
+
 let salaryDtalkModel = {
     name: 80,
     title: 50
@@ -135,6 +148,8 @@ export default {
     systemXtcsModel,
     systemReportModel,
     systemApiModel,
+    systemRedisConfigModel,
+    systemRedisRuleModel,
     salaryDtalkModel,
     salaryDtalkRobotModel,
     salaryQywxModel,

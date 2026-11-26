@@ -18,6 +18,7 @@
       @open="openDialog"
       @close="closeDialog"
   >
+    <!--header-->
     <template #header>
       <div class="my-dialog-header">
         <div class="my-dialog-header-title">{{ dgField.title }}</div>
@@ -36,66 +37,73 @@
       </div>
     </template>
 
+    <!--body-->
+
     <div class="my-dialog-body">
-    <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" :size="formField.size"
-             label-position="top" style="width: 100%">
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <el-form-item label="规则名称" prop="name">
-            <el-input v-model.trim="ruleForm.name" :maxlength="55" clearable placeholder="请输入规则名称" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="Redis配置" prop="redisMd5">
-            <el-select v-model="ruleForm.redisMd5" style="width: 100%;" :size="selectSingleField.size" filterable clearable
-                       placeholder="请选择Redis连接配置">
-              <el-option v-for="item in props.configOption" :key="item.value" :label="item.label" :value="item.value" />
-            </el-select>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <el-form-item label="匹配方式" prop="match">
-            <el-select v-model="ruleForm.match" style="width: 100%;" :size="selectSingleField.size" clearable>
-              <el-option v-for="item in props.matchOption" :key="item.value" :label="item.label" :value="item.value" />
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="单次最大键数" prop="maxKeys">
-            <el-input-number v-model="ruleForm.maxKeys" :min="1" :max="100000" controls-position="right" class="full-width" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-form-item label="键匹配内容" prop="pattern">
-        <el-input v-model.trim="ruleForm.pattern" :maxlength="255" clearable
-                  placeholder="前缀匹配填写前缀；通配符支持*和?；正则填写表达式" />
-        <div class="form-tip">清理内容与匹配表达式由后台解析执行，前端不直接传递 key pattern。</div>
-      </el-form-item>
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <el-form-item label="排序编码" prop="orderId">
-            <el-input-number v-model="ruleForm.orderId" :min="0" :max="99999" controls-position="right" class="full-width" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="状态">
-            <el-switch v-model="ruleForm.lock" :active-value="false" :inactive-value="true" active-text="启用" inactive-text="停用" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-form-item label="规则说明">
-        <el-input v-model="ruleForm.summary" type="textarea" :rows="3" maxlength="255" show-word-limit
-                  placeholder="请输入规则说明" />
-      </el-form-item>
-    </el-form>
+      <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" v-bind="formField" style="width: 100%">
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="规则名称" prop="name">
+              <el-input v-model.trim="ruleForm.name" v-bind="inputField"
+                        :maxlength="ruleLength.name" :placeholder="rulePlace.name" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="Redis配置" prop="redisMd5">
+              <el-select v-model="ruleForm.redisMd5" style="width: 100%" v-bind="selectSingleField"
+                         :placeholder="rulePlace.redisMd5">
+                <el-option v-for="item in props.configOption" :key="item.value" :label="item.label" :value="item.value" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="匹配方式" prop="match">
+              <el-select v-model="ruleForm.match" style="width: 100%" v-bind="selectSingleField"
+                         :placeholder="rulePlace.match">
+                <el-option v-for="item in props.matchOption" :key="item.value" :label="item.label" :value="item.value" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="单次最大键数" prop="maxKeys">
+              <el-input-number v-model="ruleForm.maxKeys" v-bind="inputNumberField"
+                               :min="1" :max="100000" controls-position="right" class="full-width" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-form-item label="键匹配内容" prop="pattern">
+          <el-input v-model.trim="ruleForm.pattern" v-bind="inputField"
+                    :maxlength="ruleLength.pattern" :placeholder="rulePlace.pattern" />
+          <div class="form-tip">清理内容与匹配表达式由后台解析执行，前端不直接传递 key pattern。</div>
+        </el-form-item>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="排序编码" prop="orderId">
+              <el-input-number v-model="ruleForm.orderId" v-bind="inputNumberField"
+                               :min="0" :max="99999" controls-position="right" class="full-width" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="状态">
+              <el-switch v-model="ruleForm.lock" :active-value="false" :inactive-value="true"
+                         active-text="启用" inactive-text="停用" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-form-item label="规则说明">
+          <el-input v-model="ruleForm.summary" v-bind="textAreaField"
+                    :maxlength="ruleLength.summary" :placeholder="rulePlace.summary"
+                    :autosize="{ minRows: 3, maxRows: 5 }" />
+        </el-form-item>
+      </el-form>
     </div>
 
     <template #footer>
       <div class="my-dialog-footer">
         <el-button @click="closeDialog">取 消</el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submit">确 定</el-button>
+        <el-button v-bind="buttonField" :loading="submitLoading" @click="submit">确 定</el-button>
       </div>
     </template>
   </el-dialog>
@@ -110,17 +118,26 @@ import { RedisRuleForm } from '@/models/systemModel';
 import {
   SysOpsRedisRuleApi, SysOpsRedisRuleAddApi, SysOpsRedisRuleUpdateApi
 } from '@/api/modules/systemOps';
-import { dialogField, formField, selectSingleField } from '@/utils/attrs/field';
+import {
+  buttonField, dialogField, formField, inputField, inputNumberField,
+  selectSingleField, textAreaField
+} from '@/utils/attrs/field';
+import publicLength from '@/utils/attrs/length';
+import publicPlaceHolder from '@/utils/attrs/place';
 
 const props = defineProps({
-  visible: { type: Boolean, default: false },
+  visible: { type: Boolean, required: true, default: false },
   md5: { type: String, default: '' },
   configOption: { type: Array as () => OptionEnumModelList, default: () => [] },
   matchOption: { type: Array as () => OptionEnumModelList, default: () => [] }
 });
 const emit = defineEmits(['update:visible', 'success']);
 
-const dgField = { ...dialogField, ...{ title: '清理规则', width: '60%' } };
+const dgConfigField = reactive({ title: '清理规则', width: '60%' });
+const dgField = { ...dialogField, ...dgConfigField }; // DIALOG属性
+const ruleLength = publicLength.systemRedisRuleModel;
+const rulePlace = { redisMd5: '请选择Redis连接配置', match: '请选择匹配方式', ...publicPlaceHolder.systemRedisRuleModel };
+
 const fullView = ref(dgField.fullScreen);
 const fullViewText = ref('全屏');
 const ruleFormRef = ref<FormInstance>();
@@ -182,9 +199,6 @@ const submit = async () => {
 </script>
 
 <style scoped>
-.my-dialog-body { padding: 16px 20px; }
 .full-width { width: 100%; min-width: 0; }
 .form-tip { font-size: 12px; color: #909399; line-height: 1.5; }
-:deep(.el-form-item) { margin-bottom: 14px; }
-:deep(.el-form-item__label) { padding-bottom: 4px; line-height: 1.4; }
 </style>

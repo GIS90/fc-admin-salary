@@ -179,6 +179,16 @@ export const SysOpsRedisConfigTestApi = (params: RedisConfigForm) => {
     return http.post<{ dbsize: number; host: string; port: number; db: number }>('/system/ops/redis.config.test', params);
 };
 
+// [GET]Redis PING连通性检测（不传md5时检测全部启用配置）
+export const SysOpsRedisPingApi = (params?: { md5?: string }) => {
+    return http.get<{
+        list: { md5: string; name: string; host: string; port: number; db: number; ok: boolean; dbsize: number; message: string }[];
+        total: number;
+        success: number;
+        failed: number;
+    }>('/system/ops/redis.ping', params);
+};
+
 // [GET]规则过滤条件
 export const SysOpsRedisRuleFilterApi = () => {
     return http.get<{

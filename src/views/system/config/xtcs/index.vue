@@ -25,7 +25,7 @@
         <!-- 参数类型 -->
         <template #type__text="scope">
           <el-tag v-if="scope.row.type__text" :type="scope.row.type__text === '文件' ? 'warning' : 'info'" effect="light">
-            {{ typeLabel(scope.row.type__text) }}
+            {{ scope.row.type__text }}
           </el-tag>
           <span v-else>-</span>
         </template>
@@ -84,7 +84,7 @@ import { ColumnProps, FcFilterTableInstance } from "@/components/fcFilterTable/m
 import { XtcsModelList } from "@/models/systemModel";
 import { ElMessage, ElNotification } from 'element-plus';
 import { fcTableField, PopConfirmField, buttonField } from "@/utils/attrs/field";
-import { TableFieldColumnApi, DictEnumOptionApi } from "@/api/modules/common";
+import { TableFieldColumnApi } from "@/api/modules/common";
 import Add from "./components/add.vue";
 import Edit from "./components/edit.vue";
 import ViewD from "./components/view.vue";
@@ -104,22 +104,7 @@ const columns = ref<ColumnProps<XtcsModelList>[]>([]);
 
 onMounted(() => {
   fetchTableFieldColumn(); // 表头数据
-  fetchTypeOptions(); // 参数类型枚举
 });
-
-// 参数类型枚举（xtcs-type）
-const typeOptions = ref<Array<{ label: string; value: string; disabled?: boolean }>>([]);
-const fetchTypeOptions = async () => {
-  const response = await DictEnumOptionApi({ name: 'xtcs-type' });
-  if (response.data) {
-    typeOptions.value = response.data as Array<{ label: string; value: string; disabled?: boolean }>;
-  }
-};
-
-// 参数类型名称
-const typeLabel = (value: string) => {
-  return typeOptions.value.find((item) => item.value === value)?.label || value;
-};
 
 const fetchTableFieldColumn = async () => {
   const response = await TableFieldColumnApi({xtbb: apiName});

@@ -17,7 +17,7 @@
       <!--Search查询条件-->
       <transition name="t-filter">
         <div v-if="filterVisible" class="table-search">
-          <Filter :ds-option="dsOption" :status-option="statusOption" :user-option="userOption" @search="search"  />
+          <Filter :data-option="dataOption" :task-option="taskOption" :user-option="userOption" @search="search"  />
         </div>
       </transition>
 
@@ -103,8 +103,8 @@ const requestParam = reactive({"filter": {}});  // 条件查询内容
 const searchIcon = ref("SwitchButton"); // 查询按钮图标
 const searchBtnText = ref("展开查询"); // 查询按钮文本
 // 性别枚举
-const dsOption = ref<OptionEnumModelList>([]);
-const statusOption = ref<OptionEnumModelList>([]);
+const dataOption = ref<OptionEnumModelList>([]);
+const taskOption = ref<OptionEnumModelList>([]);
 const userOption = ref<OptionEnumModelList>([]);
 
 
@@ -113,8 +113,8 @@ onMounted(async () => {
   const response = await SysOpsTaskFilterApi();
   if (response.code ===100) {
     const res = response.data as { ds: OptionEnumModelList, status: OptionEnumModelList, user: OptionEnumModelList };
-    dsOption.value = res.ds;
-    statusOption.value = res.status;
+    dataOption.value = res.ds;
+    taskOption.value = res.status;
     userOption.value = res.user;
   }
 });

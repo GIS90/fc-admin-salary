@@ -94,6 +94,19 @@ let systemApiModel = {
     long: "请输入API接口详细描述"
 }
 
+let systemRedisConfigModel = {
+    name: "请输入Redis配置名称",
+    host: "请输入Redis主机地址",
+    password: "无密码请留空",
+    summary: "请输入配置说明"
+}
+
+let systemRedisRuleModel = {
+    name: "请输入清理规则名称",
+    pattern: "前缀匹配填写前缀；通配符支持*和?；正则填写表达式",
+    summary: "请输入规则说明"
+}
+
 let salaryDtalkModel = {
     name: "请输入文件名称（.xls、.xlsx）",
     title: "请输入当前Sheet的消息标题，为空时默认使用时间+自动化提醒",
@@ -155,6 +168,8 @@ export default {
     systemXtcsModel,
     systemReportModel,
     systemApiModel,
+    systemRedisConfigModel,
+    systemRedisRuleModel,
     salaryDtalkModel,
     salaryDtalkRobotModel,
     salaryQywxModel,

@@ -1,0 +1,1 @@
+import{_ as a,o as c,c as n,b as e,f as r,g as _}from"./index.FmW3c5cc.js";import{E as s}from"./el-main.DjQdVmd-.js";import{E as l}from"./el-card.CGeRXWvZ.js";const f={};function m(d,i){const o=l,t=s;return c(),n(t,null,{default:e(()=>[r(o,null,{default:e(()=>[_(" 全屏展示 ")]),_:1})]),_:1})}const E=a(f,[["render",m]]);export{E as default};

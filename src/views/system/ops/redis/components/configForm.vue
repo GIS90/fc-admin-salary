@@ -18,6 +18,7 @@
       @open="openDialog"
       @close="closeDialog"
   >
+    <!--header-->
     <template #header>
       <div class="my-dialog-header">
         <div class="my-dialog-header-title">{{ dgField.title }}</div>
@@ -36,57 +37,69 @@
       </div>
     </template>
 
+    <!--body-->
+
     <div class="my-dialog-body">
-    <el-form ref="configFormRef" :model="configForm" :rules="rules" :size="formField.size"
-             label-position="top" style="width: 100%">
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <el-form-item label="配置名称" prop="name">
-            <el-input v-model.trim="configForm.name" :maxlength="55" clearable placeholder="请输入配置名称" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="主机地址" prop="host">
-            <el-input v-model.trim="configForm.host" :maxlength="120" clearable placeholder="127.0.0.1" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <el-form-item label="端口" prop="port">
-            <el-input-number v-model="configForm.port" :min="1" :max="65535" controls-position="right" class="full-width" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="数据库" prop="db">
-            <el-input-number v-model="configForm.db" :min="0" :max="15" controls-position="right" class="full-width" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="排序编码" prop="orderId">
-            <el-input-number v-model="configForm.orderId" :min="0" :max="99999" controls-position="right" class="full-width" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-form-item label="密码">
-        <el-input v-model="configForm.password" type="password" show-password :maxlength="120" clearable
-                  placeholder="无密码请留空" />
-      </el-form-item>
-      <el-form-item label="配置说明">
-        <el-input v-model="configForm.summary" type="textarea" :rows="3" maxlength="255" show-word-limit
-                  placeholder="请输入配置说明" />
-      </el-form-item>
-      <el-form-item label="状态">
-        <el-switch v-model="configForm.lock" :active-value="false" :inactive-value="true" active-text="启用" inactive-text="停用" />
-      </el-form-item>
-    </el-form>
+      <el-form ref="configFormRef" :model="configForm" :rules="rules" v-bind="formField" style="width: 100%">
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="配置名称" prop="name">
+              <el-input v-model.trim="configForm.name" v-bind="inputField"
+                        :maxlength="configLength.name" :placeholder="configPlace.name" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="主机地址" prop="host">
+              <el-input v-model.trim="configForm.host" v-bind="inputField"
+                        :maxlength="configLength.host" :placeholder="configPlace.host" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="密码" prop="password">
+               <el-input v-model="configForm.password" v-bind="inputField" type="password" show-password
+                    :maxlength="configLength.password" :placeholder="configPlace.password" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="端口" prop="port">
+              <el-input-number v-model="configForm.port" v-bind="inputNumberField" style="width: 100%;"
+                               :min="1" :max="65535" controls-position="right" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="数据库" prop="db">
+              <el-input-number v-model="configForm.db" v-bind="inputNumberField" style="width: 100%;"
+                               :min="0" :max="20" controls-position="right" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="排序编码" prop="orderId">
+              <el-input-number v-model="configForm.orderId" v-bind="inputNumberField" style="width: 100%;"
+                               :min="0" :max="99999" controls-position="right" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-form-item label="配置说明">
+          <el-input v-model="configForm.summary" v-bind="textAreaField"
+                    :maxlength="configLength.summary" :placeholder="configPlace.summary"
+                    :autosize="{ minRows: 3, maxRows: 5 }" />
+        </el-form-item>
+        <el-form-item label="状态">
+          <el-switch v-model="configForm.lock" :active-value="false" :inactive-value="true"
+                     active-text="启用" inactive-text="停用" />
+        </el-form-item>
+      </el-form>
     </div>
 
     <template #footer>
       <div class="my-dialog-footer">
-        <el-button :loading="testLoading" @click="testConnect">测试连接</el-button>
+        <el-button v-bind="buttonField" :loading="testLoading" @click="testConnect">测试连接</el-button>
         <el-button @click="closeDialog">取 消</el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submit">确 定</el-button>
+        <el-button v-bind="buttonField" :loading="submitLoading" @click="submit">确 定</el-button>
       </div>
     </template>
   </el-dialog>
@@ -100,15 +113,23 @@ import { RedisConfigForm } from '@/models/systemModel';
 import {
   SysOpsRedisConfigApi, SysOpsRedisConfigAddApi, SysOpsRedisConfigUpdateApi, SysOpsRedisConfigTestApi
 } from '@/api/modules/systemOps';
-import { dialogField, formField } from '@/utils/attrs/field';
+import {
+  buttonField, dialogField, formField, inputField, inputNumberField, textAreaField
+} from '@/utils/attrs/field';
+import publicLength from '@/utils/attrs/length';
+import publicPlaceHolder from '@/utils/attrs/place';
 
 const props = defineProps({
-  visible: { type: Boolean, default: false },
+  visible: { type: Boolean, required: true, default: false },
   md5: { type: String, default: '' }
 });
-const emit = defineEmits(['update:visible', 'success']);
+const emit = defineEmits(['update:visible', 'reFetchTableData']);
 
-const dgField = { ...dialogField, ...{ title: 'Redis连接配置', width: '55%' } };
+const dgConfigField = reactive({ title: 'Redis连接配置', width: '55%' });
+const dgField = { ...dialogField, ...dgConfigField }; // DIALOG属性
+const configLength = publicLength.systemRedisConfigModel;
+const configPlace = publicPlaceHolder.systemRedisConfigModel;
+
 const fullView = ref(dgField.fullScreen);
 const fullViewText = ref('全屏');
 const configFormRef = ref<FormInstance>();
@@ -174,7 +195,7 @@ const submit = async () => {
       const api = props.md5 ? SysOpsRedisConfigUpdateApi : SysOpsRedisConfigAddApi;
       await api({ ...configForm });
       ElNotification({ title: '提示', message: props.md5 ? '更新成功' : '新增成功', type: 'success' });
-      emit('success');
+      emit('reFetchTableData');
       closeDialog();
     } finally {
       submitLoading.value = false;
@@ -184,8 +205,5 @@ const submit = async () => {
 </script>
 
 <style scoped>
-.my-dialog-body { padding: 16px 20px; }
-.full-width { width: 100%; min-width: 0; }
-:deep(.el-form-item) { margin-bottom: 14px; }
-:deep(.el-form-item__label) { padding-bottom: 4px; line-height: 1.4; }
+
 </style>

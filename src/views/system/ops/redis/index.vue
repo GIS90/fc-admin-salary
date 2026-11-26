@@ -17,6 +17,8 @@
         <template v-else>
           <el-button id="btn-redis-config-add" class="table-handle-button" :type="buttonField.type" :plain="buttonField.plain"
                      :size="buttonField.size" icon="Plus" @click="addConfigHandle">新增配置</el-button>
+          <el-button id="btn-redis-config-ping" type="success" plain :size="buttonField.size" icon="Connection"
+                     @click="pingHandle()">全部PING</el-button>
         </template>
       </div>
       <div class="right-panel">
@@ -32,6 +34,10 @@
               <el-button icon="Search" @click="fetchConfigList" />
             </template>
           </el-input>
+          <el-tooltip effect="dark" content="刷新" placement="top">
+            <el-button id="btn-redis-config-refresh" :size="buttonField.size" icon="Refresh"
+                       @click="refreshConfigHandle" />
+          </el-tooltip>
         </template>
       </div>
     </el-header>
@@ -50,28 +56,29 @@
                            :columns="columns" :rowKey="ftField.rowKey" :stripe="ftField.stripe" :border="ftField.border"
                            :pagination="ftField.pagination" :showBottomView="ftField.showBottomView"
                            :showRefreshBtn="ftField.showRefreshBtn" :showColumnBtn="ftField.showColumnBtn"
-                           :showDownloadBtn="false">
+                           :showDownloadBtn="ftField.showDownloadBtn">
             <template #match="scope">
               <el-tag effect="plain">{{ matchText(scope.row.match) }}</el-tag>
             </template>
-            <template #lockText="scope">
-              <el-tag :type="scope.row.lock ? 'info' : 'success'" effect="plain">
-                {{ scope.row.lock ? '已停用' : '已启用' }}
-              </el-tag>
-            </template>
+            <!-- 表格操作 -->
             <template #options="scope">
               <el-button link type="primary" :size="buttonField.size" icon="Search" @click="previewHandle(scope.row)">预览</el-button>
               <el-button link type="warning" :size="buttonField.size" icon="Delete" @click="cleanHandle(scope.row)">清理</el-button>
               <el-button link type="primary" :size="buttonField.size" icon="Edit" @click="editRuleHandle(scope.row)">编辑</el-button>
-              <el-switch :model-value="scope.row.lock === true || scope.row.lockText === '已停用'"
-                         :active-value="false" :inactive-value="true"
-                         inline-prompt active-text="启" inactive-text="停" @change="val => lockHandle(scope.row, val)" />
               <el-popconfirm title="确认删除该清理规则？" confirm-button-text="确定" cancel-button-text="取消"
                              @confirm="deleteRuleHandle(scope.row.md5)">
                 <template #reference>
                   <el-button link type="danger" :size="buttonField.size" icon="Delete">删除</el-button>
                 </template>
               </el-popconfirm>
+            </template>
+            <!-- 状态管理 -->
+            <template #lock="scope">
+              <el-switch v-model="scope.row.lock"
+                         active-text="禁用"
+                         inactive-text="启用"
+                         style="--el-switch-on-color: #ff4949; --el-switch-off-color: #13ce66;"
+                         @change="statusHandle(scope.row.md5, $event)" />
             </template>
           </fc-filter-table>
         </div>
@@ -81,22 +88,23 @@
       <div v-show="activeTab === 'config'" class="pane">
         <div class="table-wrapper">
           <el-table :data="configList" v-loading="configLoading" border stripe height="100%" style="width: 100%" size="default">
-            <el-table-column prop="name" label="配置名称" min-width="140" />
-            <el-table-column prop="host" label="主机" min-width="140" />
-            <el-table-column prop="port" label="端口" width="90" align="center" />
-            <el-table-column prop="db" label="库" width="70" align="center" />
-            <el-table-column prop="orderId" label="排序" width="80" align="center" />
-            <el-table-column label="状态" width="90" align="center">
+            <el-table-column prop="name" label="配置名称"align="center" />
+            <el-table-column prop="host" label="主机"align="center" />
+            <el-table-column prop="port" label="端口" align="center" />
+            <el-table-column prop="db" label="库" align="center" />
+            <el-table-column prop="orderId" label="排序编号" align="center" />
+            <el-table-column label="状态" align="center">
               <template #default="scope">
                 <el-tag :type="scope.row.lock ? 'info' : 'success'" effect="plain">
                   {{ scope.row.lock ? '停用' : '启用' }}
                 </el-tag>
               </template>
             </el-table-column>
-            <el-table-column prop="createTime" label="创建时间" width="170" align="center" />
-            <el-table-column label="操作" width="180" align="center" fixed="right">
+            <el-table-column prop="createTime" label="创建时间" align="center" />
+            <el-table-column label="操作" width="220" align="center" fixed="right">
               <template #default="scope">
                 <el-button link type="primary" icon="Edit" @click="editConfigHandle(scope.row)">编辑</el-button>
+                <el-button link type="success" icon="Connection" @click="pingHandle(scope.row.md5)">PING</el-button>
                 <el-popconfirm title="确认删除该连接配置？" confirm-button-text="确定" cancel-button-text="取消"
                                @confirm="deleteConfigHandle(scope.row.md5)">
                   <template #reference>
@@ -113,12 +121,15 @@
 
     <RuleForm v-model:visible="ruleFormVisible" :md5="ruleFormMd5" :config-option="configOptions"
               :match-option="matchOptions" @success="reFetchTableData(true)" />
-    <ConfigForm v-model:visible="configFormVisible" :md5="configFormMd5" @success="onConfigSuccess" />
+    <ConfigForm v-model:visible="configFormVisible" :md5="configFormMd5" @reFetchTableData="onConfigSuccess" />
+    <PingResult v-model:visible="pingVisible" :list="pingList" :total="pingTotal" :success="pingSuccess" :failed="pingFailed" />
+    <PreviewResult v-model:visible="previewVisible" :rule="previewRule" :config="previewConfig" :match="previewMatch"
+                   :count="previewCount" :max-keys="previewMaxKeys" :sample="previewSample" />
   </el-container>
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, onMounted, h } from 'vue';
+import { reactive, ref, onMounted } from 'vue';
 import { ElMessage, ElMessageBox, ElNotification } from 'element-plus';
 import { FcFilterTableInstance } from '@/components/fcFilterTable/model';
 import { buttonField, fcTableField } from '@/utils/attrs/field';
@@ -128,13 +139,16 @@ import { TableFieldColumnApi } from '@/api/modules/common';
 import {
   SysOpsRedisConfigListApi, SysOpsRedisRuleFilterApi, SysOpsRedisRuleListApi,
   SysOpsRedisRuleDeleteApi, SysOpsRedisRulesDeleteApi, SysOpsRedisRuleLockApi,
-  SysOpsRedisRulePreviewApi, SysOpsRedisRuleCleanApi, SysOpsRedisConfigDeleteApi
+  SysOpsRedisRulePreviewApi, SysOpsRedisRuleCleanApi, SysOpsRedisConfigDeleteApi,
+  SysOpsRedisPingApi
 } from '@/api/modules/systemOps';
 import Filter from './components/filter.vue';
 import RuleForm from './components/ruleForm.vue';
 import ConfigForm from './components/configForm.vue';
+import PingResult from './components/pingResult.vue';
+import PreviewResult from './components/previewResult.vue';
 
-const fcTableConfig = reactive({ rowKey: 'md5', border: false, showDownloadBtn: false });
+const fcTableConfig = reactive({ rowKey: 'md5', border: false });
 const ftField = { ...fcTableField, ...fcTableConfig };
 const fcTableRef = ref<FcFilterTableInstance>();
 
@@ -155,17 +169,20 @@ const ruleFormMd5 = ref('');
 const configFormVisible = ref(false);
 const configFormMd5 = ref('');
 
-const defaultColumns: any[] = [
-  { type: 'selection', width: 50, fixed: 'left' },
-  { prop: 'name', label: '规则名称', minWidth: 140 },
-  { prop: 'configName', label: 'Redis配置', minWidth: 130 },
-  { prop: 'match', label: '匹配方式', width: 110 },
-  { prop: 'pattern', label: '键匹配内容', minWidth: 200 },
-  { prop: 'maxKeys', label: '最大键数', width: 100 },
-  { prop: 'lockText', label: '状态', width: 90 },
-  { prop: 'lastCleanCount', label: '上次清理数', width: 110 },
-  { prop: 'lastCleanTime', label: '上次清理时间', width: 170 }
-];
+const pingVisible = ref(false);
+const pingList = ref<any[]>([]);
+const pingTotal = ref(0);
+const pingSuccess = ref(0);
+const pingFailed = ref(0);
+
+const previewVisible = ref(false);
+const previewRule = ref('');
+const previewConfig = ref('');
+const previewMatch = ref('');
+const previewCount = ref(0);
+const previewMaxKeys = ref(0);
+const previewSample = ref<string[]>([]);
+
 
 const matchText = (value: string) => {
   return matchOptions.value.find(item => item.value === value)?.label || value;
@@ -178,17 +195,16 @@ onMounted(async () => {
 });
 
 const fetchTableFieldColumn = async () => {
-  const optionColumn = { prop: 'options', label: '操作', width: 330, fixed: 'right' };
-  try {
-    const response = await TableFieldColumnApi({ xtbb: apiName });
-    if (response.code === 100 && Array.isArray(response.data) && response.data.length) {
-      columns.value = [...(response.data as any[]), optionColumn];
-      return;
-    }
-  } catch {
-    // 后台未配置报表时使用内置表头
+  const response = await TableFieldColumnApi({xtbb: apiName});
+  if (response.code === 100 && response.data) {
+    columns.value = response.data as any;
+  } else {
+    ElNotification({
+      title: '提示',
+      message: '报表未配置表头，请联系平台管理员！',
+      type: 'warning'
+    });
   }
-  columns.value = [...defaultColumns, optionColumn];
 };
 
 const fetchFilterOptions = async () => {
@@ -234,13 +250,13 @@ const editRuleHandle = (row: RedisRuleModelList) => { ruleFormMd5.value = row.md
 const previewHandle = async (row: RedisRuleModelList) => {
   const response = await SysOpsRedisRulePreviewApi({ md5: row.md5 });
   const data = response.data;
-  ElMessageBox.alert(h('div', [
-    h('p', `规则：${data?.rule || row.name}；匹配 ${data?.count ?? 0} 个键（单次上限 ${data?.maxKeys ?? 0}）`),
-    h('p', `匹配表达式：${data?.match || '-'}`),
-    h('p', '示例键名：'),
-    h('pre', { style: { maxHeight: '240px', overflow: 'auto', background: '#f5f7fa', padding: '8px' } },
-      (data?.sample || []).join('\n') || '（无）')
-  ]), '预览结果', { confirmButtonText: '知道了' });
+  previewRule.value = data?.rule || row.name;
+  previewConfig.value = data?.config || '';
+  previewMatch.value = data?.match || '-';
+  previewCount.value = data?.count ?? 0;
+  previewMaxKeys.value = data?.maxKeys ?? 0;
+  previewSample.value = data?.sample || [];
+  previewVisible.value = true;
 };
 
 const cleanHandle = async (row: RedisRuleModelList) => {
@@ -262,9 +278,9 @@ const cleanHandle = async (row: RedisRuleModelList) => {
   reFetchTableData(true);
 };
 
-const lockHandle = async (row: RedisRuleModelList, value: any) => {
-  await SysOpsRedisRuleLockApi({ md5: row.md5, value: Boolean(value) });
-  ElMessage.success(value ? '规则已启用' : '规则已停用');
+const statusHandle = async (md5: string, value: any) => {
+  await SysOpsRedisRuleLockApi({ md5, value: Boolean(value) });
+  ElMessage.success(value ? '规则已禁用' : '规则已启用');
   reFetchTableData(true);
 };
 
@@ -291,6 +307,16 @@ const batchDeleteHandle = () => {
 const addConfigHandle = () => { configFormMd5.value = ''; configFormVisible.value = true; };
 const editConfigHandle = (row: RedisConfigModelList) => { configFormMd5.value = row.md5; configFormVisible.value = true; };
 
+const pingHandle = async (md5?: string) => {
+  const response = await SysOpsRedisPingApi(md5 ? { md5 } : {});
+  const data = response.data;
+  pingList.value = data?.list || [];
+  pingTotal.value = data?.total ?? pingList.value.length;
+  pingSuccess.value = data?.success ?? 0;
+  pingFailed.value = data?.failed ?? 0;
+  pingVisible.value = true;
+};
+
 const deleteConfigHandle = async (md5: string) => {
   await SysOpsRedisConfigDeleteApi({ md5 });
   ElNotification({ title: '提示', message: '删除成功', type: 'success' });
@@ -298,9 +324,15 @@ const deleteConfigHandle = async (md5: string) => {
   fetchFilterOptions();
 };
 
-const onConfigSuccess = () => {
-  fetchConfigList();
-  fetchFilterOptions();
+const onConfigSuccess = async () => {
+  await fetchConfigList();
+  await fetchFilterOptions();
+};
+
+const refreshConfigHandle = async () => {
+  await fetchConfigList();
+  await fetchFilterOptions();
+  ElNotification({ title: '提示', message: '刷新成功', type: 'success', duration: 1500 });
 };
 </script>
 
